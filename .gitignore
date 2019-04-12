@@ -51,6 +51,7 @@ Module.symvers
 Mkfile.old
 dkms.conf
 
-
 KR
 libft
+.DS_Store
+
