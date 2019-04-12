@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   printf.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: waddam <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: draudrau <draudrau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/09 16:56:36 by draudrau          #+#    #+#             */
-/*   Updated: 2019/04/12 15:44:11 by waddam           ###   ########.fr       */
+/*   Updated: 2019/04/12 20:57:17 by draudrau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,7 +176,7 @@ int		minprintf(char *fmt, ...)
 			{
 				flag = ft_check_flags(p);
 				//ft_decimal(ap, &count, flag);
-				if (flag == 1 || flag == 3)
+				if (flag == 1 || flag == 3) /* флаг hh или ll */
 					p += 2;
 				else if (flag == 2 || flag == 4)
 					p += 1;
@@ -212,7 +212,85 @@ int		minprintf(char *fmt, ...)
 	return (count);
 }
 
-int main()
+void	convert_v_8(long long c, int flag) /* Из десятичной в восьмиричную */
+{
+	int			ost[23];
+	int			i;
+	unsigned long long	result;
+	unsigned long long	max;
+	unsigned long long	temp;
+
+	i = 0;
+	result = 0;
+	temp = c;
+	if (c < 0)
+	{
+		if (flag == 1)
+			max = FT_MAX_UCHAR;
+		if (flag == 2)
+			max = FT_MAX_USHORT;
+		if (flag == 3 || flag == 4)
+			max = FT_MAX_ULONG;
+		else
+			max = FT_MAX_UINT;
+		temp = max + c; /* Отрицательный long long делаем unsigned long long */
+	}
+	while (temp > 7)
+	{
+		ost[i] = temp % 8;
+		temp = temp / 8;
+		i++;
+	}
+	ost[i] = temp;
+	while (i >= 0)
+	{
+		ft_putnbr(ost[i]); /* Выводим число с конца, т.к. нам надо его перевернуть */
+		i--;
+	}
+}
+
+void	convert_v_16(long long c, int flag) /* Из десятичной в шестнадцатиричную */
+{
+	int					ost[23];
+	int					i;
+	unsigned long long	result;
+	unsigned long long	max;
+	unsigned long long	temp;
+
+	i = 0;
+	result = 0;
+	temp = c;
+	if (c < 0)
+	{
+		if (flag == 1)
+			max = FT_MAX_UCHAR;
+		if (flag == 2)
+			max = FT_MAX_USHORT;
+		if (flag == 3 || flag == 4)
+			max = FT_MAX_ULONG;
+		else
+			max = FT_MAX_UINT;
+		temp = max + c; /* Отрицательный long long делаем unsigned long long */
+	}
+	while (temp > 15)
+	{
+		ost[i] = temp % 16;
+		temp = temp / 16;
+		i++;
+	}
+	ost[i] = temp;
+	while (i >= 0)
+	{
+		if (ost[i] < 10)
+			ft_putnbr(ost[i]); /* Выводим число с конца, т.к. нам надо его перевернуть */
+		else
+			ft_putchar((char)ost[i] - 10 + 'a');		
+		i--;
+	}
+}
+
+
+int		main()
 {
 	int		original;
 	int		subject;
@@ -221,11 +299,11 @@ int main()
 
 	l = 29034;
 	s = (char*)malloc(6);
-	ft_memcpy(s, "hello", 6);
-	*/minprintf("%d %d", 29034, 21);
+	ft_memcpy(s, "hello", 6);*/
+	/*minprintf("%d %d", 29034, 21);
 	printf("\n");
 	minprintf("%c %c", 'r', 'w');
-	//minprintf("%p", &l);
+	minprintf("%p", &l);
 	printf("\n");
 	printf("\nsubject %d\n", minprintf("%d", 456));
 	printf("\noriginal %d\n", printf("%d", 123));
@@ -243,6 +321,17 @@ int main()
 	printf("subj = %d, orig = %d\n", subject, original);
 	subject = minprintf("i nash %i", 2121232766);
 	original = printf("\ni zavod %i\n", 2121232765);
-	printf("subj = %d, orig = %d\n", subject, original);
+	printf("subj = %d, orig = %d\n", subject, original);*/
+
+	//printf("%llo %llo %#llo\n", 17223372036854775808ull, 17223372036854775808ull, 17223372036854775808ull);
+	//printf("%lo %lo %#lo\n", 9223372036854775806, 9223372036854775806, 9223372036854775806);
+	//
+	/*printf("%d\n", convert_v_8(125, 1));
+	printf("%hho\n", (char)125);
+	printf("%d\n", convert_v_8(58, 2));
+	printf("%d\n", convert_v_8(0, 3));*/
+	convert_v_16(-2, 4);
+	/*printf("%d\n", convert_v_8(-58, 4));
+	printf("%d\n", convert_v_8(-8, 0));*/
 	return (0);
 }
