@@ -1,0 +1,19 @@
+NAME = libftprintf.a
+SRC = printf.c
+INCLUDES = printf.h
+FLAG = -Wall -Wextra -Werror
+
+all: $(NAME)
+
+$(NAME):
+		@$(MAKE) -C libft
+		@gcc $(FLAG) $(SRC) -I.$(INCLUDES) -c
+		@ar rcs $(NAME) printf.o libft/libft.a
+clean: # дописать
+		@$(MAKE) -C libft fclean
+		@/bin/rm -f rm -f *.o
+
+fclean: clean
+		@/bin/rm -f $(NAME) # дописать
+
+re: fclean $(NAME)
