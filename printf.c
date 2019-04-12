@@ -6,7 +6,7 @@
 /*   By: waddam <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/09 16:56:36 by draudrau          #+#    #+#             */
-/*   Updated: 2019/04/12 15:07:16 by waddam           ###   ########.fr       */
+/*   Updated: 2019/04/12 15:44:11 by waddam           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 #include <stdlib.h>
 #include "printf.h"
 
-int		count_of_digits(int n)
+long long	count_of_digits(long long n)
 {
 	int count;
 
@@ -49,25 +49,25 @@ void	ft_decimal(va_list ap, int *count, int flag)
 {
 	long long	num;
 
-    num = va_arg(ap, long long);
+	num = va_arg(ap, long long);
 	if (flag == 1)
 	{
-    	ft_putnbr((char)num);
+		ft_putnbr((char)num);
 		*count = *count + count_of_digits((char)num);
 	}
 	else if (flag == 2)
 	{
-    	ft_putnbr((short)num);
+		ft_putnbr((short)num);
 		*count = *count + count_of_digits((short)num);
 	}
 	else if (flag == 3)
 	{
-    	ft_putnbrll((long)num);
+		ft_putnbrll((long)num);
 		*count = *count + count_of_digits((long)num);
 	}
 	else if (flag == 4)
 	{
-    	ft_putnbrll((long long)num);
+		ft_putnbrll((long long)num);
 		*count = *count + count_of_digits((long long)num);
 	}
 	else
@@ -175,17 +175,16 @@ int		minprintf(char *fmt, ...)
 			while (*p)
 			{
 				flag = ft_check_flags(p);
-				ft_decimal(ap, &count, flag);
+				//ft_decimal(ap, &count, flag);
 				if (flag == 1 || flag == 3)
 					p += 2;
 				else if (flag == 2 || flag == 4)
 					p += 1;
-				break ;
-				/*if(*p == 'd' || *p == 'i')
+				if(*p == 'd' || *p == 'i')
 				{
-					ft_decimal(ap, &count);
+					ft_decimal(ap, &count, flag);
 					break;
-				}*/
+				}
 				if (*p == 's')
 				{
 					ft_string(ap, &count);
@@ -223,24 +222,27 @@ int main()
 	l = 29034;
 	s = (char*)malloc(6);
 	ft_memcpy(s, "hello", 6);
-	minprintf("%d %d", 29034, 21);
+	*/minprintf("%d %d", 29034, 21);
 	printf("\n");
 	minprintf("%c %c", 'r', 'w');
-	minprintf("%p", &l);
+	//minprintf("%p", &l);
 	printf("\n");
+	printf("\nsubject %d\n", minprintf("%d", 456));
 	printf("\noriginal %d\n", printf("%d", 123));
-	printf("\nsubject %d\n", minprintf("%d", 456));*/
-	// subject = minprintf("hh nash %hhi", (char)32766);
-	// original = printf("\nhh zavod %hhi\n", (char)32765);
-	// printf("subj = %d, orig = %d\n", subject, original);
-	// subject = minprintf("h nash %hi", (short)32766);
-	// original = printf("\nh zavod %hi\n", (short)32765);
-	// printf("subj = %d, orig = %d\n", subject, original);
+	subject = minprintf("hh nash %hhi", (char)32766);
+	original = printf("\nhh zavod %hhi\n", (char)32765);
+	printf("subj = %d, orig = %d\n", subject, original);
+	subject = minprintf("h nash %hi", (short)32766);
+	original = printf("\nh zavod %hi\n", (short)32765);
+	printf("subj = %d, orig = %d\n", subject, original);
 	subject = minprintf("ll nash %lli", (long long)212121232766);
 	original = printf("\nll zavod %lli\n", (long long)212121232765);
 	printf("subj = %d, orig = %d\n", subject, original);
-	// subject = minprintf("l nash %li", (long)212121232766);
-	// original = printf("\nl zavod %li\n", (long)212121232765);
-	// printf("subj = %d, orig = %d\n", subject, original);
+	subject = minprintf("l nash %li", (long)212121232766);
+	original = printf("\nl zavod %li\n", (long)212121232765);
+	printf("subj = %d, orig = %d\n", subject, original);
+	subject = minprintf("i nash %i", 2121232766);
+	original = printf("\ni zavod %i\n", 2121232765);
+	printf("subj = %d, orig = %d\n", subject, original);
 	return (0);
 }

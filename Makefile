@@ -9,10 +9,10 @@ all: $(NAME)
 $(NAME):
 		@$(MAKE) -C libft
 		#@gcc $(FLAG) $(SRC) -I.$(INCLUDES) -c
-		gcc $(FLAG) $(SRC) libft/libft.a -I.$(INCLUDES)
+		gcc $(FLAG) -g $(SRC) libft/libft.a -I.$(INCLUDES)
 		#@ar rcs $(NAME) printf.o libft/libft.a
 clean: # дописать
-		@$(MAKE) -C libft fclean
+		#@$(MAKE) -C libft fclean
 		@/bin/rm -f rm -f *.o
 
 fclean: clean
