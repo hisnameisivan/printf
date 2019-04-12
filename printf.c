@@ -6,7 +6,7 @@
 /*   By: waddam <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/09 16:56:36 by draudrau          #+#    #+#             */
-/*   Updated: 2019/04/12 13:59:17 by waddam           ###   ########.fr       */
+/*   Updated: 2019/04/12 15:07:16 by waddam           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -233,12 +233,12 @@ int main()
 	// subject = minprintf("hh nash %hhi", (char)32766);
 	// original = printf("\nhh zavod %hhi\n", (char)32765);
 	// printf("subj = %d, orig = %d\n", subject, original);
-	subject = minprintf("h nash %hi", (short)32766);
-	original = printf("\nh zavod %hi\n", (short)32765);
-	printf("subj = %d, orig = %d\n", subject, original);
-	// subject = minprintf("ll nash %lli", (long long)212121232766);
-	// original = printf("\nll zavod %lli\n", (long long)212121232765);
+	// subject = minprintf("h nash %hi", (short)32766);
+	// original = printf("\nh zavod %hi\n", (short)32765);
 	// printf("subj = %d, orig = %d\n", subject, original);
+	subject = minprintf("ll nash %lli", (long long)212121232766);
+	original = printf("\nll zavod %lli\n", (long long)212121232765);
+	printf("subj = %d, orig = %d\n", subject, original);
 	// subject = minprintf("l nash %li", (long)212121232766);
 	// original = printf("\nl zavod %li\n", (long)212121232765);
 	// printf("subj = %d, orig = %d\n", subject, original);
