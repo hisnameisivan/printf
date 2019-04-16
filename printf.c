@@ -6,7 +6,7 @@
 /*   By: draudrau <draudrau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/09 16:56:36 by draudrau          #+#    #+#             */
-/*   Updated: 2019/04/12 20:57:17 by draudrau         ###   ########.fr       */
+/*   Updated: 2019/04/16 13:49:42 by draudrau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,36 +16,11 @@
 #include <stdlib.h>
 #include "printf.h"
 
-long long	count_of_digits(long long n)
-{
-	int count;
 
-	if (n == 0)
-		return (1);
-	count = 0;
-	if (n < 0)
-	{
-		count++;
-		n = (-1) * n;
-	}
-	while (n)
-	{
-		n = n / 10;
-		count++;
-	}
-	return (count);
-}
 
-void	ft_putnbrll(long long n)
-{
-	if ((n / 10) > 0)
-	{
-		ft_putnbrll(n / 10);
-	}
-	ft_putchar((n % 10) + '0');
-}
 
-void	ft_decimal(va_list ap, int *count, int flag)
+
+void	ft_decimal(va_list ap, int *count, int flag, char *ost)
 {
 	long long	num;
 
@@ -104,7 +79,7 @@ void	ft_pointer(va_list ap, int *count) /* Перевести в шестнад�
 	*count = *count + count_of_digits(ptr);
 }
 
-int		ft_check_specification(char *c)
+int		ft_check_specification(char *c) /* для подсчета через сколько символов перешагивать*/
 {
 	if (*c == 'c' || *c == 's' || *c == 'p'
 	|| *c == 'd' || *c == 'i' || *c == 'o'
@@ -138,23 +113,99 @@ int		ft_count_all(char *fmt, int count)
 	return (count);
 }
 
-int		ft_check_flags(char *ptr) /* Проверяет флаги hh(1), h(2), ll(3), l(4), нет флага(0)*/
+void	convert_v_8(va_list ap, int *count, int flag) /* Из десятичной в восьмиричную */
 {
-	if (*ptr == 'h')
+	int					i;
+	int					ost[23];
+	unsigned long long	max;
+	unsigned long long	temp;
+	unsigned long long	result;
+	long long			oct_num;
+
+	oct_num = va_arg(ap, long long);
+	temp = oct_num;
+	i = 0;
+	result = 0;
+	if (oct_num < 0)
 	{
-		if (*(ptr + 1) == 'h')
-			return (1);
+		if (flag == 1)
+			max = FT_MAX_UCHAR;
+		if (flag == 2)
+			max = FT_MAX_USHORT;
+		if (flag == 3 || flag == 4)
+			max = FT_MAX_ULONG;
 		else
-			return (2);
+			max = FT_MAX_UINT;
+		temp = max + oct_num + 1; /* Отрицательный long long делаем unsigned long long */
 	}
-	else if (*ptr == 'l')
+	while (temp > 7)
 	{
-		if (*(ptr + 1) == 'l')
-			return (3);
-		else
-			return (4);
+		ost[i] = temp % 8;
+		temp = temp / 8;
+		i++;
 	}
-	return (0);
+	ost[i] = temp;
+	(flag == 5) ? (*count = *count + i + 2) : (*count = *count + i + 1); /* i счетчик массива -> +1 чтобы получить длину +2 для # (0...) */
+	if (flag == 5)
+		ft_putchar('0');
+	while (i >= 0)
+	{
+		ft_putnbr(ost[i]); /* Выводим число с конца, т.к. нам надо его перевернуть */
+		i--;
+	}
+}
+
+void	convert_v_16(va_list ap, int *count, int flag, char x) /* Из десятичной в шестнадцатиричную */
+{
+	int					i;
+	int					ost[23];
+	unsigned long long	max;
+	unsigned long long	temp;
+	unsigned long long	result;
+	long long			hex_num;
+
+	hex_num = va_arg(ap, long long);
+	temp = hex_num;
+	i = 0;
+	result = 0;
+	if (hex_num < 0)
+	{
+		if (flag == 1)
+			max = FT_MAX_UCHAR;
+		if (flag == 2)
+			max = FT_MAX_USHORT;
+		if (flag == 3 || flag == 4)
+			max = FT_MAX_ULONG;
+		else
+			max = FT_MAX_UINT;
+		temp = max + hex_num + 1; /* Отрицательный long long делаем unsigned long long */
+	}
+	while (temp > 15)
+	{
+		ost[i] = temp % 16;
+		temp = temp / 16;
+		i++;
+	}
+	ost[i] = temp;
+	*count = *count + i + 1;  /* i счетчик массива -> +1 чтобы получить длину */
+	while (i >= 0)
+	{
+		if (ost[i] < 10)
+			ft_putnbr(ost[i]); /* Выводим число с конца, т.к. нам надо его перевернуть */
+		else
+			ft_putchar((char)ost[i] - 10 + ((x == 'x') ? 'a' : 'A')); /* (ost[i] - 10) - это сдвиг либо от 'a' (если x), либо от 'A' */
+		i--;
+	}
+}
+
+t_flags	*ft_create_struct_printf(void)
+{
+	t_flags	*temp;
+
+	if ((temp = (t_flags *)malloc(sizeof(t_flags))) == NULL)
+		return (NULL);
+	ft_restruct(temp);
+	return (temp);
 }
 
 int		minprintf(char *fmt, ...)
@@ -163,27 +214,49 @@ int		minprintf(char *fmt, ...)
     char	*p;
 	int		count;
 	int		flag;
+	int		ost[23];
+	int		i;
+	t_flags	*flag
 
-    p = fmt;
+    i = 0;
+	p = fmt;
 	count = 0;
     va_start(ap, fmt); /* устанавливает ap на 1-й безымянный аргумент */
     while (*p)
     {
 		if (*p =='%')
 		{
+			flags = ft_create_struct_printf();
 			p++;
 			while (*p)
 			{
+				ft_fill_struct(flags, p);
 				flag = ft_check_flags(p);
 				//ft_decimal(ap, &count, flag);
 				if (flag == 1 || flag == 3) /* флаг hh или ll */
 					p += 2;
-				else if (flag == 2 || flag == 4)
+				else if (flag == 2 || flag == 4 || flag == 5) /* флаг h или l или # */
 					p += 1;
-				if(*p == 'd' || *p == 'i')
+				while (*p >= '0' && *p <= '0')
 				{
-					ft_decimal(ap, &count, flag);
+					ost[i] = *p;
+					i++;
+					p++;
+				}
+				if (*p == 'd' || *p == 'i')
+				{
+					ft_decimal(ap, &count, flag, ost);
 					break;
+				}
+				if (*p == 'o')
+				{
+					convert_v_8(ap, &count, flag);
+					break ;
+				}
+				if (*p == 'x' || *p == 'X')
+				{
+					convert_v_16(ap, &count, flag, *p); /* аргумент *p чтобы разделить 'x' или 'X' */
+					break ;
 				}
 				if (*p == 's')
 				{
@@ -210,84 +283,6 @@ int		minprintf(char *fmt, ...)
     va_end(ap); /* очистка, когда все сделано */
 	count = ft_count_all(fmt, count);
 	return (count);
-}
-
-void	convert_v_8(long long c, int flag) /* Из десятичной в восьмиричную */
-{
-	int			ost[23];
-	int			i;
-	unsigned long long	result;
-	unsigned long long	max;
-	unsigned long long	temp;
-
-	i = 0;
-	result = 0;
-	temp = c;
-	if (c < 0)
-	{
-		if (flag == 1)
-			max = FT_MAX_UCHAR;
-		if (flag == 2)
-			max = FT_MAX_USHORT;
-		if (flag == 3 || flag == 4)
-			max = FT_MAX_ULONG;
-		else
-			max = FT_MAX_UINT;
-		temp = max + c; /* Отрицательный long long делаем unsigned long long */
-	}
-	while (temp > 7)
-	{
-		ost[i] = temp % 8;
-		temp = temp / 8;
-		i++;
-	}
-	ost[i] = temp;
-	while (i >= 0)
-	{
-		ft_putnbr(ost[i]); /* Выводим число с конца, т.к. нам надо его перевернуть */
-		i--;
-	}
-}
-
-void	convert_v_16(long long c, int flag) /* Из десятичной в шестнадцатиричную */
-{
-	int					ost[23];
-	int					i;
-	unsigned long long	result;
-	unsigned long long	max;
-	unsigned long long	temp;
-
-	i = 0;
-	result = 0;
-	temp = c;
-	if (c < 0)
-	{
-		if (flag == 1)
-			max = FT_MAX_UCHAR;
-		if (flag == 2)
-			max = FT_MAX_USHORT;
-		if (flag == 3 || flag == 4)
-			max = FT_MAX_ULONG;
-		else
-			max = FT_MAX_UINT;
-		temp = max + c; /* Отрицательный long long делаем unsigned long long */
-	}
-	while (temp > 15)
-	{
-		ost[i] = temp % 16;
-		temp = temp / 16;
-		i++;
-	}
-	ost[i] = temp;
-	while (i >= 0)
-	{
-		if (ost[i] < 10)
-			ft_putnbr(ost[i]); /* Выводим число с конца, т.к. нам надо его перевернуть */
-		else
-			ft_putchar((char)ost[i] - 10 + 'a');		
-		i--;
-	}
-}
 
 
 int		main()
@@ -325,13 +320,26 @@ int		main()
 
 	//printf("%llo %llo %#llo\n", 17223372036854775808ull, 17223372036854775808ull, 17223372036854775808ull);
 	//printf("%lo %lo %#lo\n", 9223372036854775806, 9223372036854775806, 9223372036854775806);
-	//
 	/*printf("%d\n", convert_v_8(125, 1));
 	printf("%hho\n", (char)125);
 	printf("%d\n", convert_v_8(58, 2));
 	printf("%d\n", convert_v_8(0, 3));*/
-	convert_v_16(-2, 4);
+	/*printf(" %d \n", minprintf("%x , %x , %d\n", -16565653, 25, 26));
+	printf(" %d \n", printf("%x , %x , %d\n", -16565653, 25, 26));
+	printf(" %d \n", minprintf("%X , %X , %d\n", -16565653, 25, 26));
+	printf(" %d \n", printf("%X , %X , %d\n", -16565653, 25, 26));*/
 	/*printf("%d\n", convert_v_8(-58, 4));
 	printf("%d\n", convert_v_8(-8, 0));*/
+	//printf("%.5s=%0#*.f", "value trash", 10, 123.1415926535);
+	// int num = 5;
+	// printf("%6.4hd\n", (short)10);
+	// printf("%-15d\n", 123);
+	printf("%+++++++++-20d\n", 25);
+	printf("%-+20d\n", 25);
 	return (0);
 }
+
+/*# define FT_MAX_UCHAR 255
+# define FT_MAX_USHORT 65535
+# define FT_MAX_ULONG 18446744073709551615ul
+# define FT_MAX_UINT 4294967295*/
