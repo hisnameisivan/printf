@@ -74,107 +74,134 @@ void	ft_decimal(va_list ap, int *count, t_flags *flags)
 	if (flags->width || flags->precision)
 	{
 		temp = ft_cmp_width_prec_num(flags, num);
-		if (flags->minus) /* есть флаг "-" */
+		// if (flags->minus) /* есть флаг "-" */
+		// {
+		// 	if (temp.znak == -1 ) /* num отрицательный, есть флаг '-', флаг '+' не важен */
+		// 	{
+		// 		ft_putchar('-');
+		// 		while (temp.nul > 0)
+		// 		{
+		// 			ft_putchar('0');
+		// 			temp.nul--;
+		// 		}
+		// 		ft_putnbr(ft_modul(num));
+		// 		while (temp.sp > 0)
+		// 		{
+		// 			ft_putchar(' ');
+		// 			temp.sp--;
+		// 		}
+		// 	}
+		// 	else
+		// 	{
+		// 		if (flags->plus) /* num положительный, есть флаг '-' и флаг '+' */
+		// 		{
+		// 			ft_putchar('+');
+		// 			while (temp.nul > 0)
+		// 			{
+		// 				ft_putchar('0');
+		// 				temp.nul--;
+		// 			}
+		// 			ft_putnbr(ft_modul(num));
+		// 			while (temp.sp > 0)
+		// 			{
+		// 				ft_putchar(' ');
+		// 				temp.sp--;
+		// 			}
+		// 		}
+		// 		else
+		// 		{
+		// 			while (temp.nul > 0)
+		// 			{
+		// 				ft_putchar('0');
+		// 				temp.nul--;
+		// 			}
+		// 			ft_putnbr(ft_modul(num));
+		// 			while (temp.sp > 0)
+		// 			{
+		// 				ft_putchar(' ');
+		// 				temp.sp--;
+		// 			}
+		// 		}
+		// 	}
+		// }
+		// else
+		// {
+		// 	if (temp.znak == -1) /* num отрицательный, НЕТ флага '-', флаг '+' не важен */
+		// 	{
+		// 		while (temp.sp > 0)
+		// 		{
+		// 			ft_putchar(' ');
+		// 			temp.sp--;
+		// 		}
+		// 		ft_putchar('-');
+		// 		while (temp.nul > 0)
+		// 		{
+		// 			ft_putchar('0');
+		// 			temp.nul--;
+		// 		}
+		// 		ft_putnbr(ft_modul(num));
+		// 	}
+		// 	else
+		// 	{
+		// 		if (flags->plus) /* num положительный, НЕТ флага '-' и ЕСТЬ флаг '+'  */
+		// 		{
+		// 			while (temp.sp > 0)
+		// 			{
+		// 				ft_putchar(' ');
+		// 				temp.sp--;
+		// 			}
+		// 			ft_putchar('+');
+		// 			while (temp.nul > 0)
+		// 			{
+		// 				ft_putchar('0');
+		// 				temp.nul--;
+		// 			}
+		// 			ft_putnbr(ft_modul(num));
+		// 		}
+		// 		else /* num положительный, НЕТ флага '-' и НЕТ флага '+'  */
+		// 		{
+		// 			while (temp.sp > 0)
+		// 			{
+		// 				ft_putchar(' ');
+		// 				temp.sp--;
+		// 			}
+		// 			while (temp.nul > 0)
+		// 			{
+		// 				ft_putchar('0');
+		// 				temp.nul--;
+		// 			}
+		// 			ft_putnbr(ft_modul(num));
+		// 		}
+		// 	}
+		// }
+		if (!(flags->minus))
 		{
-			if (temp.znak == -1 ) /* num отрицательный, есть флаг '-', флаг '+' не важен */
+			while (temp.sp > 0)
 			{
-				ft_putchar('-');
-				while (temp.nul > 0)
-				{
-					ft_putchar('0');
-					temp.nul--;
-				}
-				ft_putnbr(ft_modul(num));
-				while (temp.sp > 0)
-				{
-					ft_putchar(' ');
-					temp.sp--;
-				}
-			}
-			else
-			{
-				if (flags->plus) /* num положительный, есть флаг '-' и флаг '+' */
-				{
-					ft_putchar('+');
-					while (temp.nul > 0)
-					{
-						ft_putchar('0');
-						temp.nul--;
-					}
-					ft_putnbr(ft_modul(num));
-					while (temp.sp > 0)
-					{
-						ft_putchar(' ');
-						temp.sp--;
-					}
-				}
-				else
-				{
-					while (temp.nul > 0)
-					{
-						ft_putchar('0');
-						temp.nul--;
-					}
-					ft_putnbr(ft_modul(num));
-					while (temp.sp > 0)
-					{
-						ft_putchar(' ');
-						temp.sp--;
-					}
-				}
+				ft_putchar(' ');
+				temp.sp--;
 			}
 		}
-		else
+		if (num < 0)
+			ft_putchar('-');
+		else if (num > 0 && flags->plus)
+			ft_putchar('+');
+		while (temp.nul > 0)
 		{
-			if (temp.znak == -1) /* num отрицательный, НЕТ флага '-', флаг '+' не важен */
+			ft_putchar('0');
+			temp.nul--;
+		}
+		ft_putnbr(ft_modul(num));
+		if (flags->minus)
+		{
+			while (temp.sp > 0)
 			{
-				while (temp.sp > 0)
-				{
-					ft_putchar(' ');
-					temp.sp--;
-				}
-				ft_putchar('-');
-				while (temp.nul > 0)
-				{
-					ft_putchar('0');
-					temp.nul--;
-				}
-				ft_putnbr(ft_modul(num));
-			}
-			else
-			{
-				if (flags->plus) /* num положительный, НЕТ флага '-' и ЕСТЬ флаг '+'  */
-				{
-					while (temp.sp > 0)
-					{
-						ft_putchar(' ');
-						temp.sp--;
-					}
-					ft_putchar('+');
-					while (temp.nul > 0)
-					{
-						ft_putchar('0');
-						temp.nul--;
-					}
-					ft_putnbr(ft_modul(num));
-				}
-				else /* num положительный, НЕТ флага '-' и НЕТ флага '+'  */
-				{
-					while (temp.sp > 0)
-					{
-						ft_putchar(' ');
-						temp.sp--;
-					}
-					while (temp.nul > 0)
-					{
-						ft_putchar('0');
-						temp.nul--;
-					}
-					ft_putnbr(ft_modul(num));
-				}
+				ft_putchar(' ');
+				temp.sp--;
 			}
 		}
 	}
+
 	if (flags->hh)
 	{
 		ft_putnbr((char)num);
@@ -202,6 +229,99 @@ void	ft_decimal(va_list ap, int *count, t_flags *flags)
 	}*/
 }
 
+void	ft_char(va_list ap, int *count, t_flags *flags)
+{
+	int		ch;
+	t_wp	temp;
+
+	ch = va_arg(ap, int);
+	if (flags->width)
+		temp.sp = flags->width - 1;
+	if (flags->minus) /* есть флаг "-" */
+	{
+		ft_putchar((char)ch);
+		while (temp.sp > 0)
+		{
+			ft_putchar(' ');
+			temp.sp--;
+			(*count)++;
+		}
+	}
+	else
+	{
+		while (temp.sp > 0)
+		{
+			ft_putchar(' ');
+			temp.sp--;
+			(*count)++;
+		}
+		ft_putchar((char)ch);
+	}
+	(*count)++;
+}
+
+void	ft_string(va_list ap, int *count, t_flags *flags)
+{
+	char	*str;
+	t_wp	temp;
+
+	str = va_arg(ap, char *);
+	*count = *count + ft_strlen(str);
+	if (flags->width)
+		temp.sp = flags->width - ft_strlen(str);
+	if (flags->minus) /* есть флаг "-" */
+	{
+		ft_putstr(str);
+		while (temp.sp > 0)
+		{
+			ft_putchar(' ');
+			temp.sp--;
+			(*count)++;
+		}
+	}
+	else
+	{
+		while (temp.sp > 0)
+		{
+			ft_putchar(' ');
+			temp.sp--;
+			(*count)++;
+		}
+		ft_putstr(str);
+	}
+}
+
+void	ft_pointer(va_list ap, int *count, t_flags *flags)
+{
+	long long	pnt;
+	t_wp		temp;
+
+	pnt = va_arg(ap, long long);
+	*count = *count + count_of_digits(pnt);
+	if (flags->width)
+		temp.sp = flags->width - count_of_digits(pnt);
+	if (flags->minus) /* есть флаг "-" */
+	{
+		ft_putnbrll(pnt);
+		while (temp.sp > 0)
+		{
+			ft_putchar(' ');
+			temp.sp--;
+			(*count)++;
+		}
+	}
+	else
+	{
+		while (temp.sp > 0)
+		{
+			ft_putchar(' ');
+			temp.sp--;
+			(*count)++;
+		}
+		ft_putnbrll(pnt);
+	}
+}
+
 void	ft_check_modificator(t_flags *flags, char *ptr) /* Проверяет флаги hh(1), h(2), ll(3), l(4)*/
 {
 	if (*ptr == 'h')
@@ -224,7 +344,7 @@ void    ft_write_width_precision(t_flags *flags, char *p)
 {
     int width;
 	int	precision;
-	
+
 	width = 0;
 	precision = 0;
     while (*p != 'c' && *p != 's' && *p != 'p' && *p != 'd' && *p != 'i' && *p != 'o'
@@ -362,6 +482,21 @@ int		minprintf(char *fmt, ...)
 					ft_decimal(ap, &count, flags);
 					break ;
 				}
+				if (*p == 'c')
+				{
+					ft_char(ap, &count, flags);
+					break ;
+				}
+				if (*p == 's')
+				{
+					ft_string(ap, &count, flags);
+					break ;
+				}
+				if (*p == 'p')
+				{
+					ft_pointer(ap, &count, flags);
+					break ;
+				}
 				p++;
 			}
         }
@@ -384,7 +519,43 @@ int main(void)
 	//minprintf("%8.6d\n", 123);
 	//printf("%+d\n", 0);
 
-	minprintf("%+5.3d\n", 12);
-	minprintf("%+5d\n", 12);
-    return (0);
+	// minprintf("%+5.3d\n", 12);
+	// minprintf("%+5d\n", 12);
+
+	char	*str;
+
+	// ft_putnbr(minprintf("rabotaet %15c\n", '1'));
+	// ft_putstr("\n");
+	// ft_putnbr(minprintf("rabotaet %-15c\n", '1'));
+	// ft_putstr("\n");
+
+	// ft_putnbr(minprintf("rabotaet %15p\n", str));
+	// ft_putstr("\n");
+	// ft_putnbr(minprintf("rabotaet %-15p\n", str));
+	// ft_putstr("\n");
+
+	// ft_putnbr(minprintf("rabotaet %15s\n", "lsp"));
+	// ft_putstr("\n");
+	// ft_putnbr(minprintf("rabotaet %-15s\n", "lsp"));
+	// ft_putstr("\n");
+
+	// ft_putnbr(printf("rabotaet %15c\n", '1'));
+	// ft_putstr("\n");
+	// ft_putnbr(printf("rabotaet %-15c\n", '1'));
+	// ft_putstr("\n");
+	// ft_putnbr(printf("rabotaet %15p\n", str));
+	// ft_putstr("\n");
+	// ft_putnbr(printf("rabotaet %-15p\n", str));
+	// ft_putstr("\n");
+	// ft_putnbr(printf("rabotaet %15s\n", "lsp"));
+	// ft_putstr("\n");
+	// ft_putnbr(printf("rabotaet %-15s\n", "lsp"));
+
+	minprintf("%-+8.6d\n", -123);
+	minprintf("%-+8.6d\n", 123);
+	minprintf("%-8.6d\n", 123);
+	minprintf("%+8.6d\n", -123);
+	minprintf("%+8.6d\n", 123);
+	minprintf("%8.6d\n", 123);
+	return (0);
 }
