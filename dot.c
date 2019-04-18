@@ -101,7 +101,7 @@ void	ft_constructor(t_flags *flags, t_wp temp, int sit, int num)
 	}
 	else if (sit == 2)
 	{
-		ft_putchar(' ');
+		ft_putchar(' '); /* флаг пробел */
 		ft_type_nul(temp);
 		ft_putnbr(ft_modul(num));
 		temp.nul--; /* флаг пробел съел один пробел */
@@ -134,19 +134,29 @@ void	ft_constructor(t_flags *flags, t_wp temp, int sit, int num)
 	}
 	else if (sit == 6)
 	{
-		
+		ft_putchar(' '); /* флаг пробел */
+		temp.nul--; /* флаг пробел съел один пробел */
+		ft_type_space(temp);
+		ft_type_nul(temp);
+		ft_putnbr(ft_modul(num));
 	}
 	else if (sit == 7)
 	{
-		
+		ft_type_space(temp);
+		ft_type_nul(temp);
+		ft_putnbr(ft_modul(num));
 	}
 	else if (sit == 8)
 	{
-		
+		ft_putchar(' '); /* флаг пробел */
+		temp.sp--; /* флаг пробел съел один пробел */
+		ft_type_sp_nul(temp);
+		ft_putnbr(ft_modul(num));
 	}
 	else if (sit == 9)
 	{
-		
+		ft_type_sp_nul(temp);
+		ft_putnbr(ft_modul(num));
 	}
 }
 
@@ -206,17 +216,30 @@ void	ft_decimal(va_list ap, int *count, t_flags *flags)
 				}
 				else if (!(flags->plus))/* num положительный, НЕТ флага '-' и НЕТ флага '+'  */
 				{
-					while (temp.sp > 0)
+					if (flags->nul)
 					{
-						ft_putchar(' ');
-						temp.sp--;
+						if (flags->dot)
+						{		
+							if (flags->space)
+								ft_constructor(flags, temp, 6, num); /* ветка 9 */
+							else if (!(flags->space))
+								ft_constructor(flags, temp, 7, num); /* ветка 10.1 */
+						}
+						else if (!(flags->dot))
+						{
+							if (flags->space)
+								ft_constructor(flags, temp, 8, num); /* ветка 11 */
+							else if (!(flags->space))
+								ft_constructor(flags, temp, 9, num); /* ветка 12 */
+						}
 					}
-					while (temp.nul > 0)
+					else if (!(flags->nul))
 					{
-						ft_putchar('0');
-						temp.nul--;
+						if (flags->space)
+							ft_constructor(flags, temp, 6, num); /* ветка 13 */
+						else if (!(flags->space))
+							ft_constructor(flags, temp, 7, num); /* ветка 10.2 */
 					}
-					ft_putnbr(ft_modul(num));
 				}
 			}
 		}
@@ -592,11 +615,17 @@ int main(void)
 	// ft_putstr("\n");
 	// ft_putnbr(printf("rabotaet %-15s\n", "lsp"));
 
-	minprintf("%-+8.6d\n", -123);
-	minprintf("%-+8.6d\n", 123);
-	minprintf("%-8.6d\n", 123);
-	minprintf("%+8.6d\n", -123);
-	minprintf("%+8.6d\n", 123);
+	// minprintf("%-+8.6d\n", -123);
+	// printf("%-+8.6d\n", -123);
+	// minprintf("%-+8.6d\n", 123);
+	// printf("%-+8.6d\n", 123);
+	// minprintf("%-8.6d\n", 123);
+	// printf("%-8.6d\n", 123);
+	// minprintf("%+8.6d\n", -123); --
+	// printf("%+8.6d\n", -123);--
+	// minprintf("%+8.6d\n", 123);
+	// printf("%+8.6d\n", 123);
 	minprintf("%8.6d\n", 123);
+	printf("%8.6d\n", 123);
 	return (0);
 }
