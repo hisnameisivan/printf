@@ -6,7 +6,7 @@
 /*   By: draudrau <draudrau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/09 16:56:36 by draudrau          #+#    #+#             */
-/*   Updated: 2019/04/16 13:49:42 by draudrau         ###   ########.fr       */
+/*   Updated: 2019/04/18 13:42:42 by draudrau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,36 +20,174 @@
 
 
 
-void	ft_decimal(va_list ap, int *count, int flag, char *ost)
+void	ft_decimal(va_list ap, int *count, t_flags *flags)
 {
-	long long	num;
+	int		num; /* long long не работает, но нужен */
+	t_wp	temp;
 
-	num = va_arg(ap, long long);
-	if (flag == 1)
+	num = va_arg(ap, int); /* long long не работает, но нужен */
+	/*if (flags->plus && num >= 0)
+	{
+		ft_putchar('+');
+		(*count)++;
+	}*/
+	if (flags->width || flags->precision)
+	{
+		temp = ft_cmp_width_prec_num(flags, num);
+		if (flags->minus) /* есть флаг "-" */
+		{
+			if (temp.znak == -1 ) /* num отрицательный, есть флаг '-', флаг '+' не важен */
+			{
+				// ft_putchar('-');
+				// while (temp.nul > 0)
+				// {
+				// 	ft_putchar('0');
+				// 	temp.nul--;
+				// }
+				// ft_putnbr(ft_modul(num));
+				// while (temp.sp > 0)
+				// {
+				// 	ft_putchar(' ');
+				// 	temp.sp--;
+				// }
+				ft_constructor
+			}
+			else
+			{
+				if (flags->plus) /* num положительный, есть флаг '-' и флаг '+' */
+				{
+					ft_putchar('+');
+					while (temp.nul > 0)
+					{
+						ft_putchar('0');
+						temp.nul--;
+					}
+					ft_putnbr(ft_modul(num));
+					while (temp.sp > 0)
+					{
+						ft_putchar(' ');
+						temp.sp--;
+					}
+				}
+				else
+				{
+					while (temp.nul > 0)
+					{
+						ft_putchar('0');
+						temp.nul--;
+					}
+					ft_putnbr(ft_modul(num));
+					while (temp.sp > 0)
+					{
+						ft_putchar(' ');
+						temp.sp--;
+					}
+				}
+			}
+		}
+		else
+		{
+			if (temp.znak == -1) /* num отрицательный, НЕТ флага '-', флаг '+' не важен */
+			{
+				while (temp.sp > 0)
+				{
+					ft_putchar(' ');
+					temp.sp--;
+				}
+				ft_putchar('-');
+				while (temp.nul > 0)
+				{
+					ft_putchar('0');
+					temp.nul--;
+				}
+				ft_putnbr(ft_modul(num));
+			}
+			else
+			{
+				if (flags->plus) /* num положительный, НЕТ флага '-' и ЕСТЬ флаг '+'  */
+				{
+					while (temp.sp > 0)
+					{
+						ft_putchar(' ');
+						temp.sp--;
+					}
+					ft_putchar('+');
+					while (temp.nul > 0)
+					{
+						ft_putchar('0');
+						temp.nul--;
+					}
+					ft_putnbr(ft_modul(num));
+				}
+				else /* num положительный, НЕТ флага '-' и НЕТ флага '+'  */
+				{
+					while (temp.sp > 0)
+					{
+						ft_putchar(' ');
+						temp.sp--;
+					}
+					while (temp.nul > 0)
+					{
+						ft_putchar('0');
+						temp.nul--;
+					}
+					ft_putnbr(ft_modul(num));
+				}
+			}
+		}
+		/*if (!(flags->minus))
+		{
+			while (temp.sp > 0)
+			{
+				ft_putchar(' ');
+				temp.sp--;
+			}
+		}
+		if (num < 0)
+			ft_putchar('-');
+		else if (num > 0 && flags->plus)
+			ft_putchar('+');
+		while (temp.nul > 0)
+		{
+			ft_putchar('0');
+			temp.nul--;
+		}
+		ft_putnbr(ft_modul(num));
+		if (flags->minus)
+		{
+			while (temp.sp > 0)
+			{
+				ft_putchar(' ');
+				temp.sp--;
+			}
+		}*/
+	}
+
+	if (flags->hh)
 	{
 		ft_putnbr((char)num);
 		*count = *count + count_of_digits((char)num);
 	}
-	else if (flag == 2)
+	else if (flags->h)
 	{
 		ft_putnbr((short)num);
 		*count = *count + count_of_digits((short)num);
 	}
-	else if (flag == 3)
+	else if (flags->l)
 	{
 		ft_putnbrll((long)num);
 		*count = *count + count_of_digits((long)num);
 	}
-	else if (flag == 4)
+	else if (flags->ll)
 	{
 		ft_putnbrll((long long)num);
 		*count = *count + count_of_digits((long long)num);
 	}
-	else
+	/*else
 	{
 		ft_putnbr(num);
 		*count = *count + count_of_digits(num);
-	}
+	}*/
 }
 
 void	ft_string(va_list ap, int *count)
