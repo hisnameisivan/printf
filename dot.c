@@ -33,7 +33,7 @@ void	ft_putnbrll(long long n)
 	ft_putchar((n % 10) + '0');
 }
 
-int		ft_modul(int num) /* возможно придется изменить на long long*/
+long long	ft_modul(long long num) /* возможно придется изменить на long long*/
 {
 	if (num < 0)
 		return(num * (-1));
@@ -87,7 +87,7 @@ void	ft_type_sp_nul(t_wp temp) /* печатаем ширину нулями */
 	}
 }
 
-void	ft_constructor(t_flags *flags, t_wp temp, int sit, int num)
+void	ft_constructor(t_flags *flags, t_wp temp, int sit, long long num)
 {
 	if (sit == 1)
 	{
@@ -96,21 +96,21 @@ void	ft_constructor(t_flags *flags, t_wp temp, int sit, int num)
 		else if (num >= 0 && flags->plus)
 			ft_putchar('+');
 		ft_type_nul(temp);
-		ft_putnbr(ft_modul(num));
+		ft_putnbrll(ft_modul(num));
 		ft_type_space(temp);
 	}
 	else if (sit == 2)
 	{
 		ft_putchar(' '); /* флаг пробел */
 		ft_type_nul(temp);
-		ft_putnbr(ft_modul(num));
+		ft_putnbrll(ft_modul(num));
 		temp.nul--; /* флаг пробел съел один пробел */
 		ft_type_space(temp);
 	}
 	else if (sit == 3)
 	{
 		ft_type_nul(temp);
-		ft_putnbr(ft_modul(num));
+		ft_putnbrll(ft_modul(num));
 		ft_type_space(temp);
 	}
 	else if (sit == 4)
@@ -121,7 +121,7 @@ void	ft_constructor(t_flags *flags, t_wp temp, int sit, int num)
 		else if (num >= 0 && flags->plus)
 			ft_putchar('+');
 		ft_type_nul(temp);
-		ft_putnbr(ft_modul(num));
+		ft_putnbrll(ft_modul(num));
 	}
 	else if (sit == 5)
 	{
@@ -130,7 +130,7 @@ void	ft_constructor(t_flags *flags, t_wp temp, int sit, int num)
 		else if (num >= 0 && flags->plus)
 			ft_putchar('+');
 		ft_type_sp_nul(temp);
-		ft_putnbr(ft_modul(num));
+		ft_putnbrll(ft_modul(num));
 	}
 	else if (sit == 6)
 	{
@@ -138,34 +138,56 @@ void	ft_constructor(t_flags *flags, t_wp temp, int sit, int num)
 		temp.nul--; /* флаг пробел съел один пробел */
 		ft_type_space(temp);
 		ft_type_nul(temp);
-		ft_putnbr(ft_modul(num));
+		ft_putnbrll(ft_modul(num));
 	}
 	else if (sit == 7)
 	{
 		ft_type_space(temp);
 		ft_type_nul(temp);
-		ft_putnbr(ft_modul(num));
+		ft_putnbrll(ft_modul(num));
 	}
 	else if (sit == 8)
 	{
 		ft_putchar(' '); /* флаг пробел */
 		temp.sp--; /* флаг пробел съел один пробел */
 		ft_type_sp_nul(temp);
-		ft_putnbr(ft_modul(num));
+		ft_putnbrll(ft_modul(num));
 	}
 	else if (sit == 9)
 	{
 		ft_type_sp_nul(temp);
-		ft_putnbr(ft_modul(num));
+		ft_putnbrll(ft_modul(num));
 	}
+}
+
+long long	ft_apply_modificator(va_list ap, t_flags *flags) /* long long вместо int для num */
+{
+	long long	num;
+	
+	num = va_arg(ap, long long);
+	if (flags->hh)
+		(flags->spec == 'u') ? (num = (unsigned char)num) : (num = (char)num);
+	else if (flags->h)
+		(flags->spec == 'u') ? (num = (unsigned short)num) : (num = (short)num);
+	else if (flags->l)
+		(flags->spec == 'u') ? (num = (unsigned long)num) : (num = (long)num);
+	else if (flags->ll)
+		(flags->spec == 'u') ? (num = (unsigned long long)num) : (num = (long long)num);
+	return (num);
 }
 
 void	ft_decimal(va_list ap, int *count, t_flags *flags)
 {
-	int		num; /* long long не работает, но нужен */
-	t_wp	temp;
+	long long	num;
+	t_wp		temp;
 
-	num = va_arg(ap, int); /* long long не работает, но нужен */
+	if (flags->h || flags->l || flags->hh || flags->ll)
+		num = ft_apply_modificator(ap, flags);
+	else
+	{
+		num = va_arg(ap, int);
+		(flags->spec == 'u') ? (num = (unsigned int)num) : (num = (int)num); /* последнее условие в тернарнике не несет смысла (просто чтобы тернарник работал)*/
+	}
 //	if (flags->width || flags->precision) /* выяснить зачем */
 	// {
 		temp = ft_cmp_width_prec_num(flags, num);
@@ -198,7 +220,7 @@ void	ft_decimal(va_list ap, int *count, t_flags *flags)
 						ft_constructor(flags, temp, 5, num); /* ветка 6 */
 				}
 				else if (!(flags->nul))
-					ft_constructor(flags, temp, 5, num); /* ветка 5.2 */	
+					ft_constructor(flags, temp, 4, num); /* ветка 5.2 */	
 			}
 			else if (num >= 0)
 			{
@@ -270,27 +292,6 @@ void	ft_decimal(va_list ap, int *count, t_flags *flags)
 			}
 		}*/
 	// }
-
-	if (flags->hh)
-	{
-		ft_putnbr((char)num);
-		*count = *count + count_of_digits((char)num);
-	}
-	else if (flags->h)
-	{
-		ft_putnbr((short)num);
-		*count = *count + count_of_digits((short)num);
-	}
-	else if (flags->l)
-	{
-		ft_putnbrll((long)num);
-		*count = *count + count_of_digits((long)num);
-	}
-	else if (flags->ll)
-	{
-		ft_putnbrll((long long)num);
-		*count = *count + count_of_digits((long long)num);
-	}
 	/*else
 	{
 		ft_putnbr(num);
@@ -393,19 +394,36 @@ void	ft_pointer(va_list ap, int *count, t_flags *flags) /* дописать пе
 
 void	ft_check_modificator(t_flags *flags, char *ptr) /* Проверяет флаги hh(1), h(2), ll(3), l(4)*/
 {
-	if (*ptr == 'h')
+	while (*ptr != 'c' && *ptr != 's' && *ptr != 'p' && *ptr != 'd' && *ptr != 'i' && *ptr != 'o'
+	&& *ptr != 'u' && *ptr != 'x' && *ptr != 'X' && *ptr != 'f')
 	{
-		if (*(ptr + 1) == 'h')
-			flags->hh = 1;
-		else
-			flags->h = 1;
-	}
-	else if (*ptr == 'l')
-	{
-		if (*(ptr + 1) == 'l')
-			flags->ll = 1;
-		else
-			flags->l = 1;
+		if (*ptr == 'h')
+		{
+			if (*(ptr + 1) == 'h')
+			{
+				flags->hh = 1;
+				return ;
+			}
+			else
+			{
+				flags->h = 1;
+				return ;
+			}
+		}
+		else if (*ptr == 'l')
+		{
+			if (*(ptr + 1) == 'l')
+			{
+				flags->ll = 1;
+				return ;
+			}
+			else
+			{
+				flags->l = 1;
+				return ;
+			}
+		}
+		ptr++;
 	}
 }
 
@@ -457,6 +475,7 @@ int		ft_search_before_spec(char *p, char c)
 void	ft_initialization(t_flags *temp)
 {
 	temp->dot = 0;
+	temp->spec = 0;
 	temp->resh = 0;
 	temp->hh = 0;
 	temp->h = 0;
@@ -520,7 +539,13 @@ void	ft_fill_struct(t_flags *flags, char *p)
 			flags->procent = 1;
 		p++;
 	}
+	flags->spec = *p;
 }
+
+// void	ft_unsigned(va_list ap, int *count, t_flags *flags)
+// {
+
+// }
 
 int		minprintf(char *fmt, ...)
 {
@@ -541,11 +566,16 @@ int		minprintf(char *fmt, ...)
 			ft_fill_struct(flags, p);
 			while (*p)
 			{
-				if (*p == 'd' || *p == 'i')
+				if (*p == 'd' || *p == 'i' || *p == 'u')
 				{
 					ft_decimal(ap, &count, flags);
 					break ;
 				}
+				// if (*p == 'u')
+				// {
+				// 	ft_unsigned(ap, &count, flags);
+				// 	break ;
+				// }
 				if (*p == 'c')
 				{
 					ft_char(ap, &count, flags);
@@ -586,7 +616,7 @@ int main(void)
 	// minprintf("%+5.3d\n", 12);
 	// minprintf("%+5d\n", 12);
 
-	char	*str;
+	char	*str = "hello";
 
 	// ft_putnbr(minprintf("rabotaet %15c\n", '1'));
 	// ft_putstr("\n");
@@ -621,11 +651,16 @@ int main(void)
 	// printf("%-+8.6d\n", 123);
 	// minprintf("%-8.6d\n", 123);
 	// printf("%-8.6d\n", 123);
-	// minprintf("%+8.6d\n", -123); --
-	// printf("%+8.6d\n", -123);--
+	// minprintf("%+8.6d\n", -123);
+	// printf("%+8.6d\n", -123);
 	// minprintf("%+8.6d\n", 123);
 	// printf("%+8.6d\n", 123);
-	minprintf("%8.6d\n", 123);
-	printf("%8.6d\n", 123);
+	// minprintf("%8.6d\n", 123);
+	// printf("%8.6d\n", 123);
+
+	// minprintf("%+8.6hhd\n", (char)2212322212322212311);
+	// printf("%+8.6hhd\n", (char)2212322212322212311);
+	minprintf("%hhu\n", (char)2994967294u);
+	printf("%hhu\n", (char)2994967294u);
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: draudrau <draudrau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/16 12:18:30 by draudrau          #+#    #+#             */
-/*   Updated: 2019/04/18 13:24:33 by draudrau         ###   ########.fr       */
+/*   Updated: 2019/04/19 12:07:32 by draudrau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,16 @@ int main(void)
 	printf("29 stroka: % 08.6d\n", 123);
 	printf("30 stroka: % 06d\n", 123);
 	printf("31 stroka: %+08.6d\n", 123);
+	printf("32 stroka: % s\n", "privet");
+	printf("33 stroka: % c\n", 'c');
+	printf("34 stroka: % 08.6hhd\n", (char)128);
+	printf("35 stroka: % 06hhd\n", (char)2123);
+	printf("36 stroka: %+08.6hhd\n", (char)2123);
+
+	printf("35 stroka: % 06hhu\n", (char)-123);
+	printf("36 stroka: %+08.6hhu\n", (char)-123);
+	printf("35 stroka: % 06hhu\n", (char)-257);
+	printf("36 stroka: %hhu\n", (char)130);
 
 	//char		*s = "hello";
 

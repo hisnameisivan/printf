@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   printf.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: waddam <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: draudrau <draudrau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/09 16:58:56 by draudrau          #+#    #+#             */
-/*   Updated: 2019/04/17 17:37:16 by waddam           ###   ########.fr       */
+/*   Updated: 2019/04/19 12:01:02 by draudrau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 
 typedef struct	s_flags
 {
+	char		spec;
 	int			dot;
 	int			resh;
 	int			h;
