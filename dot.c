@@ -54,7 +54,7 @@ t_wp	ft_cmp_width_prec_num(t_flags *flags, long long num)
 	//temp.nul = flags->precision - count;
 	((flags->precision - count) < 0) ? (temp.nul = 0) : (temp.nul = flags->precision - count); /* чтобы учесть отрицательный результат precision - count, т к дальше сломается!!!*/
 	temp.sp = flags->width - (temp.nul + count);
-	if (flags->plus)
+	if ((flags->plus && (flags->spec == 'd' || flags->spec == 'i' || flags->spec == 'u')) || (flags->spec == 'o' && flags->resh == 1))
 		(temp.sp)--;
 	//printf("\n__noliki %d, probely %d__\n", temp.nul, temp.sp);
 	return (temp);
@@ -166,14 +166,65 @@ long long	ft_apply_modificator(va_list ap, t_flags *flags) /* long long вмес
 	
 	num = va_arg(ap, long long);
 	if (flags->hh)
-		(flags->spec == 'u') ? (num = (unsigned char)num) : (num = (char)num);
+		(flags->spec == 'u' || flags->spec == 'o') ? (num = (unsigned char)num) : (num = (char)num);
 	else if (flags->h)
-		(flags->spec == 'u') ? (num = (unsigned short)num) : (num = (short)num);
+		(flags->spec == 'u' || flags->spec == 'o') ? (num = (unsigned short)num) : (num = (short)num);
 	else if (flags->l)
-		(flags->spec == 'u') ? (num = (unsigned long)num) : (num = (long)num);
+		(flags->spec == 'u' || flags->spec == 'o') ? (num = (unsigned long)num) : (num = (long)num);
 	else if (flags->ll)
-		(flags->spec == 'u') ? (num = (unsigned long long)num) : (num = (long long)num);
+		(flags->spec == 'u' || flags->spec == 'o') ? (num = (unsigned long long)num) : (num = (long long)num);
 	return (num);
+}
+
+long long	ft_sqr(int base, int power)
+{
+	long long	result;
+
+	result = 1;
+	while (power > 0)
+	{
+		result = result * base;
+		power--;
+	}
+	return (result);
+}
+
+unsigned long long	convert_v_8(long long num, int *count, t_flags *flags)
+{
+	int					i;
+	int					ost[23];
+	unsigned long long	max;
+	unsigned long long	temp;
+	unsigned long long	result;
+
+	temp = num;
+	i = 0;
+	result = 0;
+	if (num < 0)
+	{
+		if (flags->hh)
+			max = FT_MAX_UCHAR;
+		if (flags->h)
+			max = FT_MAX_USHORT;
+		if (flags->l || flags->ll)
+			max = FT_MAX_ULONG;
+		else
+			max = FT_MAX_UINT;
+		temp = max + num + 1; /* Отрицательный long long делаем unsigned long long */
+	}
+	while (temp > 7)
+	{
+		ost[i] = temp % 8;
+		temp = temp / 8;
+		i++;
+	}
+	ost[i] = temp;
+	while (i >= 0)
+	{
+		result = result * ft_sqr(10, i) * ost[i];
+		i--;
+	}
+	return (result);
 }
 
 void	ft_decimal(va_list ap, int *count, t_flags *flags)
@@ -187,6 +238,10 @@ void	ft_decimal(va_list ap, int *count, t_flags *flags)
 	{
 		num = va_arg(ap, int);
 		(flags->spec == 'u') ? (num = (unsigned int)num) : (num = (int)num); /* последнее условие в тернарнике не несет смысла (просто чтобы тернарник работал)*/
+	}
+	if (flags->spec == 'o')
+	{
+		convert_v_8(num, count, flags);
 	}
 //	if (flags->width || flags->precision) /* выяснить зачем */
 	// {
@@ -591,6 +646,11 @@ int		minprintf(char *fmt, ...)
 					ft_pointer(ap, &count, flags);
 					break ;
 				}
+				if (*p == 'o')
+				{
+					ft_decimal(ap, &count, flags);
+					break ;
+				}
 				p++;
 			}
         }
@@ -660,7 +720,7 @@ int main(void)
 
 	// minprintf("%+8.6hhd\n", (char)2212322212322212311);
 	// printf("%+8.6hhd\n", (char)2212322212322212311);
-	minprintf("%hhu\n", (char)2994967294u);
-	printf("%hhu\n", (char)2994967294u);
+	minprintf("%hho\n", (char)254);
+	printf("%hho\n", (char)254);
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: draudrau <draudrau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/16 12:18:30 by draudrau          #+#    #+#             */
-/*   Updated: 2019/04/19 12:07:32 by draudrau         ###   ########.fr       */
+/*   Updated: 2019/04/19 14:25:50 by draudrau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,13 +66,26 @@ int main(void)
 	printf("32 stroka: % s\n", "privet");
 	printf("33 stroka: % c\n", 'c');
 	printf("34 stroka: % 08.6hhd\n", (char)128);
-	printf("35 stroka: % 06hhd\n", (char)2123);
-	printf("36 stroka: %+08.6hhd\n", (char)2123);
+	printf("35 stroka: % 06hhd\n", (char)212);
+	printf("36 stroka: %+08.6hhdd\n", (char)212);
 
-	printf("35 stroka: % 06hhu\n", (char)-123);
-	printf("36 stroka: %+08.6hhu\n", (char)-123);
-	printf("35 stroka: % 06hhu\n", (char)-257);
-	printf("36 stroka: %hhu\n", (char)130);
+	// printf("35 stroka: % 06hhu\n", (char)-123);
+	// printf("36 stroka: %+08.6hhu\n", (char)-123);
+	// printf("35 stroka: % 06hhu\n", (char)-257);
+	// printf("36 stroka: %hhu\n", (char)130);
+	
+	/* Перевод в восьмиричную */
+
+	printf("37 stroka: %8o\n", 125);
+	printf("38 stroka: %-08o\n", 125);
+	printf("39 stroka: %+8o\n", 125);
+	printf("40 stroka: %#8o\n", 125);
+	printf("41 stroka: %8.5o\n", 125);
+	printf("42 stroka: %08o\n", 125);
+	printf("43 stroka: % 08o\n", 125);
+	printf("44 stroka: %hhu\n", (char)225);
+	printf("45 stroka: %hho\n", (char)225);
+	printf("46 stroka: %hhu\n", (char)225);
 
 	//char		*s = "hello";
 
