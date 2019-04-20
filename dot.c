@@ -24,6 +24,32 @@ long long	count_of_digits(long long n)
 	return (count);
 }
 
+char	*ft_long_to_ascii(long long n)
+{
+	char	*res;
+	int		i;
+	int		is_neg;
+
+	is_neg = 1;
+	if (n < 0)
+		is_neg = -1;
+	i = count_of_digits(n);
+	if (!(res = (char *)malloc(sizeof(char) * (i + 1))))
+		return (NULL);
+	res[i] = 0;
+	while (i)
+	{
+		res[i - 1] = is_neg * (n % 10) + 48;
+		n = n / 10;
+		i--;
+	}
+	if (is_neg == -1)
+		res[0] = '-';
+	return (res);
+}
+
+
+
 void	ft_putnbrll(long long n)
 {
 	if ((n / 10) > 0)
@@ -33,29 +59,36 @@ void	ft_putnbrll(long long n)
 	ft_putchar((n % 10) + '0');
 }
 
-long long	ft_modul(long long num) /* возможно придется изменить на long long*/
+void	ft_modul_char(char *num) /* возможно придется изменить на long long*/
 {
-	if (num < 0)
-		return(num * (-1));
-	return (num);
+	ft_memmove(num, (num + 1), ft_strlen(num + 1) + 1);
 }
 
-t_wp	ft_cmp_width_prec_num(t_flags *flags, long long num)
+t_wp	ft_cmp_width_prec_num(t_flags *flags, char *num)
 {
 	t_wp	temp;
 	int		count; /* количество цифр с учетом знака */
 
-	if (num < 0)
+	temp.znak = 0;
+	temp.nul = 0;
+	temp.sp = 0;
+	if ((flags->spec == 'd' || flags->spec == 'i') && ft_strchr(num, '-'))
+	{
 		temp.znak = -1;
-	else
+		ft_modul_char(num);
+	}
+	else if ((flags->spec == 'd' || flags->spec == 'i') && !(ft_strchr(num, '-')))
 		temp.znak = 1;
-	num = ft_modul(num);
-	count = count_of_digits(num);
-	//temp.nul = flags->precision - count;
+	count = ft_strlen(num);
+	// if (temp.znak == -1)
+	// 	count = count - 1;
 	((flags->precision - count) < 0) ? (temp.nul = 0) : (temp.nul = flags->precision - count); /* чтобы учесть отрицательный результат precision - count, т к дальше сломается!!!*/
 	temp.sp = flags->width - (temp.nul + count);
-	if ((flags->plus && (flags->spec == 'd' || flags->spec == 'i' || flags->spec == 'u')) || (flags->spec == 'o' && flags->resh == 1))
+	if ((flags->plus && (flags->spec == 'd' || flags->spec == 'i' || flags->spec == 'u')) || (flags->spec == 'o' && flags->resh == 1)
+	|| ((flags->spec == 'd' || flags->spec == 'i') && (temp.znak == -1)))
 		(temp.sp)--;
+	if (((flags->spec == 'x') || (flags->spec == 'X')) && (flags->resh == 1))
+		(temp.sp) = (temp.sp) - 2; /* с решеткой шестнадцатиричная выводится с 0x */
 	//printf("\n__noliki %d, probely %d__\n", temp.nul, temp.sp);
 	return (temp);
 }
@@ -87,50 +120,50 @@ void	ft_type_sp_nul(t_wp temp) /* печатаем ширину нулями */
 	}
 }
 
-void	ft_constructor(t_flags *flags, t_wp temp, int sit, long long num)
+void	ft_constructor(t_flags *flags, t_wp temp, int sit, char *num)
 {
 	if (sit == 1)
 	{
-		if (num < 0)
+		if (temp.znak == -1)
 			ft_putchar('-');
-		else if (num >= 0 && flags->plus)
+		else if (temp.znak == 1 && flags->plus)
 			ft_putchar('+');
 		ft_type_nul(temp);
-		ft_putnbrll(ft_modul(num));
+		ft_putstr(num);
 		ft_type_space(temp);
 	}
 	else if (sit == 2)
 	{
 		ft_putchar(' '); /* флаг пробел */
 		ft_type_nul(temp);
-		ft_putnbrll(ft_modul(num));
+		ft_putstr(num);
 		temp.nul--; /* флаг пробел съел один пробел */
 		ft_type_space(temp);
 	}
 	else if (sit == 3)
 	{
 		ft_type_nul(temp);
-		ft_putnbrll(ft_modul(num));
+		ft_putstr(num);
 		ft_type_space(temp);
 	}
 	else if (sit == 4)
 	{
 		ft_type_space(temp);
-		if (num < 0)
+		if (temp.znak == -1)
 			ft_putchar('-');
-		else if (num >= 0 && flags->plus)
+		else if (temp.znak == 1 && flags->plus)
 			ft_putchar('+');
 		ft_type_nul(temp);
-		ft_putnbrll(ft_modul(num));
+		ft_putstr(num);
 	}
 	else if (sit == 5)
 	{
-		if (num < 0)
+		if (temp.znak == -1)
 			ft_putchar('-');
-		else if (num >= 0 && flags->plus)
+		else if (temp.znak == 1 && flags->plus)
 			ft_putchar('+');
 		ft_type_sp_nul(temp);
-		ft_putnbrll(ft_modul(num));
+		ft_putstr(num);
 	}
 	else if (sit == 6)
 	{
@@ -138,25 +171,25 @@ void	ft_constructor(t_flags *flags, t_wp temp, int sit, long long num)
 		temp.nul--; /* флаг пробел съел один пробел */
 		ft_type_space(temp);
 		ft_type_nul(temp);
-		ft_putnbrll(ft_modul(num));
+		ft_putstr(num);
 	}
 	else if (sit == 7)
 	{
 		ft_type_space(temp);
 		ft_type_nul(temp);
-		ft_putnbrll(ft_modul(num));
+		ft_putstr(num);
 	}
 	else if (sit == 8)
 	{
 		ft_putchar(' '); /* флаг пробел */
 		temp.sp--; /* флаг пробел съел один пробел */
 		ft_type_sp_nul(temp);
-		ft_putnbrll(ft_modul(num));
+		ft_putstr(num);
 	}
 	else if (sit == 9)
 	{
 		ft_type_sp_nul(temp);
-		ft_putnbrll(ft_modul(num));
+		ft_putstr(num);
 	}
 }
 
@@ -166,13 +199,13 @@ long long	ft_apply_modificator(va_list ap, t_flags *flags) /* long long вмес
 
 	num = va_arg(ap, long long);
 	if (flags->hh)
-		(flags->spec == 'u' || flags->spec == 'o') ? (num = (unsigned char)num) : (num = (char)num);
+		(flags->spec == 'd' || flags->spec == 'i') ? (num = (char)num) : (num = (unsigned char)num);
 	else if (flags->h)
-		(flags->spec == 'u' || flags->spec == 'o') ? (num = (unsigned short)num) : (num = (short)num);
+		(flags->spec == 'd' || flags->spec == 'i') ? (num = (short)num) : (num = (unsigned short)num);
 	else if (flags->l)
-		(flags->spec == 'u' || flags->spec == 'o') ? (num = (unsigned long)num) : (num = (long)num);
+		(flags->spec == 'd' || flags->spec == 'i') ? (num = (long)num) : (num = (unsigned long)num);
 	else if (flags->ll)
-		(flags->spec == 'u' || flags->spec == 'o') ? (num = (unsigned long long)num) : (num = (long long)num);
+		(flags->spec == 'd' || flags->spec == 'i') ? (num = (long long)num) : (num = (unsigned long long)num);
 	return (num);
 }
 
@@ -189,17 +222,18 @@ long long	ft_sqr(int base, int power)
 	return (result);
 }
 
-unsigned long long	convert_v_8(long long num, int *count, t_flags *flags)  /* Из десятичной в восьмиричную */
+char	*convert_v_8(long long num, int *count, t_flags *flags)  /* Из десятичной в восьмиричную */
 {
 	int					i;
 	int					ost[23];
+	char				*oct_num;
+	char				*oct_temp;
 	unsigned long long	max;
 	unsigned long long	temp;
-	unsigned long long	result;
 
+	oct_num = NULL;
 	temp = num;
 	i = 0;
-	result = 0;
 	if (num < 0)
 	{
 		if (flags->hh)
@@ -219,12 +253,15 @@ unsigned long long	convert_v_8(long long num, int *count, t_flags *flags)  /* И
 		i++;
 	}
 	ost[i] = temp;
+	oct_num = (char *)malloc(sizeof(char) * (i + 2));
+	oct_temp = oct_num;
 	while (i >= 0)
 	{
-		result = result + ft_sqr(10, i) * ost[i];
+		*oct_num = (char)ost[i] + '0';
 		i--;
+		oct_num++;
 	}
-	return (result);
+	return (oct_temp);
 }
 
 char	*convert_v_16(long long num, int *count, t_flags *flags) /* Из десятичной в шестнадцатиричную */
@@ -279,8 +316,9 @@ char	*convert_v_16(long long num, int *count, t_flags *flags) /* Из десят
 void	ft_decimal(va_list ap, int *count, t_flags *flags)
 {
 	long long	num;
-	char		*hex_num;
+	char		*new_num;
 	t_wp		temp;
+	char		*hex_num;
 
 	hex_num = NULL;
 	if (flags->h || flags->l || flags->hh || flags->ll)
@@ -288,65 +326,60 @@ void	ft_decimal(va_list ap, int *count, t_flags *flags)
 	else
 	{
 		num = va_arg(ap, int);
-		(flags->spec == 'u') ? (num = (unsigned int)num) : (num = (int)num); /* последнее условие в тернарнике не несет смысла (просто чтобы тернарник работал)*/
+		((flags->spec == 'd') || (flags->spec == 'i')) ? (num = (int)num) : (num = (unsigned int)num); /* тернарник нужен для перевода спецификаторов 'ouxX'*/
 	}
 	if (flags->spec == 'x' || flags->spec == 'X')
-	{
-		hex_num = convert_v_16(num, count, flags);
-		ft_putstr(hex_num);
-		free(hex_num);
-	}
-	else
-	{
-		if (flags->spec == 'o')
-			num = convert_v_8(num, count, flags);
+		new_num = convert_v_16(num, count, flags);
+	else if (flags->spec == 'o')
+		new_num = convert_v_8(num, count, flags);
+	else if (flags->spec == 'd' || flags->spec == 'i' || flags->spec == 'u')
+		new_num = ft_long_to_ascii(num);
 	//	if (flags->width || flags->precision) /* выяснить зачем */
-		// {
-		temp = ft_cmp_width_prec_num(flags, num);
+		temp = ft_cmp_width_prec_num(flags, new_num);
 		if (flags->minus) /* есть флаг "-" */
 		{
-			if (num < 0) /* num отрицательный, есть флаг '-', флаг '+' не важен */
-				ft_constructor(flags, temp, 1, num); /* ветка 1 */
+			if (temp.znak == -1) /* num отрицательный, есть флаг '-', флаг '+' не важен */
+				ft_constructor(flags, temp, 1, new_num); /* ветка 1 */
 			else
 			{
 				if (flags->plus) /* num положительный, есть флаг '-' и флаг '+' */
-					ft_constructor(flags, temp, 1, num); /* ветка 2 */
+					ft_constructor(flags, temp, 1, new_num); /* ветка 2 */
 				else
 				{
 					if (flags->space)
-						ft_constructor(flags, temp, 2, num); /* ветка 3 */
+						ft_constructor(flags, temp, 2, new_num); /* ветка 3 */
 					else if (!(flags->space))
-						ft_constructor(flags, temp, 3, num); /* ветка 4 */
+						ft_constructor(flags, temp, 3, new_num); /* ветка 4 */
 				}
 			}
 		}
 		else
 		{
-			if (num < 0) /* num отрицательный, НЕТ флага '-', флаг '+' не важен */
+			if (temp.znak == -1) /* num отрицательный, НЕТ флага '-', флаг '+' не важен */
 			{
 				if (flags->nul)
 				{
 					if (flags->dot)
-						ft_constructor(flags, temp, 4, num); /* ветка 5.1 */
+						ft_constructor(flags, temp, 4, new_num); /* ветка 5.1 */
 					else if (!(flags->dot))
-						ft_constructor(flags, temp, 5, num); /* ветка 6 */
+						ft_constructor(flags, temp, 5, new_num); /* ветка 6 */
 				}
 				else if (!(flags->nul))
-					ft_constructor(flags, temp, 4, num); /* ветка 5.2 */
+					ft_constructor(flags, temp, 4, new_num); /* ветка 5.2 */
 			}
-			else if (num >= 0)
+			else /* когда znak == 1 или 0 */
 			{
 				if (flags->plus) /* num положительный, НЕТ флага '-' и ЕСТЬ флаг '+'  */
 				{
 					if (flags->nul)
 					{
 						if (flags->dot)
-							ft_constructor(flags, temp, 4, num); /* ветка 7.1 */
+							ft_constructor(flags, temp, 4, new_num); /* ветка 7.1 */
 						else if (!(flags->dot))
-							ft_constructor(flags, temp, 5, num); /* ветка 8 */
+							ft_constructor(flags, temp, 5, new_num); /* ветка 8 */
 					}
 					else if (!(flags->nul))
-						ft_constructor(flags, temp, 4, num); /* ветка 7.2 */
+						ft_constructor(flags, temp, 4, new_num); /* ветка 7.2 */
 				}
 				else if (!(flags->plus))/* num положительный, НЕТ флага '-' и НЕТ флага '+'  */
 				{
@@ -355,61 +388,28 @@ void	ft_decimal(va_list ap, int *count, t_flags *flags)
 						if (flags->dot)
 						{
 							if (flags->space)
-								ft_constructor(flags, temp, 6, num); /* ветка 9 */
+								ft_constructor(flags, temp, 6, new_num); /* ветка 9 */
 							else if (!(flags->space))
-								ft_constructor(flags, temp, 7, num); /* ветка 10.1 */
+								ft_constructor(flags, temp, 7, new_num); /* ветка 10.1 */
 						}
 						else if (!(flags->dot))
 						{
 							if (flags->space)
-								ft_constructor(flags, temp, 8, num); /* ветка 11 */
+								ft_constructor(flags, temp, 8, new_num); /* ветка 11 */
 							else if (!(flags->space))
-								ft_constructor(flags, temp, 9, num); /* ветка 12 */
+								ft_constructor(flags, temp, 9, new_num); /* ветка 12 */
 						}
 					}
 					else if (!(flags->nul))
 					{
 						if (flags->space)
-							ft_constructor(flags, temp, 6, num); /* ветка 13 */
+							ft_constructor(flags, temp, 6, new_num); /* ветка 13 */
 						else if (!(flags->space))
-							ft_constructor(flags, temp, 7, num); /* ветка 10.2 */
+							ft_constructor(flags, temp, 7, new_num); /* ветка 10.2 */
 					}
 				}
 			}
 		}
-		/*if (!(flags->minus))
-		{
-			while (temp.sp > 0)
-			{
-				ft_putchar(' ');
-				temp.sp--;
-			}
-		}
-		if (num < 0)
-			ft_putchar('-');
-		else if (num > 0 && flags->plus)
-			ft_putchar('+');
-		while (temp.nul > 0)
-		{
-			ft_putchar('0');
-			temp.nul--;
-		}
-		ft_putnbr(ft_modul(num));
-		if (flags->minus)
-		{
-			while (temp.sp > 0)
-			{
-				ft_putchar(' ');
-				temp.sp--;
-			}
-		}*/
-	// }
-	/*else
-	{
-		ft_putnbr(num);
-		*count = *count + count_of_digits(num);
-	}*/
-	}
 	free(flags);
 }
 
@@ -784,9 +784,9 @@ int main(void)
 
 	// minprintf("%+8.6hhd\n", (char)2212322212322212311);
 	// printf("%+8.6hhd\n", (char)2212322212322212311);
-	minprintf("%x\n", 255);
-	printf("%x\n", 255);
-	minprintf("%hho\n", 255);
-	printf("%x\n", 255);
+	// minprintf("%x\n", 255);
+	// printf("%x\n", 255);
+	minprintf("% -8hho\n", (char)255);
+	printf("% -8hho\n", (char)255);
 	return (0);
 }

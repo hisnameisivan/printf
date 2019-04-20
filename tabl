@@ -1,9 +1,11 @@
-                c   s   p       d   i   o   u   x   X
-флаг      .     ub  +   ub      +    
-    (5)   #     ub  ub  ub      ig
-    (1)   hh    ub  ub  ub      
-    (2)   h     ig  ig  ig      +
-    (3)   ll    ub  ub  ub
-    (4)   l     ig  er  ub
+                    c   s   p       d   i  	o  	u	x	X
+флаг      .         ub  +   ub      +    
+    (5)   #         ub  ub  ub      ig
+    (1)   hh        ub  ub  ub      
+    (2)   h         ig  ig  ig      +
+    (3)   ll        ub  ub  ub
+    (4)   l         ig  er  ub
+          space                     +	+	-	-	-	-
+		  null
 
-
+флаг 0 ignore, если есть точность

@@ -6,7 +6,7 @@
 /*   By: draudrau <draudrau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/16 12:18:30 by draudrau          #+#    #+#             */
-/*   Updated: 2019/04/19 14:25:50 by draudrau         ###   ########.fr       */
+/*   Updated: 2019/04/20 17:20:25 by draudrau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,12 +32,12 @@ int main(void)
 	printf("\n13 stroka:%+8. 6d", 123);
 	printf("\n14 stroka:%+8.6d", -123);*/
 
-	printf(" 1 stroka: %-+8.6d\n", -123);
-    printf(" 2 stroka: % -+8.6d\n", -123); /* */
+	/*printf(" 1 stroka: %-+8.6d\n", -123);
+    printf(" 2 stroka: % -+8.6d\n", -123); 
 	printf(" 3 stroka: %-+8.6d\n", 123);
-	printf(" 4 stroka: % -+8.6d\n", 123); /* */
+	printf(" 4 stroka: % -+8.6d\n", 123); 
 	printf(" 5 stroka: %-8.6d\n", 123);
-	printf(" 6 stroka: % -8.6d\n", 123); /* */
+	printf(" 6 stroka: % -8.6d\n", 123); 
 	printf(" 7 stroka: %+8.6d\n", -123);
 	printf(" 8 stroka: % +8.6d\n", -123);
 	printf(" 9 stroka: %+8.6d\n", 123);
@@ -67,7 +67,7 @@ int main(void)
 	printf("33 stroka: % c\n", 'c');
 	printf("34 stroka: % 08.6hhd\n", (char)128);
 	printf("35 stroka: % 06hhd\n", (char)212);
-	printf("36 stroka: %+08.6hhdd\n", (char)212);
+	printf("36 stroka: %+08.6hhdd\n", (char)212);*/
 
 	// printf("35 stroka: % 06hhu\n", (char)-123);
 	// printf("36 stroka: %+08.6hhu\n", (char)-123);
@@ -76,7 +76,7 @@ int main(void)
 	
 	/* Перевод в восьмиричную */
 
-	printf("37 stroka: %8o\n", 125);
+	/*printf("37 stroka: %8o\n", 125);
 	printf("38 stroka: %-08o\n", 125);
 	printf("39 stroka: %+8o\n", 125);
 	printf("40 stroka: %#8o\n", 125);
@@ -85,7 +85,7 @@ int main(void)
 	printf("43 stroka: % 08o\n", 125);
 	printf("44 stroka: %hhu\n", (char)225);
 	printf("45 stroka: %hho\n", (char)225);
-	printf("46 stroka: %hhu\n", (char)225);
+	printf("46 stroka: %hhu\n", (char)225);*/
 
 	//char		*s = "hello";
 
@@ -106,6 +106,11 @@ int main(void)
 	//printf("rabotaet %-15p\n", s);
 	//printf("ub %+15p\n", s);
 	//printf("ub %0p\n", s);
+
+	printf("47 stroka: % -8hho\n", (char)255);
+	printf("48 stroka: % -8hhx\n", (char)255);
+	printf("47 stroka: % -8hhd\n", (char)255);
+	printf("48 stroka: % -8hhu\n", (char)255);
 
 	return (0);
 }

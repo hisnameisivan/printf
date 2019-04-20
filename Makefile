@@ -1,6 +1,6 @@
 #NAME = libftprintf.a
 NAME = a.out
-SRC = printf.c
+SRC = dot.c
 INCLUDES = printf.h
 FLAG = -Wall -Wextra -Werror
 
