@@ -163,7 +163,7 @@ void	ft_constructor(t_flags *flags, t_wp temp, int sit, long long num)
 long long	ft_apply_modificator(va_list ap, t_flags *flags) /* long long вместо int для num */
 {
 	long long	num;
-	
+
 	num = va_arg(ap, long long);
 	if (flags->hh)
 		(flags->spec == 'u' || flags->spec == 'o') ? (num = (unsigned char)num) : (num = (char)num);
@@ -189,7 +189,7 @@ long long	ft_sqr(int base, int power)
 	return (result);
 }
 
-unsigned long long	convert_v_8(long long num, int *count, t_flags *flags)
+unsigned long long	convert_v_8(long long num, int *count, t_flags *flags)  /* Из десятичной в восьмиричную */
 {
 	int					i;
 	int					ost[23];
@@ -221,17 +221,68 @@ unsigned long long	convert_v_8(long long num, int *count, t_flags *flags)
 	ost[i] = temp;
 	while (i >= 0)
 	{
-		result = result * ft_sqr(10, i) * ost[i];
+		result = result + ft_sqr(10, i) * ost[i];
 		i--;
 	}
 	return (result);
 }
 
+char	*convert_v_16(long long num, int *count, t_flags *flags) /* Из десятичной в шестнадцатиричную */
+{
+	int					i;
+	int					ost[23];
+	char				*hex_num;
+	char				*hex_temp;
+	unsigned long long	max;
+	unsigned long long	temp;
+	unsigned long long	result;
+
+	temp = num;
+	i = 0;
+	result = 0;
+	hex_num = NULL;
+	if (num < 0)
+	{
+		if (flags->hh)
+			max = FT_MAX_UCHAR;
+		if (flags->h)
+			max = FT_MAX_USHORT;
+		if (flags->l || flags->ll)
+			max = FT_MAX_ULONG;
+		else
+			max = FT_MAX_UINT;
+		temp = max + num + 1; /* Отрицательный long long делаем unsigned long long */
+	}
+	while (temp > 15)
+	{
+		ost[i] = temp % 16;
+		temp = temp / 16;
+		i++;
+	}
+	ost[i] = temp;
+	hex_num = (char *)malloc(sizeof(char) * (i + 2));
+	hex_temp = hex_num;
+	hex_num[i + 1] = '\0';
+	while (i >= 0)
+	{
+		if (ost[i] < 10)
+			*hex_num = (char)ost[i] + '0';
+		else
+			*hex_num = (char)ost[i] - 10 + ((flags->spec == 'x') ? 'a' : 'A');
+			//ft_putchar((char)ost[i] - 10 + ((x == 'x') ? 'a' : 'A')); /* (ost[i] - 10) - это сдвиг либо от 'a' (если x), либо от 'A' */
+		i--;
+		hex_num++;
+	}
+	return (hex_temp);
+}
+
 void	ft_decimal(va_list ap, int *count, t_flags *flags)
 {
 	long long	num;
+	char		*hex_num;
 	t_wp		temp;
 
+	hex_num = NULL;
 	if (flags->h || flags->l || flags->hh || flags->ll)
 		num = ft_apply_modificator(ap, flags);
 	else
@@ -239,12 +290,18 @@ void	ft_decimal(va_list ap, int *count, t_flags *flags)
 		num = va_arg(ap, int);
 		(flags->spec == 'u') ? (num = (unsigned int)num) : (num = (int)num); /* последнее условие в тернарнике не несет смысла (просто чтобы тернарник работал)*/
 	}
-	if (flags->spec == 'o')
+	if (flags->spec == 'x' || flags->spec == 'X')
 	{
-		convert_v_8(num, count, flags);
+		hex_num = convert_v_16(num, count, flags);
+		ft_putstr(hex_num);
+		free(hex_num);
 	}
-//	if (flags->width || flags->precision) /* выяснить зачем */
-	// {
+	else
+	{
+		if (flags->spec == 'o')
+			num = convert_v_8(num, count, flags);
+	//	if (flags->width || flags->precision) /* выяснить зачем */
+		// {
 		temp = ft_cmp_width_prec_num(flags, num);
 		if (flags->minus) /* есть флаг "-" */
 		{
@@ -275,7 +332,7 @@ void	ft_decimal(va_list ap, int *count, t_flags *flags)
 						ft_constructor(flags, temp, 5, num); /* ветка 6 */
 				}
 				else if (!(flags->nul))
-					ft_constructor(flags, temp, 4, num); /* ветка 5.2 */	
+					ft_constructor(flags, temp, 4, num); /* ветка 5.2 */
 			}
 			else if (num >= 0)
 			{
@@ -296,7 +353,7 @@ void	ft_decimal(va_list ap, int *count, t_flags *flags)
 					if (flags->nul)
 					{
 						if (flags->dot)
-						{		
+						{
 							if (flags->space)
 								ft_constructor(flags, temp, 6, num); /* ветка 9 */
 							else if (!(flags->space))
@@ -352,6 +409,8 @@ void	ft_decimal(va_list ap, int *count, t_flags *flags)
 		ft_putnbr(num);
 		*count = *count + count_of_digits(num);
 	}*/
+	}
+	free(flags);
 }
 
 void	ft_char(va_list ap, int *count, t_flags *flags)
@@ -569,7 +628,7 @@ void	ft_fill_struct(t_flags *flags, char *p)
 	&& *p != 'u' && *p != 'x' && *p != 'X' && *p != 'f')
 	{
 		if (*p == '0') /* нужно записать ноль раньше ширины, не заходя в запись ширины */
-			flags->nul = 1; 
+			flags->nul = 1;
 		else if (*p >= '0' && *p <= '9' && flags->dot == 0)
 		{
 			while (*p >= '0' && *p <= '9')
@@ -651,6 +710,11 @@ int		minprintf(char *fmt, ...)
 					ft_decimal(ap, &count, flags);
 					break ;
 				}
+				if (*p == 'x' || *p == 'X')
+				{
+					ft_decimal(ap, &count, flags);
+					break ;
+				}
 				p++;
 			}
         }
@@ -720,7 +784,9 @@ int main(void)
 
 	// minprintf("%+8.6hhd\n", (char)2212322212322212311);
 	// printf("%+8.6hhd\n", (char)2212322212322212311);
-	minprintf("%hho\n", (char)254);
-	printf("%hho\n", (char)254);
+	minprintf("%x\n", 255);
+	printf("%x\n", 255);
+	minprintf("%hho\n", 255);
+	printf("%x\n", 255);
 	return (0);
 }
