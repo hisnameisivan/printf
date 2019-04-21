@@ -83,7 +83,8 @@ t_wp	ft_cmp_width_prec_num(t_flags *flags, char *num)
 	// if (temp.znak == -1)
 	// 	count = count - 1;
 	((flags->precision - count) < 0) ? (temp.nul = 0) : (temp.nul = flags->precision - count); /* чтобы учесть отрицательный результат precision - count, т к дальше сломается!!!*/
-	temp.sp = flags->width - (temp.nul + count);
+	((flags->width - (temp.nul + count)) < 0) ? (temp.sp = 0) : (temp.sp = flags->width - (temp.nul + count));
+	//temp.sp = flags->width - (temp.nul + count);
 	if ((flags->plus && (flags->spec == 'd' || flags->spec == 'i' || flags->spec == 'u')) || (flags->spec == 'o' && flags->resh == 1)
 	|| ((flags->spec == 'd' || flags->spec == 'i') && (temp.znak == -1)))
 		(temp.sp)--;
@@ -168,7 +169,7 @@ void	ft_constructor(t_flags *flags, t_wp temp, int sit, char *num)
 	else if (sit == 6)
 	{
 		ft_putchar(' '); /* флаг пробел */
-		temp.nul--; /* флаг пробел съел один пробел */
+		temp.sp--; /* флаг пробел съел один пробел */
 		ft_type_space(temp);
 		ft_type_nul(temp);
 		ft_putstr(num);
@@ -318,7 +319,6 @@ void	ft_decimal(va_list ap, int *count, t_flags *flags)
 	long long	num;
 	char		*new_num;
 	t_wp		temp;
-	char		*hex_num;
 
 	new_num = NULL;
 	if (flags->h || flags->l || flags->hh || flags->ll)
@@ -400,7 +400,7 @@ void	ft_decimal(va_list ap, int *count, t_flags *flags)
 								ft_constructor(flags, temp, 9, new_num); /* ветка 12 */
 						}
 					}
-					else if (!(flags->nul))
+					else if (!(flags->nul)) // нашел
 					{
 						if (flags->space)
 							ft_constructor(flags, temp, 6, new_num); /* ветка 13 */
@@ -415,10 +415,12 @@ void	ft_decimal(va_list ap, int *count, t_flags *flags)
 
 void	ft_char(va_list ap, int *count, t_flags *flags)
 {
-	int		ch;
+	char	*ch;
 	t_wp	temp;
 
-	ch = va_arg(ap, int);
+	ch[0] = (char)va_arg(ap, int);
+	ch[1] = 0;
+	temp = ft_cmp_width_prec_num(flags, ch);
 	if (flags->width)
 		temp.sp = flags->width - 1;
 	if (flags->minus) /* есть флаг "-" */
@@ -439,7 +441,7 @@ void	ft_char(va_list ap, int *count, t_flags *flags)
 			temp.sp--;
 			(*count)++;
 		}
-		ft_putchar((char)ch);
+		ft_putchar(ch[0]);
 	}
 	(*count)++;
 }
@@ -451,6 +453,7 @@ void	ft_string(va_list ap, int *count, t_flags *flags)
 
 	str = va_arg(ap, char *);
 	*count = *count + ft_strlen(str);
+	temp = ft_cmp_width_prec_num(flags, str);
 	if (flags->width)
 		temp.sp = flags->width - ft_strlen(str);
 	if (flags->minus) /* есть флаг "-" */
@@ -543,10 +546,8 @@ void	ft_check_modificator(t_flags *flags, char *ptr) /* Проверяет фл�
 
 void    ft_write_width_precision(t_flags *flags, char *p)
 {
-    int width;
 	int	precision;
 
-	width = 0;
 	precision = 0;
     while (*p != 'c' && *p != 's' && *p != 'p' && *p != 'd' && *p != 'i' && *p != 'o'
 	&& *p != 'u' && *p != 'x' && *p != 'X' && *p != 'f')
@@ -555,7 +556,7 @@ void    ft_write_width_precision(t_flags *flags, char *p)
         {
             while (*p >= '0' && *p <= '9')
 			{
-				flags->width = width * 10 + *p - '0';
+				flags->width = flags->width * 10 + *p - '0';
 				p++;
 			}
 		}
@@ -729,80 +730,80 @@ int		minprintf(char *fmt, ...)
 
 int main(void)
 {
-    printf("01 stroka: %-+8.6d\n", -123);
-	minprintf("01 stroka: %-+8.6d\n", -123);
-    printf("02 stroka: % -+8.6d\n", -123); 
-	minprintf("02 stroka: % -+8.6d\n", -123);
-	printf("03 stroka: %-+8.6d\n", 123);
-	minprintf("03 stroka: %-+8.6d\n", 123);
-	printf("04 stroka: % -+8.6d\n", 123); 
-	minprintf("04 stroka: % -+8.6d\n", 123);
-	printf("05 stroka: %-8.6d\n", 123);
-	minprintf("05 stroka: %-8.6d\n", 123);
-	printf("06 stroka: % -8.6d\n", 123); 
-	minprintf("06 stroka: % -8.6d\n", 123);
-	printf("07 stroka: %+8.6d\n", -123);
-	minprintf("07 stroka: %+8.6d\n", -123);
-	printf("08 stroka: % +8.6d\n", -123);
-	minprintf("08 stroka: % +8.6d\n", -123);
-	printf("09 stroka: %+8.6d\n", 123);
-	minprintf("09 stroka: %+8.6d\n", 123);
-	printf("10 stroka: % +8.6d\n", 123);
-	minprintf("10 stroka: % +8.6d\n", 123);
-	printf("11 stroka: %8.6d\n", 123);
-	minprintf("11 stroka: %8.6d\n", 123);
-	printf("12 stroka: % 8.6d\n", 123); /* - */
-	minprintf("12 stroka: % 8.6d\n", 123); /* - */
-	printf("13 stroka: %+8d\n", -123);
-	minprintf("13 stroka: %+8d\n", -123);
-	printf("14 stroka: % +8d\n", -123);
-	minprintf("14 stroka: % +8d\n", -123);
-	printf("15 stroka: %8.6d\n", 123);
-	minprintf("15 stroka: %8.6d\n", 123);
-	printf("16 stroka: % 8.6d\n", 123); /* - */
-	minprintf("16 stroka: % 8.6d\n", 123); /* - */
-	printf("17 stroka: %+ 8.6d\n", 123);
-	minprintf("17 stroka: %+ 8.6d\n", 123);
-	printf("18 stroka: % 8.6 d\n", 123); /* - */
-	minprintf("18 stroka: % 8.6 d\n", 123); /* - */
-	printf("19 stroka: %      8d\n", -123);
-	minprintf("19 stroka: %      8d\n", -123);
-	printf("20 stroka: % 8.6d\n", 123); /* - */
-	minprintf("20 stroka: % 8.6d\n", 123); /* - */
-	printf("21 stroka: % d\n", -123);
-	minprintf("21 stroka: % d\n", -123);
-	printf("22 stroka: %      d\n", -123);
-	minprintf("22 stroka: %      d\n", -123);
-	printf("23 stroka: %08.6d\n", 123);
-	minprintf("23 stroka: %08.6d\n", 123);
-	printf("24 stroka: %-010d\n", 123);
-	minprintf("24 stroka: %-010d\n", 123);
-	printf("25 stroka: % 010d\n", 123);
-	minprintf("25 stroka: % 010d\n", 123);
-	printf("26 stroka: % 010.5d\n", 123); /* - */
-	minprintf("26 stroka: % 010.5d\n", 123); /* - */
-	printf("27 stroka: %9 0d\n", 123);
-	minprintf("27 stroka: %9 0d\n", 123);
-	printf("28 stroka: %9d\n", 123);
-	minprintf("28 stroka: %9d\n", 123);
-	printf("29 stroka: % 08.6d\n", 123); /* - */
-	minprintf("29 stroka: % 08.6d\n", 123); /* - */
-	printf("30 stroka: % 06d\n", 123);
-	minprintf("30 stroka: % 06d\n", 123);
-	printf("31 stroka: %+08.6d\n", 123);
-	minprintf("31 stroka: %+08.6d\n", 123);
-	printf("32 stroka: % s\n", "privet"); /* - */
-	minprintf("32 stroka: % s\n", "privet"); /* - */
-	printf("33 stroka: % c\n", 'c'); /* - */ 
+    // printf("01 stroka: %-+8.6d\n", -123);
+	// minprintf("01 stroka: %-+8.6d\n", -123);
+    // printf("02 stroka: % -+8.6d\n", -123);
+	// minprintf("02 stroka: % -+8.6d\n", -123);
+	// printf("03 stroka: %-+8.6d\n", 123);
+	// minprintf("03 stroka: %-+8.6d\n", 123);
+	// printf("04 stroka: % -+8.6d\n", 123);
+	// minprintf("04 stroka: % -+8.6d\n", 123);
+	// printf("05 stroka: %-8.6d\n", 123);
+	// minprintf("05 stroka: %-8.6d\n", 123);
+	// printf("06 stroka: % -8.6d\n", 123);
+	// minprintf("06 stroka: % -8.6d\n", 123);
+	// printf("07 stroka: %+8.6d\n", -123);
+	// minprintf("07 stroka: %+8.6d\n", -123);
+	// printf("08 stroka: % +8.6d\n", -123);
+	// minprintf("08 stroka: % +8.6d\n", -123);
+	// printf("09 stroka: %+8.6d\n", 123);
+	// minprintf("09 stroka: %+8.6d\n", 123);
+	// printf("10 stroka: % +8.6d\n", 123);
+	// minprintf("10 stroka: % +8.6d\n", 123);
+	// printf("11 stroka: %8.6d\n", 123);
+	// minprintf("11 stroka: %8.6d\n", 123);
+	// printf("zav12 stroka: % 8.6d\n", 123);
+	// minprintf("min12 stroka: % 8.6d\n", 123);
+	// printf("13 stroka: %+8d\n", -123);
+	// minprintf("13 stroka: %+8d\n", -123);
+	// printf("14 stroka: % +8d\n", -123);
+	// minprintf("14 stroka: % +8d\n", -123);
+	// printf("15 stroka: %8.6d\n", 123);
+	// minprintf("15 stroka: %8.6d\n", 123);
+	// printf("16 stroka: % 8.6d\n", 123);
+	// minprintf("16 stroka: % 8.6d\n", 123);
+	// printf("17 stroka: %+ 8.6d\n", 123);
+	// minprintf("17 stroka: %+ 8.6d\n", 123);
+	// printf("18 stroka: % 8.6 d\n", 123);
+	// minprintf("18 stroka: % 8.6 d\n", 123);
+	// printf("19 stroka: %      8d\n", -123);
+	// minprintf("19 stroka: %      8d\n", -123);
+	// printf("20 stroka: % 8.6d\n", 123);
+	// minprintf("20 stroka: % 8.6d\n", 123);
+	// printf("21 stroka: % d\n", -123);
+	// minprintf("21 stroka: % d\n", -123);
+	// printf("22 stroka: %      d\n", -123);
+	// minprintf("22 stroka: %      d\n", -123);
+	// printf("23 stroka: %08.6d\n", 123);
+	// minprintf("23 stroka: %08.6d\n", 123);
+	// printf("24 stroka: %-010d\n", 123);
+	// minprintf("24 stroka: %-010d\n", 123);
+	// printf("25 stroka: % 010d\n", 123);
+	// minprintf("25 stroka: % 010d\n", 123);
+	// printf("zav26 stroka: % 010.5d\n", 123);
+	// minprintf("min26 stroka: % 010.5d\n", 123);
+	// printf("27 stroka: %9 0d\n", 123);
+	// minprintf("27 stroka: %9 0d\n", 123);
+	// printf("28 stroka: %9d\n", 123);
+	// minprintf("28 stroka: %9d\n", 123);
+	// printf("29 stroka: % 08.6d\n", 123);
+	// minprintf("29 stroka: % 08.6d\n", 123);
+	// printf("30 stroka: % 06d\n", 123);
+	// minprintf("30 stroka: % 06d\n", 123);
+	// printf("31 stroka: %+08.6d\n", 123);
+	// minprintf("31 stroka: %+08.6d\n", 123);
+	// printf("32 stroka: % 15s\n", "privet");
+	// minprintf("32 stroka: % 15s\n", "privet");
+	printf("33 stroka: % c\n", 'c'); /* - */
 	minprintf("33 stroka: % c\n", 'c'); /* - */
-	printf("34 stroka: % 08.6hhd\n", (char)128);
-	minprintf("34 stroka: % 08.6hhd\n", (char)128);
-	printf("35 stroka: % 06hhd\n", (char)212);
-	minprintf("35 stroka: % 06hhd\n", (char)212);
-	printf("36 stroka: %+08.6hhdd\n", (char)212);
-	minprintf("36 stroka: %+08.6hhdd\n", (char)212);
-	minprintf("37 stroka: % 1.2d\n", -1);
-	printf("37 stroka: % 1.2d\n", -1);
+	// printf("34 stroka: % 08.6hhd\n", (char)128);
+	// minprintf("34 stroka: % 08.6hhd\n", (char)128);
+	// printf("35 stroka: % 06hhd\n", (char)212);
+	// minprintf("35 stroka: % 06hhd\n", (char)212);
+	// printf("36 stroka: %+08.6hhdd\n", (char)212);
+	// minprintf("36 stroka: %+08.6hhdd\n", (char)212);
+	// minprintf("37 stroka: % 1.2d\n", -1);
+	// printf("37 stroka: % 1.2d\n", -1);
 
 	char	*str = "hello";
 
