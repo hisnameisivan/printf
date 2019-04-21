@@ -5,7 +5,8 @@
     (2)   h         ig  ig  ig      +
     (3)   ll        ub  ub  ub
     (4)   l         ig  er  ub
-          space                     +	+	ub	-	-	-
-		  null
-
+        space						+	+	ub	-	-	-
+		null
+		fl +								ub
 флаг 0 ignore, если есть точность
+флаг space ignore когда есть флаг '+'

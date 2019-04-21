@@ -132,21 +132,27 @@ void	ft_constructor(t_flags *flags, t_wp temp, int sit, char *num)
 		ft_type_nul(temp);
 		ft_putstr(num);
 		ft_type_space(temp);
+		printf("\nsit 1\n");
 	}
 	else if (sit == 2)
 	{
-		ft_putchar(' '); /* флаг пробел */
-		ft_type_nul(temp);
-		ft_putstr(num);
-		temp.nul--; /* флаг пробел съел один пробел */
-		ft_type_space(temp);
-	}
-	else if (sit == 3)
-	{
-		ft_type_nul(temp);
+		if (temp.znak == 1) /* (sit 2a) znak == 1 - значит число либо d или i */
+		{
+			ft_putchar(' '); /* флаг пробел (флаг пробел не работает с восьмиричной и шестнадцатиричной*/
+			temp.sp--; /* флаг пробел съел один пробел */
+		}
+		ft_type_nul(temp); /* sit 2b - отсюда начинается не заходя в if*/
 		ft_putstr(num);
 		ft_type_space(temp);
+		printf("\nsit 2\n");
 	}
+	// else if (sit == 3)
+	// {
+	// 	ft_type_nul(temp);
+	// 	ft_putstr(num);
+	// 	ft_type_space(temp);
+	// 	printf("\nsit 3\n");
+	// }
 	else if (sit == 4)
 	{
 		ft_type_space(temp);
@@ -156,6 +162,7 @@ void	ft_constructor(t_flags *flags, t_wp temp, int sit, char *num)
 			ft_putchar('+');
 		ft_type_nul(temp);
 		ft_putstr(num);
+		printf("\nsit 4\n");
 	}
 	else if (sit == 5)
 	{
@@ -165,32 +172,40 @@ void	ft_constructor(t_flags *flags, t_wp temp, int sit, char *num)
 			ft_putchar('+');
 		ft_type_sp_nul(temp);
 		ft_putstr(num);
+		printf("\nsit 5\n");
 	}
 	else if (sit == 6)
 	{
-		ft_putchar(' '); /* флаг пробел */
-		temp.sp--; /* флаг пробел съел один пробел */
-		ft_type_space(temp);
+		if (temp.znak == 1) /* sit 6a znak == 1 - значит число либо d или i */
+		{
+			ft_putchar(' '); /* флаг пробел (флаг пробел не работает с восьмиричной и шестнадцатиричной*/
+			temp.sp--; /* флаг пробел съел один пробел */
+		}
+		ft_type_space(temp); /* sit 6b отсюда начинается */
 		ft_type_nul(temp);
 		ft_putstr(num);
+		printf("\nsit 6\n");
 	}
-	else if (sit == 7)
-	{
-		ft_type_space(temp);
-		ft_type_nul(temp);
-		ft_putstr(num);
-	}
+	// else if (sit == 7)
+	// {
+	// 	ft_type_space(temp);
+	// 	ft_type_nul(temp);
+	// 	ft_putstr(num);
+	// 	printf("\nsit 7\n");
+	// }
 	else if (sit == 8)
 	{
 		ft_putchar(' '); /* флаг пробел */
 		temp.sp--; /* флаг пробел съел один пробел */
 		ft_type_sp_nul(temp);
 		ft_putstr(num);
+		printf("\nsit 8\n");
 	}
 	else if (sit == 9)
 	{
 		ft_type_sp_nul(temp);
 		ft_putstr(num);
+		printf("\nsit 9\n");
 	}
 }
 
@@ -349,7 +364,7 @@ void	ft_decimal(va_list ap, int *count, t_flags *flags)
 					if (flags->space)
 						ft_constructor(flags, temp, 2, new_num); /* ветка 3 */
 					else if (!(flags->space))
-						ft_constructor(flags, temp, 3, new_num); /* ветка 4 */
+						ft_constructor(flags, temp, 2, new_num); /* ветка 4 */
 				}
 			}
 		}
@@ -390,7 +405,7 @@ void	ft_decimal(va_list ap, int *count, t_flags *flags)
 							if (flags->space)
 								ft_constructor(flags, temp, 6, new_num); /* ветка 9 */
 							else if (!(flags->space))
-								ft_constructor(flags, temp, 7, new_num); /* ветка 10.1 */
+								ft_constructor(flags, temp, 6, new_num); /* ветка 10.1 */
 						}
 						else if (!(flags->dot))
 						{
@@ -405,7 +420,7 @@ void	ft_decimal(va_list ap, int *count, t_flags *flags)
 						if (flags->space)
 							ft_constructor(flags, temp, 6, new_num); /* ветка 13 */
 						else if (!(flags->space))
-							ft_constructor(flags, temp, 7, new_num); /* ветка 10.2 */
+							ft_constructor(flags, temp, 6, new_num); /* ветка 10.2 */
 					}
 				}
 			}
@@ -415,7 +430,7 @@ void	ft_decimal(va_list ap, int *count, t_flags *flags)
 
 void	ft_char(va_list ap, int *count, t_flags *flags)
 {
-	char	*ch;
+	char	ch[2];
 	t_wp	temp;
 
 	ch[0] = (char)va_arg(ap, int);
@@ -794,8 +809,8 @@ int main(void)
 	// minprintf("31 stroka: %+08.6d\n", 123);
 	// printf("32 stroka: % 15s\n", "privet");
 	// minprintf("32 stroka: % 15s\n", "privet");
-	printf("33 stroka: % c\n", 'c'); /* - */
-	minprintf("33 stroka: % c\n", 'c'); /* - */
+	// printf("33 stroka: % c\n", 'c');
+	// minprintf("33 stroka: % c\n", 'c');
 	// printf("34 stroka: % 08.6hhd\n", (char)128);
 	// minprintf("34 stroka: % 08.6hhd\n", (char)128);
 	// printf("35 stroka: % 06hhd\n", (char)212);
@@ -851,7 +866,87 @@ int main(void)
 	// printf("%+8.6hhd\n", (char)2212322212322212311);
 	// minprintf("%x\n", 255);
 	// printf("%x\n", 255);
-	//minprintf("% -8hho\n", (char)255);
-	//printf("% -8hho\n", (char)255);
+
+	/* тесты для восьмиричной записи */
+	
+	
+	printf("01 stroka: %-+8.6o\n", -123);
+	minprintf("01 stroka: %-+8.6o\n", -123);
+    printf("02 stroka: % -+8.6o\n", -123);
+	minprintf("02 stroka: % -+8.6o\n", -123);
+	printf("03 stroka: %-+8.6o\n", 123);
+	minprintf("03 stroka: %-+8.6o\n", 123);
+	printf("04 stroka: % -+8.6o\n", 123);
+	minprintf("04 stroka: % -+8.6o\n", 123);
+	printf("05 stroka: %-8.6o\n", 123);
+	minprintf("05 stroka: %-8.6o\n", 123);
+	printf("106 stroka: % -8.6o\n", 123);
+	minprintf("06 stroka: % -8.6o\n", 123);
+	printf("07 stroka: %+8.6o\n", -123);
+	minprintf("07 stroka: %+8.6o\n", -123);
+	printf("08 stroka: % +8.6o\n", -123);
+	minprintf("08 stroka: % +8.6o\n", -123);
+	printf("09 stroka: %+8.6o\n", 123);
+	minprintf("09 stroka: %+8.6o\n", 123);
+	printf("10 stroka: % +8.6o\n", 123);
+	minprintf("10 stroka: % +8.6o\n", 123);
+	printf("11 stroka: %8.6o\n", 123);
+	minprintf("11 stroka: %8.6o\n", 123);
+	printf("zav12 stroka: % 8.6o\n", 123);
+	minprintf("min12 stroka: % 8.6o\n", 123);
+	printf("13 stroka: %+8o\n", -123);
+	minprintf("13 stroka: %+8o\n", -123);
+	printf("14 stroka: % +8o\n", -123);
+	minprintf("14 stroka: % +8o\n", -123);
+	printf("15 stroka: %8.6o\n", 123);
+	minprintf("15 stroka: %8.6o\n", 123);
+	printf("16 stroka: % 8.6o\n", 123);
+	minprintf("16 stroka: % 8.6o\n", 123);
+	printf("17 stroka: %+ 8.6o\n", 123);
+	minprintf("17 stroka: %+ 8.6o\n", 123);
+	printf("18 stroka: % 8.6 o\n", 123);
+	minprintf("18 stroka: % 8.6 o\n", 123);
+	printf("19 stroka: %      15o\n", -123);
+	minprintf("19 stroka: %      15o\n", -123);
+	printf("20 stroka: % 8.6o\n", 123);
+	minprintf("20 stroka: % 8.6o\n", 123);
+	printf("21 stroka: % o\n", -123); /* */
+	minprintf("21 stroka: % o\n", -123);
+	printf("22 stroka: %      o\n", -123); /* */
+	minprintf("22 stroka: %      o\n", -123);
+	printf("23 stroka: %08.6o\n", 123);
+	minprintf("23 stroka: %08.6o\n", 123);
+	printf("24 stroka: %-010o\n", 123);
+	minprintf("24 stroka: %-010o\n", 123);
+	printf("25 stroka: % 010o\n", 123); /* */
+	minprintf("25 stroka: % 010o\n", 123);
+	printf("zav26 stroka: % 010.5o\n", 123);
+	minprintf("min26 stroka: % 010.5o\n", 123);
+	printf("27 stroka: %9 0o\n", 123);
+	minprintf("27 stroka: %9 0o\n", 123);
+	printf("28 stroka: %9o\n", 123);
+	minprintf("28 stroka: %9o\n", 123);
+	printf("29 stroka: % 08.6o\n", 123);
+	minprintf("29 stroka: % 08.6o\n", 123);
+	printf("30 stroka: % 06o\n", 123); /* */
+	minprintf("30 stroka: % 06o\n", 123);
+	printf("31 stroka: %+08.6o\n", 123);
+	minprintf("31 stroka: %+08.6o\n", 123);
+	printf("32 stroka: % 15s\n", "privet");
+	minprintf("32 stroka: % 15s\n", "privet");
+	printf("33 stroka: % c\n", 'c');
+	minprintf("33 stroka: % c\n", 'c');
+	printf("34 stroka: % 08.6hho\n", (char)128);
+	minprintf("34 stroka: % 08.6hho\n", (char)128);
+	printf("35 stroka: % 06hho\n", (char)212);
+	minprintf("35 stroka: % 06hho\n", (char)212); /* */
+	printf("36 stroka: %+08.6hho\n", (char)212);
+	minprintf("36 stroka: %+08.6hho\n", (char)212);
+	printf("37 stroka: % 1.2o\n", -1); /* */
+	minprintf("37 stroka: % 1.2o\n", -1);
+	printf("38 stroka: % -8hho\n", (char)255); /* */
+	minprintf("38 stroka: % -8hho\n", (char)255);
+	printf("39 stroka: % -8hho\n", (char)255); /* */
+	minprintf("39 stroka: % -8hho\n", (char)255);
 	return (0);
 }
