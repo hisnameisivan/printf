@@ -368,7 +368,7 @@ void	ft_decimal(va_list ap, int *count, t_flags *flags)
 					ft_constructor(flags, temp, 1, new_num, count); /* ветка 2 */
 				else
 				{
-					if (flags->space)
+					if (flags->space) /* можно объединить if и else if, флаг пробел учитывается в конструкторе*/
 						ft_constructor(flags, temp, 2, new_num, count); /* ветка 3 */
 					else if (!(flags->space))
 						ft_constructor(flags, temp, 2, new_num, count); /* ветка 4 */
@@ -409,14 +409,14 @@ void	ft_decimal(va_list ap, int *count, t_flags *flags)
 					{
 						if (flags->dot)
 						{
-							if (flags->space)
+							if (flags->space) /* можно объединить if и else if, флаг пробел учитывается в конструкторе*/
 								ft_constructor(flags, temp, 6, new_num, count); /* ветка 9 */
 							else if (!(flags->space))
 								ft_constructor(flags, temp, 6, new_num, count); /* ветка 10.1 */
 						}
 						else if (!(flags->dot))
 						{
-							if (flags->space)
+							if (flags->space) /* можно объединить if и else if, флаг пробел учитывается в конструкторе*/
 								ft_constructor(flags, temp, 8, new_num, count); /* ветка 11 */
 							else if (!(flags->space))
 								ft_constructor(flags, temp, 8, new_num, count); /* ветка 12 */

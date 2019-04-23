@@ -5,8 +5,11 @@
     (2)   h         ig  ig  ig      +
     (3)   ll        ub  ub  ub
     (4)   l         ig  er  ub
-        space						+	+	ub	-	-	-
-		null
-		fl +								ub
+        space			ub			+	+	ub	-	-	-
+		null            ub(w)
+		fl +			ub					ub
 флаг 0 ignore, если есть точность
 флаг space ignore когда есть флаг '+'
+флаг 0 со строками ub, но по факту работает
+
+флаг 0 ignore, если есть флаг '-' (для строк)
