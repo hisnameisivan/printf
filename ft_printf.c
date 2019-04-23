@@ -91,9 +91,9 @@ t_wp	ft_cmp_width_prec_num(t_flags *flags, char *num)
 	//temp.sp = flags->width - (temp.nul + count);
 	if ((flags->plus && (flags->spec == 'd' || flags->spec == 'i' || flags->spec == 'u')) || (flags->spec == 'o' && flags->resh == 1)
 	|| ((flags->spec == 'd' || flags->spec == 'i') && (temp.znak == -1)))
-		(temp.sp)--;
+		(((temp.sp) - 1) > 0) ? ((temp.sp)--) : (temp.sp = 0);
 	if (((flags->spec == 'x') || (flags->spec == 'X')) && (flags->resh == 1))
-		(temp.sp) = (temp.sp) - 2; /* с решеткой шестнадцатиричная выводится с 0x */
+		(((temp.sp) - 1) > 0) ? ((temp.sp) = (temp.sp) - 2) : (temp.sp = 0); /* с решеткой шестнадцатиричная выводится с 0x */
 	//printf("\n__noliki %d, probely %d__\n", temp.nul, temp.sp);
 	return (temp);
 }
@@ -122,6 +122,76 @@ void	ft_type_sp_nul(t_wp temp, int *count) /* печатаем ширину ну
 	{
 		ft_putchar_pf('0', count);
 		temp.sp--;
+	}
+}
+
+void	ft_constructor_16(t_flags *flags, t_wp temp, char *num, int *count)
+{
+	int		spaces;
+	int		nulls;
+
+	spaces = temp.sp;
+	nulls = temp.nul;
+
+	if (flags->minus)
+	{
+		ft_putchar_pf('0', count);
+		ft_putchar_pf(flags->spec, count);
+		ft_putstr_pf(num, count);
+		while (spaces--)
+			ft_putchar_pf(' ', count);
+		while (nulls--)
+			ft_putchar_pf('0', count);
+	}
+	else
+	{
+		while (spaces > 0)
+		{
+			ft_putchar_pf(' ', count);
+			spaces--;
+		}
+		while (nulls > 0)
+		{
+			ft_putchar_pf('0', count);
+			nulls--;
+		}
+		ft_putchar_pf('0', count);
+		ft_putchar_pf(flags->spec, count);
+		ft_putstr_pf(num, count);
+	}
+}
+
+void	ft_constructor_8(t_flags *flags, t_wp temp, char *num, int *count)
+{
+	int		spaces;
+	int		nulls;
+
+	spaces = temp.sp;
+	nulls = temp.nul;
+
+	if (flags->minus)
+	{
+		ft_putchar_pf('0', count);
+		ft_putstr_pf(num, count);
+		while (spaces--)
+			ft_putchar_pf(' ', count);
+		while (nulls--)
+			ft_putchar_pf('0', count);
+	}
+	else
+	{
+		while (spaces > 0)
+		{
+			ft_putchar_pf(' ', count);
+			spaces--;
+		}
+		while (nulls > 0)
+		{
+			ft_putchar_pf('0', count);
+			nulls--;
+		}
+		ft_putchar_pf('0', count);
+		ft_putstr_pf(num, count);
 	}
 }
 
@@ -356,8 +426,20 @@ void	ft_decimal(va_list ap, int *count, t_flags *flags)
 		new_num = convert_v_8(num, flags);
 	else if (flags->spec == 'd' || flags->spec == 'i' || flags->spec == 'u')
 		new_num = ft_long_to_ascii(num);
+	temp = ft_cmp_width_prec_num(flags, new_num);
+	if (temp.znak == 0 && (flags->spec == 'x' || flags->spec == 'X') && flags->resh)
+	{
+		ft_constructor_16(flags, temp, new_num, count);
+		free(flags);
+		return ;
+	}
+	if (temp.znak == 0 && flags->spec == 'o' && flags->resh)
+	{
+		ft_constructor_8(flags, temp, new_num, count);
+		free(flags);
+		return ;
+	}
 	//	if (flags->width || flags->precision) /* выяснить зачем */
-		temp = ft_cmp_width_prec_num(flags, new_num);
 		if (flags->minus) /* есть флаг "-" */
 		{
 			if (temp.znak == -1) /* num отрицательный, есть флаг '-', флаг '+' не важен */

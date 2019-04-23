@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   test.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: draudrau <draudrau@student.42.fr>          +#+  +:+       +#+        */
+/*   By: waddam <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/16 12:18:30 by draudrau          #+#    #+#             */
-/*   Updated: 2019/04/23 18:41:59 by draudrau         ###   ########.fr       */
+/*   Updated: 2019/04/23 19:05:02 by waddam           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,11 +34,11 @@ int main(void)
 
 	/* Спецификатор d */
 	// printf("01 stroka: %-+8.6d\n", -123);
-    // printf("02 stroka: % -+8.6d\n", -123); 
+    // printf("02 stroka: % -+8.6d\n", -123);
 	// printf("03 stroka: %-+8.6d\n", 123);
-	// printf("04 stroka: % -+8.6d\n", 123); 
+	// printf("04 stroka: % -+8.6d\n", 123);
 	// printf("05 stroka: %-8.6d\n", 123);
-	// printf("06 stroka: % -8.6d\n", 123); 
+	// printf("06 stroka: % -8.6d\n", 123);
 	// printf("07 stroka: %+8.6d\n", -123);
 	// printf("08 stroka: % +8.6d\n", -123);
 	// printf("09 stroka: %+8.6d\n", 123);
@@ -74,7 +74,7 @@ int main(void)
 	// printf("37 stroka: %+08.6hhu\n", (char)-123);
 	// printf("38 stroka: % 06hhu\n", (char)-257);
 	// printf("39 stroka: %hhu\n", (char)130);
-	
+
 	/* Перевод в восьмиричную */
 
 	/*printf("40 stroka: %8o\n", 125);
@@ -123,7 +123,9 @@ int main(void)
 	// printf("56 stroka: %+8.2s\n", "privet1");
 	// printf("57 stroka: %02.2s\n", "privet1");
 
-	printf("1 stroka: %#6.3x\n", 123);
+	printf("1 stroka: %#6.1x\n", 123);
+	printf("1 stroka: %#6x\n", 123);
+	printf("1 stroka: %#.6x\n", 123);
 	// printf("2 stroka: %#2x\n", 123);
 	// printf("3 stroka: %#3x\n", 123);
 	// printf("4 stroka: %#4x\n", 123);
