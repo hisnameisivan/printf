@@ -308,18 +308,18 @@ long long	ft_apply_modificator(va_list ap, t_flags *flags) /* long long вмес
 	return (num);
 }
 
-long long	ft_sqr(int base, int power)
-{
-	long long	result;
+// long long	ft_sqr(int base, int power)
+// {
+// 	long long	result;
 
-	result = 1;
-	while (power > 0)
-	{
-		result = result * base;
-		power--;
-	}
-	return (result);
-}
+// 	result = 1;
+// 	while (power > 0)
+// 	{
+// 		result = result * base;
+// 		power--;
+// 	}
+// 	return (result);
+// }
 
 char	*convert_v_8(long long num, t_flags *flags)  /* Из десятичной в восьмиричную */
 {
