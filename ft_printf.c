@@ -63,7 +63,7 @@ char	*ft_long_to_ascii(long long n)
 	return (res);
 }
 
-void	ft_modul_char(char *num) /* возможно придется изменить на long long*/
+void	ft_modul_char(char *num)
 {
 	ft_memmove(num, (num + 1), ft_strlen(num + 1) + 1);
 }
@@ -92,9 +92,11 @@ t_wp	ft_cmp_width_prec_num(t_flags *flags, char *num)
 	if ((flags->plus && (flags->spec == 'd' || flags->spec == 'i' || flags->spec == 'u')) || (flags->spec == 'o' && flags->resh == 1)
 	|| ((flags->spec == 'd' || flags->spec == 'i') && (temp.znak == -1)))
 		(((temp.sp) - 1) > 0) ? ((temp.sp)--) : (temp.sp = 0);
-	if (((flags->spec == 'x') || (flags->spec == 'X')) && (flags->resh == 1))
-		(((temp.sp) - 1) > 0) ? ((temp.sp) = (temp.sp) - 2) : (temp.sp = 0); /* с решеткой шестнадцатиричная выводится с 0x */
-	//printf("\n__noliki %d, probely %d__\n", temp.nul, temp.sp);
+	if (((flags->spec == 'x') || (flags->spec == 'X')) && (flags->resh == 1) && ft_strcmp("0", num))
+		(((temp.sp) - 2) > 0) ? ((temp.sp) = (temp.sp) - 2) : (temp.sp = 0); /* с решеткой шестнадцатиричная выводится с 0x */
+	else if (((flags->spec == 'x') || (flags->spec == 'X')) && (flags->resh == 1) && !ft_strcmp("0", num))
+		if (temp.sp < 0)
+			temp.sp = 0;
 	return (temp);
 }
 
@@ -135,13 +137,17 @@ void	ft_constructor_16(t_flags *flags, t_wp temp, char *num, int *count)
 
 	if (flags->minus)
 	{
-		ft_putchar_pf('0', count);
-		ft_putchar_pf(flags->spec, count);
-		ft_putstr_pf(num, count);
-		while (spaces--)
-			ft_putchar_pf(' ', count);
+		if (ft_strcmp("0", num) && (!flags->dot || (flags->dot && temp.nul)))
+		{
+			ft_putchar_pf('0', count);
+			ft_putchar_pf(flags->spec, count);
+		}
+		if (!flags->dot || (flags->dot && temp.nul))
+			ft_putstr_pf(num, count);
 		while (nulls--)
 			ft_putchar_pf('0', count);
+		while (spaces--)
+			ft_putchar_pf(' ', count);
 	}
 	else
 	{
@@ -150,14 +156,18 @@ void	ft_constructor_16(t_flags *flags, t_wp temp, char *num, int *count)
 			ft_putchar_pf(' ', count);
 			spaces--;
 		}
+		if (ft_strcmp("0", num) && (!flags->dot || (flags->dot && temp.nul)))
+		{
+			ft_putchar_pf('0', count);
+			ft_putchar_pf(flags->spec, count);
+		}
 		while (nulls > 0)
 		{
 			ft_putchar_pf('0', count);
 			nulls--;
 		}
-		ft_putchar_pf('0', count);
-		ft_putchar_pf(flags->spec, count);
-		ft_putstr_pf(num, count);
+		if (!flags->dot || (flags->dot && temp.nul))
+			ft_putstr_pf(num, count);
 	}
 }
 
@@ -743,7 +753,7 @@ void	ft_fill_struct(t_flags *flags, char *p)
 	flags->spec = *p;
 }
 
-int		ft_printf(char *fmt, ...)
+int		ft_printf(const char *fmt, ...)
 {
 	va_list	ap; /* указывает на очередной безымянный аргумент */
 	t_flags	*flags;
@@ -790,6 +800,11 @@ int		ft_printf(char *fmt, ...)
 				if (*p == 'x' || *p == 'X')
 				{
 					ft_decimal(ap, &count, flags);
+					break ;
+				}
+				if (*p == '%')
+				{
+					ft_percent(ap, &count, flags);
 					break ;
 				}
 				p++;
