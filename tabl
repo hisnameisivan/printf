@@ -1,13 +1,13 @@
                     c   s   p       d   i  	o  	u	x	X
 флаг      .         ub  +   ub      +    
-    (5)   #         ub  ub  ub      ig
+    (5)   #         ub  ub  ub      ig  ub      ub
     (1)   hh        ub  ub  ub      
     (2)   h         ig  ig  ig      +
     (3)   ll        ub  ub  ub
     (4)   l         ig  er  ub
         space			ub			+	+	ub	-	-	-
 		null            ub(w)
-		fl +			ub					ub
+		fl +			ub					ub  ub
 флаг 0 ignore, если есть точность
 флаг space ignore когда есть флаг '+'
 флаг 0 со строками ub, но по факту работает

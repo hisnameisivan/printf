@@ -89,14 +89,11 @@ t_wp	ft_cmp_width_prec_num(t_flags *flags, char *num)
 	((flags->precision - count) < 0) ? (temp.nul = 0) : (temp.nul = flags->precision - count); /* чтобы учесть отрицательный результат precision - count, т к дальше сломается!!!*/
 	((flags->width - (temp.nul + count)) < 0) ? (temp.sp = 0) : (temp.sp = flags->width - (temp.nul + count));
 	//temp.sp = flags->width - (temp.nul + count);
-	if ((flags->plus && (flags->spec == 'd' || flags->spec == 'i' || flags->spec == 'u')) || (flags->spec == 'o' && flags->resh == 1)
+	if ((flags->plus && (flags->spec == 'd' || flags->spec == 'i')) || (flags->spec == 'o' && flags->resh == 1)
 	|| ((flags->spec == 'd' || flags->spec == 'i') && (temp.znak == -1)))
 		(((temp.sp) - 1) > 0) ? ((temp.sp)--) : (temp.sp = 0);
-	if (((flags->spec == 'x') || (flags->spec == 'X')) && (flags->resh == 1) && ft_strcmp("0", num))
+	if (((flags->spec == 'x') || (flags->spec == 'X')) && (flags->resh == 1))
 		(((temp.sp) - 2) > 0) ? ((temp.sp) = (temp.sp) - 2) : (temp.sp = 0); /* с решеткой шестнадцатиричная выводится с 0x */
-	else if (((flags->spec == 'x') || (flags->spec == 'X')) && (flags->resh == 1) && !ft_strcmp("0", num))
-		if (temp.sp < 0)
-			temp.sp = 0;
 	return (temp);
 }
 
@@ -129,42 +126,41 @@ void	ft_type_sp_nul(t_wp temp, int *count) /* печатаем ширину ну
 
 void	ft_constructor_16(t_flags *flags, t_wp temp, char *num, int *count)
 {
-	int		spaces;
-	int		nulls;
-
-	spaces = temp.sp;
-	nulls = temp.nul;
-
 	if (flags->minus)
 	{
-		if (ft_strcmp("0", num) && (!flags->dot || (flags->dot && temp.nul)))
+		if (ft_strcmp("0", num) && (!flags->dot || (flags->dot && temp.nul))) /* если подан не 0 и (нет точки от точности или (есть точность )) */
 		{
 			ft_putchar_pf('0', count);
 			ft_putchar_pf(flags->spec, count);
 		}
-		if (!flags->dot || (flags->dot && temp.nul))
-			ft_putstr_pf(num, count);
-		while (nulls--)
+		ft_putstr_pf(num, count);
+		while (temp.nul > 0)
+		{
 			ft_putchar_pf('0', count);
-		while (spaces--)
+			temp.nul--;
+		}
+		while (temp.sp > 0)
+		{
 			ft_putchar_pf(' ', count);
+			temp.sp--;
+		}
 	}
 	else
 	{
-		while (spaces > 0)
+		while (temp.sp > 0)
 		{
 			ft_putchar_pf(' ', count);
-			spaces--;
+			temp.sp--;
 		}
 		if (ft_strcmp("0", num) && (!flags->dot || (flags->dot && temp.nul)))
 		{
 			ft_putchar_pf('0', count);
 			ft_putchar_pf(flags->spec, count);
 		}
-		while (nulls > 0)
+		while (temp.nul > 0)
 		{
 			ft_putchar_pf('0', count);
-			nulls--;
+			temp.nul--;
 		}
 		if (!flags->dot || (flags->dot && temp.nul))
 			ft_putstr_pf(num, count);
@@ -753,7 +749,7 @@ void	ft_fill_struct(t_flags *flags, char *p)
 	flags->spec = *p;
 }
 
-int		ft_printf(const char *fmt, ...)
+int		ft_printf(char *fmt, ...)
 {
 	va_list	ap; /* указывает на очередной безымянный аргумент */
 	t_flags	*flags;
@@ -802,11 +798,11 @@ int		ft_printf(const char *fmt, ...)
 					ft_decimal(ap, &count, flags);
 					break ;
 				}
-				if (*p == '%')
-				{
-					ft_percent(ap, &count, flags);
-					break ;
-				}
+				// if (*p == '%')
+				// {
+				// 	ft_percent(ap, &count, flags);
+				// 	break ;
+				// }
 				p++;
 			}
 		}
