@@ -65,7 +65,7 @@ int main(void)
 
 	// printf("24 : %-#6.5X\n", 123);
 	// printf("25 : %+10u\n", 0);
-	
+
 	// ft_printf("%.0d\n", 0);
 	// ft_printf("%.0i\n", 0);
 	// ft_printf("%.0o\n", 0);
@@ -108,9 +108,9 @@ int main(void)
 	//    printf("01 no : %-+7.d\n", 15);
 	// ft_printf("02 ft : %-+7.d\n", 0);	/* точность =0, минус да, плюс да, num != 0 */ // fail
 	//    printf("02 no : %-+7.d\n", 0);
-	
-	
-	// ft_printf("01 != 0 ft : %-+8.0d\n", 123); 
+
+
+	// ft_printf("01 != 0 ft : %-+8.0d\n", 123);
 	//    printf("01 != 0 no : %-+8.0d\n", 123);
 	// ft_printf("01 == 0 ft : %-+8.0d\n", 0);
 	//    printf("01 == 0 no : %-+8.0d\n", 0);
@@ -153,7 +153,7 @@ int main(void)
 	//    printf("no : % 08d:\n", 123);
 	// ft_printf("ft : % 08.6d:\n", 123);
 	//    printf("no : % 08.6d:\n", 123);
-	// ft_printf("ft : %08.6d:\n", 123);	
+	// ft_printf("ft : %08.6d:\n", 123);
 	//    printf("no : %08.6d:\n", 123);
 
 	// printf("01 stroka: %-+8.6d\n", -123);
@@ -238,5 +238,7 @@ int main(void)
 
 	// printf("%0.0d\n", 0);
 	//printf("%08.5x\n", 255);
+
+	// ft_printf("%lllllhhhhhhhd\n", 145577434352);
 	return (0);
  }
