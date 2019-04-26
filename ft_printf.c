@@ -221,6 +221,12 @@ void	ft_constructor(t_flags *flags, t_wp temp, int sit, char *num, int *count)
 			ft_putchar_pf(' ', count); /* флаг пробел (флаг пробел не работает с восьмиричной и шестнадцатиричной*/
 			temp.sp--; /* флаг пробел съел один пробел */
 		}
+		else if (temp.znak == 0 && flags->spec != 'u' && flags->resh)
+		{
+			ft_putchar_pf('0', count);
+			if (flags->spec != 'o') /* для шестнадцатиричной */
+				ft_putchar_pf(flags->spec, count);	
+		}
 		ft_type_nul(temp, count); /* sit 2b - отсюда начинается не заходя в if*/
 		ft_putstr_pf(num, count);
 		ft_type_space(temp, count);
@@ -235,25 +241,28 @@ void	ft_constructor(t_flags *flags, t_wp temp, int sit, char *num, int *count)
 	// }
 	else if (sit == 4)
 	{
-		ft_type_space(temp, count);
+		if (flags->dot == 1 || (flags->dot == 0 && flags->nul == 0)) /* 4a */
+			ft_type_space(temp, count); 
 		if (temp.znak == -1)
 			ft_putchar_pf('-', count);
 		else if (temp.znak == 1 && flags->plus)
 			ft_putchar_pf('+', count);
+		if (flags->dot == 0 && flags->nul == 1) /* 4b */
+			ft_type_sp_nul(temp, count); 
 		ft_type_nul(temp, count);
 		ft_putstr_pf(num, count);
 		//printf("\nsit 4\n");
 	}
-	else if (sit == 5) /* можно закоментить ничего не ломается */
-	{
-		if (temp.znak == -1)
-			ft_putchar_pf('-', count);
-		else if (temp.znak == 1 && flags->plus)
-			ft_putchar_pf('+', count);
-		ft_type_sp_nul(temp, count);
-		ft_putstr_pf(num, count);
-		//printf("\nsit 5\n");
-	}
+	// else if (sit == 5) /* можно закоментить ничего не ломается */
+	// {
+	// 	if (temp.znak == -1)
+	// 		ft_putchar_pf('-', count);
+	// 	else if (temp.znak == 1 && flags->plus)
+	// 		ft_putchar_pf('+', count);
+	// 	ft_type_sp_nul(temp, count);
+	// 	ft_putstr_pf(num, count);
+	// 	//printf("\nsit 5\n");
+	// }
 	else if (sit == 6)
 	{
 		if (temp.znak == 1 && flags->space) /* sit 6a znak == 1 - значит число либо d или i */
@@ -261,7 +270,17 @@ void	ft_constructor(t_flags *flags, t_wp temp, int sit, char *num, int *count)
 			ft_putchar_pf(' ', count); /* флаг пробел (флаг пробел не работает с восьмиричной и шестнадцатиричной*/
 			temp.sp--; /* флаг пробел съел один пробел */
 		}
-		ft_type_space(temp, count); /* sit 6b отсюда начинается */
+		if (flags->dot == 1 || (flags->dot == 0 && flags->nul == 0))
+			ft_type_space(temp, count); /* sit 6b отсюда начинается */
+		if (temp.znak == 0 && flags->spec != 'u' && flags->resh)
+		{
+			ft_putchar_pf('0', count);
+			if (flags->spec != 'o') /* для шестнадцатиричной */
+				ft_putchar_pf(flags->spec, count);	
+		}
+		if (flags->nul && flags->dot == 0) /* если точность указана Флаг '0' ignore -> нужно, чтобы не было точки */
+			ft_type_sp_nul(temp, count); /* sit 6c или sit 6d*/
+		else	
 		ft_type_nul(temp, count);
 		ft_putstr_pf(num, count);
 		//printf("\nsit 6\n");
@@ -273,17 +292,17 @@ void	ft_constructor(t_flags *flags, t_wp temp, int sit, char *num, int *count)
 	// 	ft_putstr(num);
 	// 	printf("\nsit 7\n");
 	// }
-	else if (sit == 8)
-	{
-		if (temp.znak == 1 && flags->space) /* sit 6a znak == 1 - значит число либо d или i */
-		{
-			ft_putchar_pf(' ', count); /* флаг пробел (флаг пробел не работает с восьмиричной и шестнадцатиричной*/
-			temp.sp--; /* флаг пробел съел один пробел */
-		}
-		ft_type_sp_nul(temp, count);
-		ft_putstr_pf(num, count);
-		//printf("\nsit 8\n");
-	}
+	// else if (sit == 8)
+	// {
+	// 	if (temp.znak == 1 && flags->space) /* sit 6a znak == 1 - значит число либо d или i */
+	// 	{
+	// 		ft_putchar_pf(' ', count); /* флаг пробел (флаг пробел не работает с восьмиричной и шестнадцатиричной*/
+	// 		temp.sp--; /* флаг пробел съел один пробел */
+	// 	}
+	// 	ft_type_sp_nul(temp, count);
+	// 	ft_putstr_pf(num, count);
+	// 	//printf("\nsit 8\n");
+	// }
 	// else if (sit == 9) /* */ склеилась с 8
 	// {
 	// 	ft_type_sp_nul(temp);
@@ -412,6 +431,90 @@ char	*convert_v_16(long long num, t_flags *flags) /* Из десятичной �
 	return (hex_temp);
 }
 
+int		ft_check_nothing(char *num, t_flags *flags, int *count)
+{
+	if (ft_strcmp("0", num) == 0)
+	{
+	if (flags->minus)
+	{
+		if (flags->dot != 0 && flags->precision == 0)
+		{
+			if (flags->spec == 'd' || flags->spec == 'i')
+			{
+				if (flags->plus == 1)
+				{
+					ft_putchar_pf('+', count);
+					flags->width--;
+					while (flags->width > 0)
+					{
+						ft_putchar_pf(' ', count);
+						flags->width--;
+					}
+					return (1);
+				}
+				else
+				{
+					while (flags->width > 0)
+					{
+						ft_putchar_pf(' ', count);
+						flags->width--;
+					}
+					return (1);
+				}
+			}
+			else
+			{
+				while (flags->width > 0)
+				{
+					ft_putchar_pf(' ', count);
+					flags->width--;
+				}
+				return (1);
+			}
+		}
+	}
+	else
+	{
+		if (flags->dot != 0 && flags->precision == 0)
+		{
+			if (flags->spec == 'd' || flags->spec == 'i')
+			{
+				if (flags->plus == 1)
+				{
+					flags->width--;
+					while (flags->width > 0)
+					{
+						ft_putchar_pf(' ', count);
+						flags->width--;
+					}
+					ft_putchar_pf('+', count);
+					return (1);
+				}
+				else
+				{
+					while (flags->width > 0)
+					{
+						ft_putchar_pf(' ', count);
+						flags->width--;
+					}
+					return (1);
+				}
+			}
+			else
+			{
+				while (flags->width > 0)
+				{
+					ft_putchar_pf(' ', count);
+					flags->width--;
+				}
+				return (1);
+			}
+		}
+	}
+	}
+	return (0);
+}
+
 void	ft_decimal(va_list ap, int *count, t_flags *flags)
 {
 	long long	num;
@@ -432,19 +535,31 @@ void	ft_decimal(va_list ap, int *count, t_flags *flags)
 		new_num = convert_v_8(num, flags);
 	else if (flags->spec == 'd' || flags->spec == 'i' || flags->spec == 'u')
 		new_num = ft_long_to_ascii(num);
+	if ((ft_check_nothing(new_num, flags, count)) == 1)
+		return ;
 	temp = ft_cmp_width_prec_num(flags, new_num);
-	if (temp.znak == 0 && (flags->spec == 'x' || flags->spec == 'X') && flags->resh)
+	if (temp.znak == 0)
 	{
-		ft_constructor_16(flags, temp, new_num, count);
+		if (flags->minus)
+			ft_constructor(flags, temp, 2, new_num, count);
+		else 
+			ft_constructor(flags, temp, 6, new_num, count);
 		free(flags);
 		return ;
 	}
-	if (temp.znak == 0 && flags->spec == 'o' && flags->resh)
-	{
-		ft_constructor_8(flags, temp, new_num, count);
-		free(flags);
-		return ;
-	}
+
+	// if (temp.znak == 0 && (flags->spec == 'x' || flags->spec == 'X') && flags->resh)
+	// {
+	// 	ft_constructor_16(flags, temp, new_num, count);
+	// 	free(flags);
+	// 	return ;
+	// }
+	// if (temp.znak == 0 && flags->spec == 'o' && flags->resh)
+	// {
+	// 	ft_constructor_8(flags, temp, new_num, count);
+	// 	free(flags);
+	// 	return ;
+	// }
 	//	if (flags->width || flags->precision) /* выяснить зачем */
 		if (flags->minus) /* есть флаг "-" */
 		{
@@ -456,10 +571,7 @@ void	ft_decimal(va_list ap, int *count, t_flags *flags)
 					ft_constructor(flags, temp, 1, new_num, count); /* ветка 2 */
 				else
 				{
-					if (flags->space) /* можно объединить if и else if, флаг пробел учитывается в конструкторе*/
-						ft_constructor(flags, temp, 2, new_num, count); /* ветка 3 */
-					else if (!(flags->space))
-						ft_constructor(flags, temp, 2, new_num, count); /* ветка 4 */
+					ft_constructor(flags, temp, 2, new_num, count);
 				}
 			}
 		}
@@ -467,56 +579,17 @@ void	ft_decimal(va_list ap, int *count, t_flags *flags)
 		{
 			if (temp.znak == -1) /* num отрицательный, НЕТ флага '-', флаг '+' не важен */
 			{
-				if (flags->nul)
-				{
-					if (flags->dot)
-						ft_constructor(flags, temp, 4, new_num, count); /* ветка 5.1 */
-					else if (!(flags->dot))
-						ft_constructor(flags, temp, 5, new_num, count); /* ветка 6 */ /* точность не влияет */
-				}
-				else if (!(flags->nul))
-					ft_constructor(flags, temp, 4, new_num, count); /* ветка 5.2 */
+				ft_constructor(flags, temp, 4, new_num, count);
 			}
 			else /* когда znak == 1 или 0 */
 			{
 				if (flags->plus) /* num положительный, НЕТ флага '-' и ЕСТЬ флаг '+'  */
 				{
-					if (flags->nul)
-					{
-						if (flags->dot)
-							ft_constructor(flags, temp, 4, new_num, count); /* ветка 7.1 */
-						else if (!(flags->dot))
-							ft_constructor(flags, temp, 5, new_num, count); /* ветка 8 */  /* точность не влияет */
-					}
-					else if (!(flags->nul))
-						ft_constructor(flags, temp, 4, new_num, count); /* ветка 7.2 */
+					ft_constructor(flags, temp, 4, new_num, count);
 				}
 				else if (!(flags->plus))/* num положительный, НЕТ флага '-' и НЕТ флага '+'  */
 				{
-					if (flags->nul)
-					{
-						if (flags->dot)
-						{
-							if (flags->space) /* можно объединить if и else if, флаг пробел учитывается в конструкторе*/
-								ft_constructor(flags, temp, 6, new_num, count); /* ветка 9 */
-							else if (!(flags->space))
-								ft_constructor(flags, temp, 6, new_num, count); /* ветка 10.1 */
-						}
-						else if (!(flags->dot))
-						{
-							if (flags->space) /* можно объединить if и else if, флаг пробел учитывается в конструкторе*/
-								ft_constructor(flags, temp, 8, new_num, count); /* ветка 11 */
-							else if (!(flags->space))
-								ft_constructor(flags, temp, 8, new_num, count); /* ветка 12 */
-						}
-					}
-					else if (!(flags->nul)) // нашел
-					{
-						if (flags->space)
-							ft_constructor(flags, temp, 6, new_num, count); /* ветка 13 */
-						else if (!(flags->space))
-							ft_constructor(flags, temp, 6, new_num, count); /* ветка 10.2 */
-					}
+					ft_constructor(flags, temp, 6, new_num, count);
 				}
 			}
 		}
