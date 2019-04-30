@@ -63,7 +63,7 @@ char	*ft_long_to_ascii(long long n)
 	return (res);
 }
 
-void	ft_modul_char(char *num) 
+void	ft_modul_char(char *num)
 {
 	ft_memmove(num, (num + 1), ft_strlen(num + 1) + 1);
 }
@@ -436,6 +436,8 @@ char	*convert_v_16(long long num, t_flags *flags) /* Из десятичной �
 // 26.04 изменил ft_check_nothing, немного сократил
 int		ft_check_nothing(char *num, t_flags *flags, int *count)
 {
+	if (num == NULL)
+		return (0);
 	if (ft_strcmp("0", num) == 0)
 	{
 		if (flags->minus)
@@ -449,7 +451,7 @@ int		ft_check_nothing(char *num, t_flags *flags, int *count)
 					ft_type_space(flags->width, count);
 					return (1);
 				}
-				
+
 				ft_type_space(flags->width, count);
 				return (1);
 			}
@@ -494,7 +496,7 @@ int		ft_check_nothing(char *num, t_flags *flags, int *count)
 					ft_type_space(flags->width, count);
 					ft_putchar_pf('+', count);
 					ft_putchar_pf('0', count);
-					return (1);	
+					return (1);
 				}
 				flags->width--;
 				ft_type_space(flags->width, count);
@@ -507,9 +509,47 @@ int		ft_check_nothing(char *num, t_flags *flags, int *count)
 	return (0);
 }
 
-void	ft_convert_negative_u(long long *num, t_flags *flags)
+unsigned long long	ucount_of_digits(unsigned long long n)
+{
+	int count;
+
+	if (n == 0)
+		return (1);
+	count = 0;
+	while (n)
+	{
+		n = n / 10;
+		count++;
+	}
+	return (count);
+}
+
+char	*ft_ulong_to_ascii(unsigned long long n)
+{
+	char	*res;
+	int		i;
+	int		is_neg;
+
+	is_neg = 1;
+	i = ucount_of_digits(n);
+	if (!(res = (char *)malloc(sizeof(char) * (i + 1))))
+		return (NULL);
+	res[i] = 0;
+	while (i)
+	{
+		res[i - 1] = is_neg * (n % 10) + 48;
+		n = n / 10;
+		i--;
+	}
+	if (is_neg == -1)
+		res[0] = '-';
+	return (res);
+}
+
+char	*ft_convert_negative_u(long long *num, t_flags *flags)
 {
 	unsigned long long	max;
+	unsigned long long	temp_num;
 
 	if (flags->hh)
 		max = FT_MAX_UCHAR;
@@ -519,8 +559,10 @@ void	ft_convert_negative_u(long long *num, t_flags *flags)
 		max = FT_MAX_ULONG;
 	else
 		max = FT_MAX_UINT;
-	*num = max + *num + 1; /* Отрицательный long long делаем unsigned long long */
+	temp_num = max + *num + 1; /* Отрицательный long long делаем unsigned long long */
+	return (ft_ulong_to_ascii(temp_num));
 }
+
 
 void	ft_decimal(va_list ap, int *count, t_flags *flags)
 {
@@ -541,7 +583,7 @@ void	ft_decimal(va_list ap, int *count, t_flags *flags)
 	else if (flags->spec == 'o')
 		new_num = convert_v_8(num, flags);
 	else if (flags->spec == 'u' && num < 0)
-		ft_convert_negative_u(&num, flags);
+		new_num = ft_convert_negative_u(&num, flags);
 	else if (flags->spec == 'd' || flags->spec == 'i' || flags->spec == 'u')
 		new_num = ft_long_to_ascii(num);
 	if ((ft_check_nothing(new_num, flags, count)) == 1)
@@ -873,7 +915,7 @@ void	ft_float(va_list ap, int *count, t_flags *flags)
 {
 	int		temp;
 	double	fraction;
-	
+
 	fraction = va_arg(ap, double);
 	temp = (int)fraction;
 	fraction = fraction - temp;
@@ -882,7 +924,7 @@ void	ft_float(va_list ap, int *count, t_flags *flags)
 	printf("%d\n", temp);
 	printf("%f", fraction);
 	count++;
-} 
+}
 
 int		ft_printf(const char *fmt, ...)
 {
@@ -954,8 +996,8 @@ int		ft_printf(const char *fmt, ...)
 	return (count);
 }
 
-int main(void)
-{
+// int main(void)
+// {
 // 	/* тесты для десятичной записи */
 
 	// printf("01 stroka: %-+8.6d\n", -123);
@@ -1279,12 +1321,12 @@ int main(void)
 	//ft_printf("%.o\n", 0);
 	//printf("%#.x\n", 0);
 	//printf("%#.0o\n", 0);
-	
-	printf("%d\n", printf("%llu\n", (long long)-42));
-	ft_printf("%d\n",ft_printf("%llu\n", (long long)-42));
-	
+
+	// printf("%d\n", printf("%llu\n", (long long)-42));
+	// ft_printf("%d\n",ft_printf("%llu\n", (long long)-42));
+
 	// ft_printf("%d\n", ft_printf("%.8s\n", "hello"));
 	// printf("%d\n", printf("%.8s\n", "hello"));
 
-	return (0);
-}
+// 	return (0);
+// }
