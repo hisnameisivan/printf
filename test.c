@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   test.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: waddam <waddam@student.42.fr>              +#+  +:+       +#+        */
+/*   By: draudrau <draudrau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/16 12:18:30 by draudrau          #+#    #+#             */
-/*   Updated: 2019/04/26 14:11:38 by waddam           ###   ########.fr       */
+/*   Updated: 2019/04/30 14:45:25 by draudrau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,9 +123,9 @@ int main(void)
 	// printf("56 stroka: %+8.2s\n", "privet1");
 	// printf("57 stroka: %02.2s\n", "privet1");
 
-	printf("1 stroka: %#6.1x\n", 123);
-	printf("1 stroka: %#6x\n", 123);
-	printf("1 stroka: %#.6x\n", 123);
+	// printf("1 stroka: %#6.1x\n", 123);
+	// printf("1 stroka: %#6x\n", 123);
+	// printf("1 stroka: %#.6x\n", 123);
 	// printf("2 stroka: %#2x\n", 123);
 	// printf("3 stroka: %#3x\n", 123);
 	// printf("4 stroka: %#4x\n", 123);
@@ -133,8 +133,104 @@ int main(void)
 	// printf("6 stroka: %#6x\n", 123);
 	// printf("7 stroka: %#7x\n", 123);
 	//printf("23 stroka: %6.6x\n", 123);
-	printf("%+08.0d\n", 0);
-	printf("%+8.0d\n", 0);
-	printf("%+8.0o\n", 0);
+	// printf("%+08.0d\n", 0);
+	// printf("%+8.0d\n", 0);
+	// printf("%+8.0o\n", 0);
+	
+	/* FCH исправить тесты */
+	// тесты ОК
+
+	// printf("% %\n");
+	// printf("%+%\n");
+	// printf("%   %%%\n", "test");
+	// printf("#0006\n");
+	// printf("%%");
+	// printf("\n#0007\n");
+	// printf("%5%");
+	// printf("\n#0008\n");
+	// printf("%-5%");
+	// printf("\n#0009\n");
+	// printf("%.0%");
+	// printf("\n#0010\n");
+	// printf("%%", "test");
+	// printf("\n#0011\n");
+	// printf("%   %", "test");
+	// printf("\n\n#0028\n");
+	// printf("%d\n", 4294967297);
+	// printf("\n#0044\n");
+	// printf("%#08x", 42);
+	// printf("\n#0046\n");
+	// printf("@moulitest: %#.x %#.0x", 0, 0);
+	// printf("\n#0047\n");
+	// printf("@moulitest: %.x %.0x", 0, 0);
+	// printf("\n#0048\n");
+	// printf("@moulitest: %5.x %5.0x", 0, 0);
+	//printf("%5s", "");
+	//printf("\n#0060\n");
+	//printf("%.2s is a string", "");
+	//printf("\n#0061\n");
+	//printf("%5.2s is a string", "");
+	//printf("\n#0066\n");
+	//printf("%-.2s is a string", "");
+	//printf("\n#0067\n");
+	//printf("%-5.2s is a string", "");
+	// printf("\n#0073\n");
+	// printf("@moulitest: %s", NULL);
+	// не ОК
+
+	// printf("\n#0029\n");
+	// printf("%jx\n", -4294967296);
+	// printf("\n#0030\n");
+	// printf("%jx\n", -4294967297);
+
+
+	// printf("\n#0074\n");
+	// printf("%.2c", NULL);
+	// printf("\n#0075\n");
+	// printf("%s %s", NULL, "string");
+	// printf("\n#0079\n");
+	// printf("@moulitest: %c", 0);
+	// printf("\n#0080\n");
+	// printf("%2c", 0);
+	// printf("\n#0081\n");
+	// printf("null %c and text", 0);
+	// printf("\n#0082\n");
+	// printf("% c", 0);
+	// printf("\n#0093\n");
+	// printf("@moulitest: %.o %.0o", 0, 0);
+	// printf("\n#0094\n");
+	// printf("@moulitest: %5.o %5.0o", 0, 0);
+	// printf("\n#0095\n");
+	// printf("@moulitest: %#.o %#.0o", 0, 0);
+	// printf("\n#0151\n");
+	// printf("%jd", 9223372036854775807);
+	// printf("\n#0152\n");
+	// printf("%jd", -9223372036854775808);
+	// printf("\n#0153\n");
+	// printf("%zd", 4294967295);
+	// printf("\n#0154\n");
+	// printf("%zd", 4294967296);
+	// printf("\n#0175\n");
+	// printf("@moulitest: %.d %.0d", 0, 0);
+	// printf("\n#0176\n");
+	// printf("@moulitest: %5.d %5.0d", 0, 0);
+	// printf("\n#0190\n");
+	// printf("%lu", -42);
+	// printf("\n#0192\n");
+	// printf("%ju", 4999999999);
+	// printf("\n#0193\n");
+	// printf("%ju", 4294967296);
+	// printf("\n");
+
+	/* тесты float */
+
+	printf("%Lf\n", 22222222222222222222.1);
+	printf("%.0f\n", 123.523);
+	printf("%.f\n", 123.523);
+	printf("%-8.1f\n", 123.523);
+	printf("%.6f\n", 123.523);
+	printf("%lf\n", 4294967296.523); /* undefined behavior c ll */
+	printf("%f\n", 4294967296.523);
+	printf("%.0f", 19999.9 );
 	return (0);
 }

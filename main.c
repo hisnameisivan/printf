@@ -240,5 +240,12 @@ int main(void)
 	//printf("%08.5x\n", 255);
 
 	// ft_printf("%lllllhhhhhhhd\n", 145577434352);
+	double x = 15.9;
+	int z;
+
+	z = (int)x;
+	printf("\n%d\n", z);
+	x = x - z;
+	printf("\n%f\n", x);
 	return (0);
  }

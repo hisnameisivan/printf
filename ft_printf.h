@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_printf.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: waddam <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: draudrau <draudrau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/09 16:58:56 by draudrau          #+#    #+#             */
-/*   Updated: 2019/04/22 19:20:16 by waddam           ###   ########.fr       */
+/*   Updated: 2019/04/30 14:17:27 by draudrau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,14 @@
 # define FT_MAX_ULONG 18446744073709551615ul
 # define FT_MAX_UINT 4294967295
 # include "libft/libft.h"
+# include <limits.h>
 
 typedef struct	s_flags
 {
 	char		spec;
 	int			dot;
 	int			resh;
+	int			j;
 	int			h;
 	int			l;
 	int			hh;
@@ -36,7 +38,6 @@ typedef struct	s_flags
 	int			procent;
 	int			width; /* для ширины */
 	int			precision; /* для точности */
-	//va_list		ap;
 }				t_flags;
 
 typedef struct	s_wp

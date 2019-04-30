@@ -63,7 +63,7 @@ char	*ft_long_to_ascii(long long n)
 	return (res);
 }
 
-void	ft_modul_char(char *num)
+void	ft_modul_char(char *num) 
 {
 	ft_memmove(num, (num + 1), ft_strlen(num + 1) + 1);
 }
@@ -71,7 +71,7 @@ void	ft_modul_char(char *num)
 t_wp	ft_cmp_width_prec_num(t_flags *flags, char *num)
 {
 	t_wp	temp;
-	int		count; /* количество цифр с учетом знака */
+	int		count; /* количество цифр без учета знака */
 
 	temp.znak = 0;
 	temp.nul = 0;
@@ -98,7 +98,7 @@ t_wp	ft_cmp_width_prec_num(t_flags *flags, char *num)
 }
 
 // 26.04 изменил функции ft_type_, вместо структуры подаем int
-void	ft_type_space(int spaces, int *count) /* печатаем ширину пробелмаи */
+void	ft_type_space(int spaces, int *count) /* печатаем ширину пробелами */
 {
 	while (spaces > 0)
 	{
@@ -325,6 +325,8 @@ long long	ft_apply_modificator(va_list ap, t_flags *flags) /* long long вмес
 		(flags->spec == 'd' || flags->spec == 'i') ? (num = (long)num) : (num = (unsigned long)num);
 	else if (flags->ll)
 		(flags->spec == 'd' || flags->spec == 'i') ? (num = (long long)num) : (num = (unsigned long long)num);
+	else if (flags->j)
+		num = (unsigned long)num; /* новый флаг j */
 	return (num);
 }
 
@@ -442,12 +444,27 @@ int		ft_check_nothing(char *num, t_flags *flags, int *count)
 			{
 				if ((flags->spec == 'd' || flags->spec == 'i') && flags->plus == 1)
 				{
-					ft_putchar_pf('+', count);
 					flags->width--;
+					ft_putchar_pf('+', count);
 					ft_type_space(flags->width, count);
 					return (1);
 				}
+				
 				ft_type_space(flags->width, count);
+				return (1);
+			}
+			else if (flags->dot == 0) /* добавила 28.04 */
+			{
+				if ((flags->spec == 'd' || flags->spec == 'i') && flags->plus == 1)
+				{
+					flags->width = flags->width - 2; /* вычитаем под знак и под ноль */
+					ft_putchar_pf('+', count);
+					ft_putchar_pf('0', count);
+					ft_type_space(flags->width, count);
+					return (1);
+				}
+				ft_putchar_pf('0', count);
+				ft_type_space(--flags->width, count);
 				return (1);
 			}
 		}
@@ -462,12 +479,47 @@ int		ft_check_nothing(char *num, t_flags *flags, int *count)
 					ft_putchar_pf('+', count);
 					return (1);
 				}
+				if (flags->resh != 0 && flags->spec == 'o') /* восьмиричная с # выводит 0 (остальные выводят пустоту)*/
+					flags->width--;
 				ft_type_space(flags->width, count);
+				if (flags->resh != 0 && flags->spec == 'o')
+					ft_putchar_pf('0', count);
 				return (1);
 			}
+			else if (flags->dot == 0) /* добавила 28.04 */
+			{
+				if ((flags->spec == 'd' || flags->spec == 'i') && flags->plus == 1)
+				{
+					flags->width = flags->width - 2; /* вычитаем под знак и под ноль */
+					ft_type_space(flags->width, count);
+					ft_putchar_pf('+', count);
+					ft_putchar_pf('0', count);
+					return (1);	
+				}
+				flags->width--;
+				ft_type_space(flags->width, count);
+				ft_putchar_pf('0', count);
+				return (1);
+			}
+
 		}
 	}
 	return (0);
+}
+
+void	ft_convert_negative_u(long long *num, t_flags *flags)
+{
+	unsigned long long	max;
+
+	if (flags->hh)
+		max = FT_MAX_UCHAR;
+	if (flags->h)
+		max = FT_MAX_USHORT;
+	if (flags->l || flags->ll)
+		max = FT_MAX_ULONG;
+	else
+		max = FT_MAX_UINT;
+	*num = max + *num + 1; /* Отрицательный long long делаем unsigned long long */
 }
 
 void	ft_decimal(va_list ap, int *count, t_flags *flags)
@@ -477,7 +529,7 @@ void	ft_decimal(va_list ap, int *count, t_flags *flags)
 	t_wp		temp;
 
 	new_num = NULL;
-	if (flags->h || flags->l || flags->hh || flags->ll)
+	if (flags->h || flags->l || flags->hh || flags->ll || flags->j) /* добавила флаг j */
 		num = ft_apply_modificator(ap, flags);
 	else
 	{
@@ -488,6 +540,8 @@ void	ft_decimal(va_list ap, int *count, t_flags *flags)
 		new_num = convert_v_16(num, flags);
 	else if (flags->spec == 'o')
 		new_num = convert_v_8(num, flags);
+	else if (flags->spec == 'u' && num < 0)
+		ft_convert_negative_u(&num, flags);
 	else if (flags->spec == 'd' || flags->spec == 'i' || flags->spec == 'u')
 		new_num = ft_long_to_ascii(num);
 	if ((ft_check_nothing(new_num, flags, count)) == 1)
@@ -551,27 +605,28 @@ void	ft_decimal(va_list ap, int *count, t_flags *flags)
 	free(flags);
 }
 
-void	ft_char(va_list ap, int *count, t_flags *flags)
+void	ft_char(va_list ap, int *count, t_flags *flags) /* изменила 28.04 */
 {
-	char	ch[2];
-	t_wp	temp;
+	char	ch;
+	//char	ch[2];
+	//t_wp	temp;
 
-	ch[0] = (char)va_arg(ap, int);
-	ch[1] = 0;
-	temp = ft_cmp_width_prec_num(flags, ch);
-	if (flags->width)
-		temp.sp = flags->width - 1;
+	ch = (char)va_arg(ap, int);
+	//ch[0] = (char)va_arg(ap, int);
+	//ch[1] = 0;
+	//temp = ft_cmp_width_prec_num(flags, ch);
+	//if (flags->width)
+	//	temp.sp = flags->width - 1;
+	flags->width = flags->width - 1;
 	if (flags->minus)
 	{
-		ft_putstr_pf(ch, count);
-		while (temp.sp-- > 0)
-			ft_putchar_pf(' ', count);
+		ft_putchar_pf(ch, count);
+		ft_type_space(flags->width, count);
 	}
 	else
 	{
-		while (temp.sp-- > 0)
-			ft_putchar_pf(' ', count);
-		ft_putstr_pf(ch, count);
+		ft_type_space(flags->width, count);
+		ft_putchar_pf(ch, count);
 	}
 }
 
@@ -582,21 +637,29 @@ void	ft_string(va_list ap, int *count, t_flags *flags)
 
 	spaces = 0;
 	str = va_arg(ap, char *);
+	if (!str)
+	{
+		ft_putstr_pf("(null)", count);
+		return ;
+	}
+	if (*str == '\0')
+	{
+		ft_type_space(flags->width, count);
+		return ;
+	}
 	if (flags->precision == 0)
 		flags->precision = ft_strlen(str);
-	(flags->width - flags->precision <= 0 ) ? (spaces = 0) : (spaces = flags->width - flags->precision);
+	((flags->width - flags->precision) <= 0 ) ? (spaces = 0) : (spaces = flags->width - flags->precision);
 	if (flags->minus)
 	{
-		while (flags->precision-- > 0)
+		while (flags->precision-- > 0 && *str != '\0') /* добавила условие != '\0'*/
 			ft_putchar_pf(*str++, count);
-		while (spaces-- > 0)
-			ft_putchar_pf(' ', count);
+		ft_type_space(spaces, count);
 	}
 	else
 	{
-		while (spaces-- > 0)
-			ft_putchar_pf(' ', count);
-		while (flags->precision-- > 0)
+		ft_type_space(spaces, count);
+		while (flags->precision-- > 0 && *str != '\0') /* добавила условие != '\0'*/
 			ft_putchar_pf(*str++, count);
 	}
 }
@@ -643,7 +706,7 @@ void	ft_pointer(va_list ap, int *count, t_flags *flags)
 void	ft_check_modificator(t_flags *flags, char *ptr) /* Проверяет флаги hh(1), h(2), ll(3), l(4)*/
 {
 	while (*ptr != 'c' && *ptr != 's' && *ptr != 'p' && *ptr != 'd' && *ptr != 'i' && *ptr != 'o'
-	&& *ptr != 'u' && *ptr != 'x' && *ptr != 'X' && *ptr != 'f')
+	&& *ptr != 'u' && *ptr != 'x' && *ptr != 'X' && *ptr != 'f' && *ptr != '\0') /* добавила != '\0' для процента*/
 	{
 		if (*ptr == 'h')
 		{
@@ -671,6 +734,8 @@ void	ft_check_modificator(t_flags *flags, char *ptr) /* Проверяет фл�
 				return ;
 			}
 		}
+		else if (*ptr == 'j') /* новый флаг j */
+			flags->j = 1;
 		ptr++;
 	}
 }
@@ -708,7 +773,7 @@ void	ft_write_width_precision(t_flags *flags, char *p)
 int		ft_search_before_spec(char *p, char c)
 {
 	while (*p != 'c' && *p != 's' && *p != 'p' && *p != 'd' && *p != 'i' && *p != 'o'
-	&& *p != 'u' && *p != 'x' && *p != 'X' && *p != 'f')
+	&& *p != 'u' && *p != 'x' && *p != 'X' && *p != 'f'&& *p != '\0')
 	{
 		if (*p == c)
 			return (1);
@@ -723,6 +788,7 @@ void	ft_initialization(t_flags *temp)
 	temp->dot = 0;
 	temp->spec = 0;
 	temp->resh = 0;
+	temp->j = 0;
 	temp->hh = 0;
 	temp->h = 0;
 	temp->ll = 0;
@@ -757,7 +823,7 @@ void	ft_fill_struct(t_flags *flags, char *p)
 		ft_write_width_precision(flags, p);
 	ft_check_modificator(flags, p);
 	while (*p != 'c' && *p != 's' && *p != 'p' && *p != 'd' && *p != 'i' && *p != 'o'
-	&& *p != 'u' && *p != 'x' && *p != 'X' && *p != 'f')
+	&& *p != 'u' && *p != 'x' && *p != 'X' && *p != 'f' && *p != '\0') /* добавила != '\0' для процента */
 	{
 		if (*p == '0') /* нужно записать ноль раньше ширины, не заходя в запись ширины */
 			flags->nul = 1;
@@ -787,6 +853,36 @@ void	ft_fill_struct(t_flags *flags, char *p)
 	}
 	flags->spec = *p;
 }
+
+void	ft_percent(int *count, t_flags *flags) /* добавила функцию 28.04 */
+{
+	flags->width--;
+	if (flags->minus)
+	{
+		ft_putchar_pf('%', count);
+		ft_type_space(flags->width, count);
+	}
+	else
+	{
+		(flags->nul != 0) ? (ft_type_sp_nul(flags->width, count)) : (ft_type_space(flags->width, count));
+		ft_putchar_pf('%', count);
+	}
+}
+
+void	ft_float(va_list ap, int *count, t_flags *flags)
+{
+	int		temp;
+	double	fraction;
+	
+	fraction = va_arg(ap, double);
+	temp = (int)fraction;
+	fraction = fraction - temp;
+	if (flags->dot != 0 && flags->precision == 0) /* дописать */
+		temp++;
+	printf("%d\n", temp);
+	printf("%f", fraction);
+	count++;
+} 
 
 int		ft_printf(const char *fmt, ...)
 {
@@ -837,16 +933,16 @@ int		ft_printf(const char *fmt, ...)
 					ft_decimal(ap, &count, flags);
 					break ;
 				}
-				// if (*p == 'f')
-				// {
-				// 	ft_float(ap, &count, flags);
-				// 	break ;
-				// }
-				// if (*p == '%')
-				// {
-				// 	ft_percent(ap, &count, flags);
-				// 	break ;
-				// }
+				if (*p == 'f')
+				{
+					ft_float(ap, &count, flags);
+					break ;
+				}
+				if (*p == '%')
+				{
+					ft_percent(&count, flags);
+					break ;
+				}
 				p++;
 			}
 		}
@@ -858,9 +954,9 @@ int		ft_printf(const char *fmt, ...)
 	return (count);
 }
 
-// int main(void)
-// {
-	/* тесты для десятичной записи */
+int main(void)
+{
+// 	/* тесты для десятичной записи */
 
 	// printf("01 stroka: %-+8.6d\n", -123);
 	// ft_printf("01 stroka: %-+8.6d\n", -123);
@@ -1142,5 +1238,53 @@ int		ft_printf(const char *fmt, ...)
 	// printf("kolichestvo %d\n", printf("37 stroka: % 1.2d\n", -1));
 	// printf("kolichestvo %d\n", printf("38 stroka: %9.5d\n", 345));
 	// printf("kolichestvo %d\n", ft_printf("38 stroka: %9.5d\n", 345));
-// 	return (0);
-// }
+	// ft_printf("%.0d\n", 0);
+	// ft_printf("%.0x\n", 0);
+	// ft_printf("%.0o\n", 0);
+	// ft_printf("%.0x\n", 0);
+	// ft_printf("%#.0d\n", 0);
+	// ft_printf("%#.0x\n", 0);
+	// ft_printf("%#.0o\n", 0);
+	// ft_printf("%#.0x\n", 0);
+// 	ft_printf("01 %#hhx\n", (char)256);
+// 	ft_printf("02 %hh#x\n", (char)256);
+// 	printf("04 %#hhx\n", (char)256);
+// 	printf("05 %hh#x\n", (char)256);
+// 	printf("%%\n");
+// 	printf("%5%\n");
+// 	printf("%-5%\n");
+// 	printf("%.0%\n");
+
+	//printf("\n#0074\n");
+	// ft_printf("%.2c", NULL);
+	// ft_printf("%.2c", 0);
+	// printf("\n#0075\n");
+	// printf("%s %s", NULL, "string");
+	// printf("\n#0079\n");
+	// printf("@moulitest: %c", 0);
+	// printf("\n#0080\n");
+	// printf("%2c", 0);
+	// printf("\n#0081\n");
+	// printf("null %c and text", 0);
+	// printf("\n#0082\n");
+	// printf("% c", 0);
+	//ft_printf("%+d\n", 0);
+	//ft_printf("%+0d\n", 0);
+	//printf("%+0d\n", 0);
+	//ft_printf("%#8x\n", 0);
+	//printf("%#8x\n", 0);
+	// ft_printf("@moulitest: %#.o %#.0o\n", 0, 0);
+	//printf("@moulitest: %#.o %#.0o\n", 0, 0);
+	//printf("@moulitest: %#.x %#.0x", 0, 0);
+	//ft_printf("%.o\n", 0);
+	//printf("%#.x\n", 0);
+	//printf("%#.0o\n", 0);
+	
+	printf("%d\n", printf("%llu\n", (long long)-42));
+	ft_printf("%d\n",ft_printf("%llu\n", (long long)-42));
+	
+	// ft_printf("%d\n", ft_printf("%.8s\n", "hello"));
+	// printf("%d\n", printf("%.8s\n", "hello"));
+
+	return (0);
+}
