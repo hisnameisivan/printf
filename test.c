@@ -6,12 +6,13 @@
 /*   By: draudrau <draudrau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/16 12:18:30 by draudrau          #+#    #+#             */
-/*   Updated: 2019/04/30 14:45:25 by draudrau         ###   ########.fr       */
+/*   Updated: 2019/05/01 15:01:02 by draudrau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <float.h>
 
 int main(void)
 {
@@ -224,13 +225,15 @@ int main(void)
 
 	/* тесты float */
 
-	printf("%Lf\n", 22222222222222222222.1);
-	printf("%.0f\n", 123.523);
-	printf("%.f\n", 123.523);
-	printf("%-8.1f\n", 123.523);
-	printf("%.6f\n", 123.523);
-	printf("%lf\n", 4294967296.523); /* undefined behavior c ll */
-	printf("%f\n", 4294967296.523);
-	printf("%.0f", 19999.9 );
+	// printf("%f\n", 22222222222222222222.1);
+	// printf("%.0f\n", -123.523);
+	// printf("%.f\n", 123.523);
+	// printf("%-8.1f\n", 123.523);
+	// printf("%.6f\n", 123.523);
+	// printf("%Lf\n", 41111111111294963296.523L); /* undefined behavior c ll */
+	// printf("%f\n", 41111111111294963296.523);
+	// printf("%.3f\n", 19999.99999 );
+	// printf("%.9f", 1.1234560890123456);
+	printf("%Lf\n", (long double)1.12345688888);
 	return (0);
 }

@@ -330,18 +330,18 @@ long long	ft_apply_modificator(va_list ap, t_flags *flags) /* long long вмес
 	return (num);
 }
 
-// long long	ft_sqr(int base, int power)
-// {
-// 	long long	result;
+long long	ft_sqr(int base, int power)
+{
+	long long	result;
 
-// 	result = 1;
-// 	while (power > 0)
-// 	{
-// 		result = result * base;
-// 		power--;
-// 	}
-// 	return (result);
-// }
+	result = 1;
+	while (power > 0)
+	{
+		result = result * base;
+		power--;
+	}
+	return (result);
+}
 
 char	*convert_v_8(long long num, t_flags *flags)  /* Из десятичной в восьмиричную */
 {
@@ -509,7 +509,7 @@ int		ft_check_nothing(char *num, t_flags *flags, int *count)
 	return (0);
 }
 
-unsigned long long	ucount_of_digits(unsigned long long n)
+unsigned long long	ucount_of_digits(unsigned long long n) /* функция под 1 тест lu, -42*/
 {
 	int count;
 
@@ -524,7 +524,7 @@ unsigned long long	ucount_of_digits(unsigned long long n)
 	return (count);
 }
 
-char	*ft_ulong_to_ascii(unsigned long long n)
+char	*ft_ulong_to_ascii(unsigned long long n) /* функция под 1 тест lu, -42*/
 {
 	char	*res;
 	int		i;
@@ -650,15 +650,8 @@ void	ft_decimal(va_list ap, int *count, t_flags *flags)
 void	ft_char(va_list ap, int *count, t_flags *flags) /* изменила 28.04 */
 {
 	char	ch;
-	//char	ch[2];
-	//t_wp	temp;
 
 	ch = (char)va_arg(ap, int);
-	//ch[0] = (char)va_arg(ap, int);
-	//ch[1] = 0;
-	//temp = ft_cmp_width_prec_num(flags, ch);
-	//if (flags->width)
-	//	temp.sp = flags->width - 1;
 	flags->width = flags->width - 1;
 	if (flags->minus)
 	{
@@ -733,17 +726,6 @@ void	ft_pointer(va_list ap, int *count, t_flags *flags)
 	}
 	free(new_pnt);
 }
-
-// void	ft_float(va_list ap, int *count, t_flags *flags)
-// {
-// 	long double	num;
-// 	int			temp_num;
-// 	char		*new_pnt;
-// 	t_wp		temp;
-
-// 	num = va_arg(ap, long double);
-// 	temp
-// }
 
 void	ft_check_modificator(t_flags *flags, char *ptr) /* Проверяет флаги hh(1), h(2), ll(3), l(4)*/
 {
@@ -913,16 +895,26 @@ void	ft_percent(int *count, t_flags *flags) /* добавила функцию 2
 
 void	ft_float(va_list ap, int *count, t_flags *flags)
 {
-	int		temp;
-	double	fraction;
+	long long	temp;
+	long long	temp2;
+	double		fraction;
 
 	fraction = va_arg(ap, double);
-	temp = (int)fraction;
+	temp = (long long)fraction;
 	fraction = fraction - temp;
-	if (flags->dot != 0 && flags->precision == 0) /* дописать */
+	if (flags->dot != 0 && flags->precision == 0 && temp >= 0) /* дописать */
 		temp++;
-	printf("%d\n", temp);
-	printf("%f", fraction);
+	else if (flags->dot != 0 && flags->precision == 0 && temp < 0)
+		temp--;
+//	if ()
+	temp2 = (long long)(fraction * ft_sqr(10, (flags->precision + 1)));
+	// if (temp2 % 10 < 5)
+	// 	temp2 = temp2 / 10;
+	// else if (temp2 % 10 >= 5)
+	// 	temp2 = temp2 / 10 + 1;
+	printf("%lld\n", temp);
+	printf("%lld\n", temp2);
+//	printf("%f", fraction);
 	count++;
 }
 
@@ -996,8 +988,8 @@ int		ft_printf(const char *fmt, ...)
 	return (count);
 }
 
-// int main(void)
-// {
+int main(void)
+{
 // 	/* тесты для десятичной записи */
 
 	// printf("01 stroka: %-+8.6d\n", -123);
@@ -1327,6 +1319,6 @@ int		ft_printf(const char *fmt, ...)
 
 	// ft_printf("%d\n", ft_printf("%.8s\n", "hello"));
 	// printf("%d\n", printf("%.8s\n", "hello"));
-
-// 	return (0);
-// }
+	ft_printf("%.0f", 1.234);
+	return (0);
+}
