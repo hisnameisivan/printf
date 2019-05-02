@@ -895,27 +895,61 @@ void	ft_percent(int *count, t_flags *flags) /* добавила функцию 2
 
 void	ft_float(va_list ap, int *count, t_flags *flags)
 {
+	int			i;
+	int			rounding;
 	long long	temp;
-	long long	temp2;
-	double		fraction;
+	long long	whole;
+	long double	fraction;
+	char fr[5000];
 
-	fraction = va_arg(ap, double);
-	temp = (long long)fraction;
-	fraction = fraction - temp;
-	if (flags->dot != 0 && flags->precision == 0 && temp >= 0) /* дописать */
-		temp++;
-	else if (flags->dot != 0 && flags->precision == 0 && temp < 0)
-		temp--;
-//	if ()
-	temp2 = (long long)(fraction * ft_sqr(10, (flags->precision + 1)));
-	// if (temp2 % 10 < 5)
-	// 	temp2 = temp2 / 10;
-	// else if (temp2 % 10 >= 5)
-	// 	temp2 = temp2 / 10 + 1;
-	printf("%lld\n", temp);
-	printf("%lld\n", temp2);
-//	printf("%f", fraction);
-	count++;
+	if (flags->bl)
+		fraction = va_arg(ap, long double);
+	else
+		fraction = va_arg(ap, double);
+	whole = (long long)fraction;
+	fraction = fraction - whole;
+	i = 0;
+	flags->precision++; /* чтобы записать цифру по которой будем округлять +1 */
+	while (flags->precision > 0)
+	{
+		fraction = fraction * 10;
+		fr[i] = (int)fraction + '0';
+		temp = (long long)fraction;
+		fraction = fraction - temp;
+		flags->precision--;
+		i++;
+	}
+	i--;
+	rounding = fr[i] - '0';
+	fr[i] = '\0';
+	i--;
+	if (rounding > 5)
+	{
+		fr[i]++;
+		while (((fr[i] - '0') == 10) && (i >= 0)) /* i - 1 проверка на то, что мы дошли до первого (нулевого) элемента массива */
+		{
+			fr[i] = '0';
+			(i == 0) ? whole++ : fr[i - 1]++;
+			i--;
+		}
+		// if ((fr[i] - '0') == 10)
+		// {
+		// 	fr[i] = '0';
+		// 	whole++;
+		// }
+	}
+	printf("%lld\n", whole);
+	printf("%d\n", rounding);
+	//printf("%lld\n", temp2);
+	printf("%Lf\n", fraction);
+	i = 0;
+	while (fr[i])
+	{
+		printf("%c ",fr[i]);
+		i++;
+	}
+	printf("\n");
+//	count++;
 }
 
 int		ft_printf(const char *fmt, ...)
@@ -1319,6 +1353,6 @@ int main(void)
 
 	// ft_printf("%d\n", ft_printf("%.8s\n", "hello"));
 	// printf("%d\n", printf("%.8s\n", "hello"));
-	ft_printf("%.0f", 1.234);
+	ft_printf("%.0f", 1.899999);
 	return (0);
 }
