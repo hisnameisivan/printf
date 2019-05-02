@@ -76,12 +76,12 @@ t_wp	ft_cmp_width_prec_num(t_flags *flags, char *num)
 	temp.znak = 0;
 	temp.nul = 0;
 	temp.sp = 0;
-	if ((flags->spec == 'd' || flags->spec == 'i') && ft_strchr(num, '-'))
+	if ((flags->spec == 'd' || flags->spec == 'i' || flags->spec == 'f') && ft_strchr(num, '-'))
 	{
 		temp.znak = -1;
 		ft_modul_char(num);
 	}
-	else if ((flags->spec == 'd' || flags->spec == 'i') && !(ft_strchr(num, '-')))
+	else if ((flags->spec == 'd' || flags->spec == 'i' || flags->spec == 'f') && !(ft_strchr(num, '-')))
 		temp.znak = 1;
 	count = ft_strlen(num);
 	// if (temp.znak == -1)
@@ -89,8 +89,8 @@ t_wp	ft_cmp_width_prec_num(t_flags *flags, char *num)
 	((flags->precision - count) < 0) ? (temp.nul = 0) : (temp.nul = flags->precision - count); /* чтобы учесть отрицательный результат precision - count, т к дальше сломается!!!*/
 	((flags->width - (temp.nul + count)) < 0) ? (temp.sp = 0) : (temp.sp = flags->width - (temp.nul + count));
 	//temp.sp = flags->width - (temp.nul + count);
-	if ((flags->plus && (flags->spec == 'd' || flags->spec == 'i')) || (flags->spec == 'o' && flags->resh == 1)
-	|| ((flags->spec == 'd' || flags->spec == 'i') && (temp.znak == -1)))
+	if ((flags->plus && (flags->spec == 'd' || flags->spec == 'i' || flags->spec == 'f')) || (flags->spec == 'o' && flags->resh == 1)
+	|| ((flags->spec == 'd' || flags->spec == 'i' || flags->spec == 'f') && (temp.znak == -1)))
 		(((temp.sp) - 1) > 0) ? ((temp.sp)--) : (temp.sp = 0);
 	if (((flags->spec == 'x') || (flags->spec == 'X')) && (flags->resh == 1))
 		(((temp.sp) - 2) > 0) ? ((temp.sp) = (temp.sp) - 2) : (temp.sp = 0); /* с решеткой шестнадцатиричная выводится с 0x */
@@ -451,7 +451,11 @@ int		ft_check_nothing(char *num, t_flags *flags, int *count)
 					ft_type_space(flags->width, count);
 					return (1);
 				}
-
+				if ((flags->spec == 'd' || flags->spec == 'i') && flags->space == 1)
+				{
+					ft_putchar_pf(' ', count);
+					flags->width--;
+				}
 				ft_type_space(flags->width, count);
 				return (1);
 			}
@@ -483,6 +487,11 @@ int		ft_check_nothing(char *num, t_flags *flags, int *count)
 				}
 				if (flags->resh != 0 && flags->spec == 'o') /* восьмиричная с # выводит 0 (остальные выводят пустоту)*/
 					flags->width--;
+				if ((flags->spec == 'd' || flags->spec == 'i') && flags->space == 1)
+				{
+					ft_putchar_pf(' ', count);
+					flags->width--;
+				}
 				ft_type_space(flags->width, count);
 				if (flags->resh != 0 && flags->spec == 'o')
 					ft_putchar_pf('0', count);
@@ -498,7 +507,12 @@ int		ft_check_nothing(char *num, t_flags *flags, int *count)
 					ft_putchar_pf('0', count);
 					return (1);
 				}
-				flags->width--;
+				if ((flags->spec == 'd' || flags->spec == 'i') && flags->space == 1)
+				{
+					ft_putchar_pf(' ', count);
+					flags->width--; /* вычитаем под флаг пробел */
+				}
+				flags->width--; /* вычитаем под ноль */
 				ft_type_space(flags->width, count);
 				ft_putchar_pf('0', count);
 				return (1);
@@ -563,6 +577,41 @@ char	*ft_convert_negative_u(long long *num, t_flags *flags)
 	return (ft_ulong_to_ascii(temp_num));
 }
 
+void	ft_complex_constructor(t_flags *flags, t_wp temp, char *new_num, int *count)
+{
+	if (flags->minus) /* есть флаг "-" */
+	{
+		if (temp.znak == -1) /* num отрицательный, есть флаг '-', флаг '+' не важен */
+			ft_constructor(flags, temp, 1, new_num, count); /* ветка 1 */
+		else
+		{
+			if (flags->plus) /* num положительный, есть флаг '-' и флаг '+' */
+				ft_constructor(flags, temp, 1, new_num, count); /* ветка 2 */
+			else
+			{
+				ft_constructor(flags, temp, 2, new_num, count);
+			}
+		}
+	}
+	else
+	{
+		if (temp.znak == -1) /* num отрицательный, НЕТ флага '-', флаг '+' не важен */
+		{
+			ft_constructor(flags, temp, 4, new_num, count);
+		}
+		else /* когда znak == 1 или 0 */
+		{
+			if (flags->plus) /* num положительный, НЕТ флага '-' и ЕСТЬ флаг '+'  */
+			{
+				ft_constructor(flags, temp, 4, new_num, count);
+			}
+			else if (!(flags->plus))/* num положительный, НЕТ флага '-' и НЕТ флага '+'  */
+			{
+				ft_constructor(flags, temp, 6, new_num, count);
+			}
+		}
+	}
+}
 
 void	ft_decimal(va_list ap, int *count, t_flags *flags)
 {
@@ -598,7 +647,7 @@ void	ft_decimal(va_list ap, int *count, t_flags *flags)
 		free(flags);
 		return ;
 	}
-
+	ft_complex_constructor(flags, temp, new_num, count);
 	// if (temp.znak == 0 && (flags->spec == 'x' || flags->spec == 'X') && flags->resh)
 	// {
 	// 	ft_constructor_16(flags, temp, new_num, count);
@@ -612,38 +661,38 @@ void	ft_decimal(va_list ap, int *count, t_flags *flags)
 	// 	return ;
 	// }
 	//	if (flags->width || flags->precision) /* выяснить зачем */
-		if (flags->minus) /* есть флаг "-" */
-		{
-			if (temp.znak == -1) /* num отрицательный, есть флаг '-', флаг '+' не важен */
-				ft_constructor(flags, temp, 1, new_num, count); /* ветка 1 */
-			else
-			{
-				if (flags->plus) /* num положительный, есть флаг '-' и флаг '+' */
-					ft_constructor(flags, temp, 1, new_num, count); /* ветка 2 */
-				else
-				{
-					ft_constructor(flags, temp, 2, new_num, count);
-				}
-			}
-		}
-		else
-		{
-			if (temp.znak == -1) /* num отрицательный, НЕТ флага '-', флаг '+' не важен */
-			{
-				ft_constructor(flags, temp, 4, new_num, count);
-			}
-			else /* когда znak == 1 или 0 */
-			{
-				if (flags->plus) /* num положительный, НЕТ флага '-' и ЕСТЬ флаг '+'  */
-				{
-					ft_constructor(flags, temp, 4, new_num, count);
-				}
-				else if (!(flags->plus))/* num положительный, НЕТ флага '-' и НЕТ флага '+'  */
-				{
-					ft_constructor(flags, temp, 6, new_num, count);
-				}
-			}
-		}
+		// if (flags->minus) /* есть флаг "-" */
+		// {
+		// 	if (temp.znak == -1) /* num отрицательный, есть флаг '-', флаг '+' не важен */
+		// 		ft_constructor(flags, temp, 1, new_num, count); /* ветка 1 */
+		// 	else
+		// 	{
+		// 		if (flags->plus) /* num положительный, есть флаг '-' и флаг '+' */
+		// 			ft_constructor(flags, temp, 1, new_num, count); /* ветка 2 */
+		// 		else
+		// 		{
+		// 			ft_constructor(flags, temp, 2, new_num, count);
+		// 		}
+		// 	}
+		// }
+		// else
+		// {
+		// 	if (temp.znak == -1) /* num отрицательный, НЕТ флага '-', флаг '+' не важен */
+		// 	{
+		// 		ft_constructor(flags, temp, 4, new_num, count);
+		// 	}
+		// 	else /* когда znak == 1 или 0 */
+		// 	{
+		// 		if (flags->plus) /* num положительный, НЕТ флага '-' и ЕСТЬ флаг '+'  */
+		// 		{
+		// 			ft_constructor(flags, temp, 4, new_num, count);
+		// 		}
+		// 		else if (!(flags->plus))/* num положительный, НЕТ флага '-' и НЕТ флага '+'  */
+		// 		{
+		// 			ft_constructor(flags, temp, 6, new_num, count);
+		// 		}
+		// 	}
+		// }
 	free(flags);
 }
 
@@ -674,6 +723,7 @@ void	ft_string(va_list ap, int *count, t_flags *flags)
 	str = va_arg(ap, char *);
 	if (!str)
 	{
+		ft_type_space(flags->width - 6, count);
 		ft_putstr_pf("(null)", count);
 		return ;
 	}
@@ -893,30 +943,68 @@ void	ft_percent(int *count, t_flags *flags) /* добавила функцию 2
 	}
 }
 
+char	*ft_strjoin_float(char *str1, char *str2)
+{
+	char	*tab;
+	int		i;
+	int		k;
+
+	if (str1 == NULL && str2 == NULL)
+		return (NULL);
+	i = 0;
+	k = 0;
+	if ((tab = (char*)malloc(ft_strlen(str1) + ft_strlen(str2) + 2)) == NULL)
+		return (NULL);
+	while (str1[i] != 0)
+	{
+		tab[i] = str1[i];
+		i++;
+	}
+	if (*str2 != '\0')
+	{
+		tab[i] = '.';
+		i++;
+	}
+	while (str2[k] != 0)
+	{
+		tab[i] = str2[k];
+		i++;
+		k++;
+	}
+	tab[i] = '\0';
+	return (tab);
+}
+
 void	ft_float(va_list ap, int *count, t_flags *flags)
 {
 	int			i;
+	int			precision;
 	int			rounding;
 	long long	temp;
 	long long	whole;
 	long double	fraction;
-	char fr[5000];
+	char 		fr[5000];
+	char		*wh;
+	char		*new_float;
+	t_wp		cmp_f;
 
+	precision = 0;
 	if (flags->bl)
 		fraction = va_arg(ap, long double);
 	else
 		fraction = va_arg(ap, double);
 	whole = (long long)fraction;
-	fraction = fraction - whole;
+	if ((fraction = fraction - whole) < 0)
+		fraction = fraction * (-1);
 	i = 0;
-	flags->precision++; /* чтобы записать цифру по которой будем округлять +1 */
-	while (flags->precision > 0)
+	(flags->dot == 0) ? (precision = 7) : (precision = flags->precision + 1); /* чтобы записать цифру по которой будем округлять +1 */
+	while (precision > 0)
 	{
 		fraction = fraction * 10;
 		fr[i] = (int)fraction + '0';
 		temp = (long long)fraction;
 		fraction = fraction - temp;
-		flags->precision--;
+		precision--;
 		i++;
 	}
 	i--;
@@ -929,27 +1017,34 @@ void	ft_float(va_list ap, int *count, t_flags *flags)
 		while (((fr[i] - '0') == 10) && (i >= 0)) /* i - 1 проверка на то, что мы дошли до первого (нулевого) элемента массива */
 		{
 			fr[i] = '0';
-			(i == 0) ? whole++ : fr[i - 1]++;
+			if (i == 0) 
+				(whole >= 0) ? (whole++) : (whole--);
+			else
+				fr[i - 1]++;
 			i--;
 		}
-		// if ((fr[i] - '0') == 10)
-		// {
-		// 	fr[i] = '0';
-		// 	whole++;
-		// }
+		if (flags->dot && flags->precision == 0)
+			(whole >= 0) ? (whole++) : (whole--);
 	}
-	printf("%lld\n", whole);
-	printf("%d\n", rounding);
-	//printf("%lld\n", temp2);
-	printf("%Lf\n", fraction);
-	i = 0;
-	while (fr[i])
-	{
-		printf("%c ",fr[i]);
-		i++;
-	}
-	printf("\n");
-//	count++;
+	wh = ft_long_to_ascii(whole);
+	// printf("%lld\n", whole);
+	// printf("%d\n", rounding);
+	// //printf("%lld\n", temp2);
+	// printf("%Lf\n", fraction);
+	// i = 0;
+	// while (fr[i])
+	// {
+	// 	printf("%c ",fr[i]);
+	// 	i++;
+	// }
+	//printf("\n");
+	flags->precision = 0;
+	new_float = ft_strjoin_float(wh, fr);
+	cmp_f = ft_cmp_width_prec_num(flags, new_float);
+	ft_complex_constructor(flags, cmp_f, new_float, count);
+	// printf("%s", new_float);
+	// printf("\n");
+
 }
 
 int		ft_printf(const char *fmt, ...)
@@ -1353,6 +1448,12 @@ int main(void)
 
 	// ft_printf("%d\n", ft_printf("%.8s\n", "hello"));
 	// printf("%d\n", printf("%.8s\n", "hello"));
-	ft_printf("%.0f", 1.899999);
+	//float nb = -0.00;
+	//ft_printf("%-+10.14f\n", nb);
+	//printf("original %-+10.14f\n", nb);
+	// ft_printf("\n%d\n", -100);
+
+	ft_printf("%023i\n", LONG_MIN, LONG_MIN, LONG_MIN, LONG_MIN, LONG_MIN);
+	printf("%023i", LONG_MIN, LONG_MIN, LONG_MIN, LONG_MIN, LONG_MIN);
 	return (0);
 }
