@@ -499,28 +499,30 @@ int		ft_check_nothing(char *num, t_flags *flags, int *count)
 					if (flags->plus == 1)
 						return (ft_constructor_nothing(flags, 1, count));
 					else if (flags->plus == 0)
-						return (ft_constructor_nothing(flags, 2, count));
+						return (ft_constructor_nothing(flags, 2, count));	
 				}
 				else
 					return (ft_constructor_nothing(flags, 2, count)); /* для o, x, u с .0 или . */
 			}
-			else if (flags->dot == 0)
-			{
-				if (flags->spec == 'd' || flags->spec == 'i')
-				{
-					if (flags->plus == 1)
-						return (ft_constructor_nothing(flags, 3, count));
-					if (flags->plus == 0)
-					{
-						if (flags->space == 1)
-							return (ft_constructor_nothing(flags, 3, count));
-						if (flags->space == 0)
-							return (ft_constructor_nothing(flags, 4, count));
-					}
-				}
-				else
-					return (ft_constructor_nothing(flags, 4, count)); /* для o, x, u без точности */
-			}
+			else if (flags->dot == 0 && (flags->spec == 'x' || flags->spec == 'X' || flags->spec == 'o') && flags->resh) /* чтобы с нулем и решеткой не выводилась приставка оx */
+				return (ft_constructor_nothing(flags, 4, count));
+			// else if (flags->dot == 0) 
+			// {
+			// 	if (flags->spec == 'd' || flags->spec == 'i')
+			// 	{
+			// 		if (flags->plus == 1)
+			// 			return (ft_constructor_nothing(flags, 3, count));
+			// 		if (flags->plus == 0)
+			// 		{
+			// 			if (flags->space == 1)
+			// 				return (ft_constructor_nothing(flags, 3, count));
+			// 			if (flags->space == 0)
+			// 				return (ft_constructor_nothing(flags, 4, count));
+			// 		}
+			// 	}
+				// else
+				// 	return (ft_constructor_nothing(flags, 4, count)); /* для o, x, u без точности */
+			//}
 		}
 		else /* нет флага минус */
 		{
@@ -538,43 +540,45 @@ int		ft_check_nothing(char *num, t_flags *flags, int *count)
 				else /* для o (без реш), для x и u */
 					return (ft_constructor_nothing(flags, 2, count));
 			}
-			else if (flags->dot == 0)
-			{
-				if (flags->spec == 'd' || flags->spec == 'i')
-				{
-					if (flags->plus == 1)
-					{
-						if (flags->nul == 1)
-							return (ft_constructor_nothing(flags, 6, count));
-						else if (flags->nul == 0)
-							return (ft_constructor_nothing(flags, 8, count));
-					}
-					else if (flags->plus == 0)
-					{
-						if (flags->nul == 1)
-						{
-							if (flags->space == 1)
-								return (ft_constructor_nothing(flags, 6, count));
-							if (flags->space == 0)
-								return (ft_constructor_nothing(flags, 7, count));
-						}
-						if (flags->nul == 0)
-						{
-							if (flags->space == 1)
-								return (ft_constructor_nothing(flags, 6, count));
-							else if (flags->space == 0)
-								return (ft_constructor_nothing(flags, 5, count));
-						}
-					}
-				}
-				else /* для o u x */
-				{
-					if (flags->nul == 1)
-						return (ft_constructor_nothing(flags, 7, count));
-					else if (flags->nul == 0)
-						return (ft_constructor_nothing(flags, 5, count));
-				}
-			}
+			else if (flags->dot == 0 && (flags->spec == 'x' || flags->spec == 'X' || flags->spec == 'o') && flags->resh) /* чтобы с нулем и решеткой не выводилась приставка оx */
+				return ((flags->nul == 1) ? ft_constructor_nothing(flags, 7, count) : ft_constructor_nothing(flags, 5, count));
+			// else if (flags->dot == 0)
+			// {
+			// 	if (flags->spec == 'd' || flags->spec == 'i')
+			// 	{
+			// 		if (flags->plus == 1)
+			// 		{
+			// 			if (flags->nul == 1)
+			// 				return (ft_constructor_nothing(flags, 6, count));
+			// 			else if (flags->nul == 0)
+			// 				return (ft_constructor_nothing(flags, 8, count));
+			// 		}
+			// 		else if (flags->plus == 0)
+			// 		{
+			// 			if (flags->nul == 1)
+			// 			{
+			// 				if (flags->space == 1)
+			// 					return (ft_constructor_nothing(flags, 6, count));
+			// 				if (flags->space == 0)
+			// 					return (ft_constructor_nothing(flags, 7, count));
+			// 			}
+			// 			if (flags->nul == 0)
+			// 			{
+			// 				if (flags->space == 1)
+			// 					return (ft_constructor_nothing(flags, 6, count));
+			// 				else if (flags->space == 0)
+			// 					return (ft_constructor_nothing(flags, 5, count));
+			// 			}
+			// 		}
+			// 	}
+			// 	else /* для o u x */
+			// 	{
+			// 		if (flags->nul == 1)
+			// 			return (ft_constructor_nothing(flags, 7, count));
+			// 		else if (flags->nul == 0)
+			// 			return (ft_constructor_nothing(flags, 5, count));
+			// 	}
+			// }
 		}
 	}
 	return (0);
