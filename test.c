@@ -6,7 +6,7 @@
 /*   By: draudrau <draudrau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/16 12:18:30 by draudrau          #+#    #+#             */
-/*   Updated: 2019/05/03 16:43:29 by draudrau         ###   ########.fr       */
+/*   Updated: 2019/05/03 19:14:58 by draudrau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -248,7 +248,22 @@ int main(void)
 	// printf("stroka 10 %015.2f\n", -123.456);
 	// printf("stroka 11 %015.2d\n", -123);
 
-	printf("stroka 13: %hd\n", 0);
-	printf("stroka 14: %d\n", 0);
+	printf("stroka 01: %-+5.0f\n", 0.);
+	printf("stroka 02: %- 5.0f\n", 0.);
+	printf("stroka 03: %-5.0f\n", 0.);
+	printf("stroka 04: %-+5f\n", 0.);
+	printf("stroka 05: %- 5f\n", 0.);
+	printf("stroka 06: %-5f\n", 0.);
+	printf("stroka 71: %+5.0f\n", 0.);
+	printf("stroka 72: % 5.0f\n", 0.);
+	printf("stroka 08: %5.0f\n", 0.);
+
+
+	printf("stroka 09: %+05f\n", 0.);
+	printf("stroka 10: %+5f\n", 0.);
+	printf("stroka 11: % 05f\n", 0.);
+	printf("stroka 12: %05f\n", 0.);
+	printf("stroka 13: % 5f\n", 0.);
+	printf("stroka 14: %5f\n", 0.);
 	return (0);
 }

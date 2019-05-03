@@ -433,7 +433,57 @@ char	*convert_v_16(long long num, t_flags *flags) /* Из десятичной �
 	}
 	return (hex_temp);
 }
-// 26.04 изменил ft_check_nothing, немного сократил
+
+int		ft_constructor_nothing(t_flags *flags, int sit, int *count)
+{
+	if (sit == 1)
+	{
+		ft_putchar_pf('+', count);
+		ft_type_space(flags->width - 1, count);
+	}
+	else if (sit == 2)
+		ft_type_space(flags->width, count);
+	else if (sit == 3)
+	{
+		if (flags->plus == 1)
+			ft_putchar_pf('+', count);
+		else if (flags->plus == 0 && flags->space == 1)
+			ft_putchar_pf(' ', count);
+		ft_putchar_pf('0', count);
+		ft_type_space(flags->width - 2, count);
+	}
+	else if (sit == 4)
+	{
+		ft_putchar_pf('0', count);
+		ft_type_space(flags->width - 1, count);
+	}
+	else if (sit == 5)
+	{
+		ft_type_space(flags->width - 1, count);
+		ft_putchar_pf('0', count);
+	}
+	else if (sit == 6)
+	{
+		ft_putchar_pf('+', count);
+		ft_type_sp_nul(flags->width - 2, count);
+		ft_putchar_pf('0', count);
+	}
+	else if (sit == 7)
+		ft_type_sp_nul(flags->width, count);
+	else if (sit == 8)
+	{
+		ft_type_space(flags->width - 2, count);
+		ft_putchar_pf('+', count);
+		ft_putchar_pf('0', count);
+	}
+	else if (sit == 9)
+	{
+		ft_type_space(flags->width - 1, count);
+		ft_putchar_pf('+', count);
+	}
+	return (1);
+}
+
 int		ft_check_nothing(char *num, t_flags *flags, int *count)
 {
 	if (num == NULL)
@@ -447,68 +497,29 @@ int		ft_check_nothing(char *num, t_flags *flags, int *count)
 				if (flags->spec == 'd' || flags->spec == 'i')
 				{
 					if (flags->plus == 1)
-					{
-						ft_putchar_pf('+', count);
-						ft_type_space(flags->width - 1, count);
-						return (1);
-					}
+						return (ft_constructor_nothing(flags, 1, count));
 					else if (flags->plus == 0)
-					{
-						if (flags->space == 1)
-						{
-							ft_putchar_pf(' ', count);
-							ft_type_space(flags->width - 1, count);
-							return (1);
-						}
-						else if (flags->space == 0)
-						{
-							ft_type_space(flags->width, count);
-							return (1);
-						}
-					}	
+						return (ft_constructor_nothing(flags, 2, count));	
 				}
 				else
-				{
-					ft_putchar_pf('0', count);
-					ft_type_space(flags->width - 1, count);
-					return (1);
-				}
+					return (ft_constructor_nothing(flags, 2, count)); /* для o, x, u с .0 или . */
 			}
 			else if (flags->dot == 0) 
 			{
 				if (flags->spec == 'd' || flags->spec == 'i')
 				{
 					if (flags->plus == 1)
-					{
-						ft_putchar_pf('+', count);
-						ft_putchar_pf('0', count);
-						ft_type_space(flags->width - 2, count);
-						return (1);
-
-					}
+						return (ft_constructor_nothing(flags, 3, count));
 					if (flags->plus == 0)
 					{
 						if (flags->space == 1)
-						{
-							ft_putchar_pf(' ', count);
-							ft_putchar_pf('0', count);
-							ft_type_space(flags->width - 2, count);
-							return (1);
-						}
+							return (ft_constructor_nothing(flags, 3, count));
 						if (flags->space == 0)
-						{
-							ft_putchar_pf('0', count);
-							ft_type_space(flags->width - 1, count);
-							return (1);
-						}
+							return (ft_constructor_nothing(flags, 4, count));
 					}
 				}
 				else
-				{
-					ft_putchar_pf('0', count);
-					ft_type_space(flags->width - 1, count);
-					return (1);
-				}
+					return (ft_constructor_nothing(flags, 4, count)); /* для o, x, u без точности */
 			}
 		}
 		else /* нет флага минус */
@@ -518,37 +529,14 @@ int		ft_check_nothing(char *num, t_flags *flags, int *count)
 				if (flags->spec == 'd' || flags->spec == 'i')
 				{
 					if (flags->plus == 1)
-					{
-						ft_type_space(flags->width - 1, count);
-						ft_putchar_pf('+', count);
-						return (1);
-					}
-					if (flags->plus == 0)
-					{
-						if (flags->space == 1)
-						{
-							ft_type_space(flags->width - 1, count);
-							ft_putchar_pf(' ', count);
-							return (1);
-						}
-						else if (flags->space == 0)
-						{
-							ft_type_space(flags->width, count);
-							return (1);
-						}
-					}
+						return (ft_constructor_nothing(flags, 9, count));
+					else if (flags->plus == 0)
+						return (ft_constructor_nothing(flags, 2, count));
 				}
 				else if (flags->resh != 0 && flags->spec == 'o') /* восьмиричная с # выводит 0 (остальные выводят пустоту)*/
-				{
-					ft_type_space(flags->width - 1, count);
-					ft_putchar_pf('0', count);
-					return (1);
-				}
+					return (ft_constructor_nothing(flags, 5, count));
 				else /* для o (без реш), для x и u */
-				{
-					ft_type_space(flags->width, count);
-					return (1);
-				}
+					return (ft_constructor_nothing(flags, 2, count));
 			}
 			else if (flags->dot == 0)
 			{
@@ -557,68 +545,34 @@ int		ft_check_nothing(char *num, t_flags *flags, int *count)
 					if (flags->plus == 1)
 					{
 						if (flags->nul == 1)
-						{
-							ft_putchar_pf('+', count);
-							ft_type_sp_nul(flags->width - 1, count);
-							return (1);
-						}
+							return (ft_constructor_nothing(flags, 6, count));
 						else if (flags->nul == 0)
-						{
-							ft_type_space(flags->width - 2, count);
-							ft_putchar_pf('+', count);
-							ft_putchar_pf('0', count);
-							return (1);
-						}
+							return (ft_constructor_nothing(flags, 8, count));
 					}
 					else if (flags->plus == 0)
 					{
 						if (flags->nul == 1)
 						{
 							if (flags->space == 1)
-							{
-								ft_putchar_pf(' ', count);
-								ft_type_space(flags->width - 1, count);
-								return (1);
-							}
+								return (ft_constructor_nothing(flags, 6, count));
 							if (flags->space == 0)
-							{
-								ft_type_sp_nul(flags->width - 1, count);
-								ft_putchar_pf('0', count);
-								return (1);
-							}
+								return (ft_constructor_nothing(flags, 7, count));
 						}
 						if (flags->nul == 0)
 						{
 							if (flags->space == 1)
-							{
-								ft_putchar_pf(' ', count);
-								ft_type_space(flags->width - 2, count);
-								ft_putchar_pf('0', count);
-								return (1);
-							}
+								return (ft_constructor_nothing(flags, 6, count));
 							else if (flags->space == 0)
-							{
-								ft_type_space(flags->width - 1, count);
-								ft_putchar_pf('0', count);
-								return (1);
-							}
+								return (ft_constructor_nothing(flags, 5, count));
 						}
 					}
 				}
-				else
+				else /* для o u x */
 				{
 					if (flags->nul == 1)
-					{
-						ft_type_sp_nul(flags->width - 1, count);
-						ft_putchar_pf('0', count);
-						return (1);
-					}
+						return (ft_constructor_nothing(flags, 7, count));
 					else if (flags->nul == 0)
-					{
-						ft_type_space(flags->width - 1, count);
-						ft_putchar_pf('0', count);
-						return (1);
-					}
+						return (ft_constructor_nothing(flags, 5, count));
 				}
 			}
 		}
