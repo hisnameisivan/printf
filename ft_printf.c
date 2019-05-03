@@ -444,80 +444,183 @@ int		ft_check_nothing(char *num, t_flags *flags, int *count)
 		{
 			if (flags->dot != 0 && flags->precision == 0)
 			{
-				if ((flags->spec == 'd' || flags->spec == 'i') && flags->plus == 1)
+				if (flags->spec == 'd' || flags->spec == 'i')
 				{
-					flags->width--;
-					ft_putchar_pf('+', count);
-					ft_type_space(flags->width, count);
-					return (1);
+					if (flags->plus == 1)
+					{
+						ft_putchar_pf('+', count);
+						ft_type_space(flags->width - 1, count);
+						return (1);
+					}
+					else if (flags->plus == 0)
+					{
+						if (flags->space == 1)
+						{
+							ft_putchar_pf(' ', count);
+							ft_type_space(flags->width - 1, count);
+							return (1);
+						}
+						else if (flags->space == 0)
+						{
+							ft_type_space(flags->width, count);
+							return (1);
+						}
+					}	
 				}
-				if ((flags->spec == 'd' || flags->spec == 'i') && flags->space == 1)
+				else
 				{
-					ft_putchar_pf(' ', count);
-					flags->width--;
-				}
-				ft_type_space(flags->width, count);
-				return (1);
-			}
-			else if (flags->dot == 0) /* добавила 28.04 */
-			{
-				if ((flags->spec == 'd' || flags->spec == 'i') && flags->plus == 1)
-				{
-					flags->width = flags->width - 2; /* вычитаем под знак и под ноль */
-					ft_putchar_pf('+', count);
 					ft_putchar_pf('0', count);
-					ft_type_space(flags->width, count);
+					ft_type_space(flags->width - 1, count);
 					return (1);
 				}
-				ft_putchar_pf('0', count);
-				ft_type_space(--flags->width, count);
-				return (1);
+			}
+			else if (flags->dot == 0) 
+			{
+				if (flags->spec == 'd' || flags->spec == 'i')
+				{
+					if (flags->plus == 1)
+					{
+						ft_putchar_pf('+', count);
+						ft_putchar_pf('0', count);
+						ft_type_space(flags->width - 2, count);
+						return (1);
+
+					}
+					if (flags->plus == 0)
+					{
+						if (flags->space == 1)
+						{
+							ft_putchar_pf(' ', count);
+							ft_putchar_pf('0', count);
+							ft_type_space(flags->width - 2, count);
+							return (1);
+						}
+						if (flags->space == 0)
+						{
+							ft_putchar_pf('0', count);
+							ft_type_space(flags->width - 1, count);
+							return (1);
+						}
+					}
+				}
+				else
+				{
+					ft_putchar_pf('0', count);
+					ft_type_space(flags->width - 1, count);
+					return (1);
+				}
 			}
 		}
-		else
+		else /* нет флага минус */
 		{
 			if (flags->dot != 0 && flags->precision == 0)
 			{
-				if ((flags->spec == 'd' || flags->spec == 'i') && flags->plus == 1)
+				if (flags->spec == 'd' || flags->spec == 'i')
 				{
-					flags->width--;
-					ft_type_space(flags->width, count);
-					ft_putchar_pf('+', count);
+					if (flags->plus == 1)
+					{
+						ft_type_space(flags->width - 1, count);
+						ft_putchar_pf('+', count);
+						return (1);
+					}
+					if (flags->plus == 0)
+					{
+						if (flags->space == 1)
+						{
+							ft_type_space(flags->width - 1, count);
+							ft_putchar_pf(' ', count);
+							return (1);
+						}
+						else if (flags->space == 0)
+						{
+							ft_type_space(flags->width, count);
+							return (1);
+						}
+					}
+				}
+				else if (flags->resh != 0 && flags->spec == 'o') /* восьмиричная с # выводит 0 (остальные выводят пустоту)*/
+				{
+					ft_type_space(flags->width - 1, count);
+					ft_putchar_pf('0', count);
 					return (1);
 				}
-				if (flags->resh != 0 && flags->spec == 'o') /* восьмиричная с # выводит 0 (остальные выводят пустоту)*/
-					flags->width--;
-				if ((flags->spec == 'd' || flags->spec == 'i') && flags->space == 1)
+				else /* для o (без реш), для x и u */
 				{
-					ft_putchar_pf(' ', count);
-					flags->width--;
+					ft_type_space(flags->width, count);
+					return (1);
 				}
-				ft_type_space(flags->width, count);
-				if (flags->resh != 0 && flags->spec == 'o')
-					ft_putchar_pf('0', count);
-				return (1);
 			}
-			else if (flags->dot == 0) /* добавила 28.04 */
+			else if (flags->dot == 0)
 			{
-				if ((flags->spec == 'd' || flags->spec == 'i') && flags->plus == 1)
+				if (flags->spec == 'd' || flags->spec == 'i')
 				{
-					flags->width = flags->width - 2; /* вычитаем под знак и под ноль */
-					ft_type_space(flags->width, count);
-					ft_putchar_pf('+', count);
-					ft_putchar_pf('0', count);
-					return (1);
+					if (flags->plus == 1)
+					{
+						if (flags->nul == 1)
+						{
+							ft_putchar_pf('+', count);
+							ft_type_sp_nul(flags->width - 1, count);
+							return (1);
+						}
+						else if (flags->nul == 0)
+						{
+							ft_type_space(flags->width - 2, count);
+							ft_putchar_pf('+', count);
+							ft_putchar_pf('0', count);
+							return (1);
+						}
+					}
+					else if (flags->plus == 0)
+					{
+						if (flags->nul == 1)
+						{
+							if (flags->space == 1)
+							{
+								ft_putchar_pf(' ', count);
+								ft_type_space(flags->width - 1, count);
+								return (1);
+							}
+							if (flags->space == 0)
+							{
+								ft_type_sp_nul(flags->width - 1, count);
+								ft_putchar_pf('0', count);
+								return (1);
+							}
+						}
+						if (flags->nul == 0)
+						{
+							if (flags->space == 1)
+							{
+								ft_putchar_pf(' ', count);
+								ft_type_space(flags->width - 2, count);
+								ft_putchar_pf('0', count);
+								return (1);
+							}
+							else if (flags->space == 0)
+							{
+								ft_type_space(flags->width - 1, count);
+								ft_putchar_pf('0', count);
+								return (1);
+							}
+						}
+					}
 				}
-				if ((flags->spec == 'd' || flags->spec == 'i') && flags->space == 1)
+				else
 				{
-					ft_putchar_pf(' ', count);
-					flags->width--; /* вычитаем под флаг пробел */
+					if (flags->nul == 1)
+					{
+						ft_type_sp_nul(flags->width - 1, count);
+						ft_putchar_pf('0', count);
+						return (1);
+					}
+					else if (flags->nul == 0)
+					{
+						ft_type_space(flags->width - 1, count);
+						ft_putchar_pf('0', count);
+						return (1);
+					}
 				}
-				flags->width--; /* вычитаем под ноль */
-				ft_type_space(flags->width, count);
-				ft_putchar_pf('0', count);
-				return (1);
 			}
-
 		}
 	}
 	return (0);
@@ -1117,11 +1220,11 @@ int		ft_printf(const char *fmt, ...)
 	return (count);
 }
 
-int main(void)
-{
+// int main(void)
+// {
 // 	/* тесты для десятичной записи */
 
-	// printf("01 stroka: %-+8.6d\n", -123);
+// 	// printf("01 stroka: %-+8.6d\n", -123);
 	// ft_printf("01 stroka: %-+8.6d\n", -123);
 	// printf("02 stroka: % -+8.6d\n", -123);
 	// ft_printf("02 stroka: % -+8.6d\n", -123);
@@ -1450,10 +1553,14 @@ int main(void)
 	// printf("%d\n", printf("%.8s\n", "hello"));
 	//float nb = -0.00;
 	//ft_printf("%-+10.14f\n", nb);
-	//printf("original %-+10.14f\n", nb);
-	// ft_printf("\n%d\n", -100);
+// 	//printf("original %-+10.14f\n", nb);
+// 	// ft_printf("\n%d\n", -100);
 
-	ft_printf("%023i\n", LONG_MIN, LONG_MIN, LONG_MIN, LONG_MIN, LONG_MIN);
-	printf("%023i", LONG_MIN, LONG_MIN, LONG_MIN, LONG_MIN, LONG_MIN);
-	return (0);
-}
+// 	ft_printf("%023i\n", LONG_MIN, LONG_MIN, LONG_MIN, LONG_MIN, LONG_MIN);
+// 	printf("%023i", LONG_MIN, LONG_MIN, LONG_MIN, LONG_MIN, LONG_MIN);
+// 	ft_printf("%hd", (char)-32768);
+// 	printf("\n%hd", (char)-32768);
+// 	ft_printf("ft %03.2d\n", 0);
+// 	printf("za %03.2d", 0);
+// 	return (0);
+// }

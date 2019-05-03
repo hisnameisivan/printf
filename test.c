@@ -6,7 +6,7 @@
 /*   By: draudrau <draudrau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/16 12:18:30 by draudrau          #+#    #+#             */
-/*   Updated: 2019/05/02 18:33:41 by draudrau         ###   ########.fr       */
+/*   Updated: 2019/05/03 16:43:29 by draudrau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -235,17 +235,20 @@ int main(void)
 	// printf("%.3f\n", 19999.99999 );
 	// printf("%.9f", 1.1234560890123456);
 	//printf("%.5048f\n", 1.2048);
-	printf("stroka 01 %+f\n", 123.456);
-	printf("stroka 02 %-12f\n", 123.456);
-	printf("stroka 03 % 12f\n", 123.456);
-	printf("stroka 03 %12f\n", 123.456);
-	printf("stroka 04 %#f\n", 123.456);
-	printf("stroka 05 %012f\n", 123.456);
-	printf("stroka 06 %+-12f\n", 123.456);
-	printf("stroka 07 %+12f\n", -123.456);
-	printf("stroka 08 %+12f\n", -123.456);
-	printf("stroka 09 % f\n", -123.456);
-	printf("stroka 10 %015.2f\n", -123.456);
-	printf("stroka 11 %015.2d\n", -123);
+	// printf("stroka 01 %+f\n", 123.456);
+	// printf("stroka 02 %-12f\n", 123.456);
+	// printf("stroka 03 % 12f\n", 123.456);
+	// printf("stroka 03 %12f\n", 123.456);
+	// printf("stroka 04 %#f\n", 123.456);
+	// printf("stroka 05 %012f\n", 123.456);
+	// printf("stroka 06 %+-12f\n", 123.456);
+	// printf("stroka 07 %+12f\n", -123.456);
+	// printf("stroka 08 %+12f\n", -123.456);
+	// printf("stroka 09 % f\n", -123.456);
+	// printf("stroka 10 %015.2f\n", -123.456);
+	// printf("stroka 11 %015.2d\n", -123);
+
+	printf("stroka 13: %hd\n", 0);
+	printf("stroka 14: %d\n", 0);
 	return (0);
 }
