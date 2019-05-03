@@ -499,12 +499,12 @@ int		ft_check_nothing(char *num, t_flags *flags, int *count)
 					if (flags->plus == 1)
 						return (ft_constructor_nothing(flags, 1, count));
 					else if (flags->plus == 0)
-						return (ft_constructor_nothing(flags, 2, count));	
+						return (ft_constructor_nothing(flags, 2, count));
 				}
 				else
 					return (ft_constructor_nothing(flags, 2, count)); /* для o, x, u с .0 или . */
 			}
-			else if (flags->dot == 0) 
+			else if (flags->dot == 0)
 			{
 				if (flags->spec == 'd' || flags->spec == 'i')
 				{
@@ -1000,7 +1000,7 @@ void	ft_percent(int *count, t_flags *flags) /* добавила функцию 2
 	}
 }
 
-char	*ft_strjoin_float(char *str1, char *str2)
+char	*ft_strjoin_float(char *str1, char *str2, t_flags *flags)
 {
 	char	*tab;
 	int		i;
@@ -1017,7 +1017,7 @@ char	*ft_strjoin_float(char *str1, char *str2)
 		tab[i] = str1[i];
 		i++;
 	}
-	if (*str2 != '\0')
+	if (*str2 != '\0' || flags->resh == 1)
 	{
 		tab[i] = '.';
 		i++;
@@ -1074,7 +1074,7 @@ void	ft_float(va_list ap, int *count, t_flags *flags)
 		while (((fr[i] - '0') == 10) && (i >= 0)) /* i - 1 проверка на то, что мы дошли до первого (нулевого) элемента массива */
 		{
 			fr[i] = '0';
-			if (i == 0) 
+			if (i == 0)
 				(whole >= 0) ? (whole++) : (whole--);
 			else
 				fr[i - 1]++;
@@ -1096,7 +1096,7 @@ void	ft_float(va_list ap, int *count, t_flags *flags)
 	// }
 	//printf("\n");
 	flags->precision = 0;
-	new_float = ft_strjoin_float(wh, fr);
+	new_float = ft_strjoin_float(wh, fr, flags);
 	cmp_f = ft_cmp_width_prec_num(flags, new_float);
 	ft_complex_constructor(flags, cmp_f, new_float, count);
 	// printf("%s", new_float);
