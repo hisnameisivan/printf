@@ -499,14 +499,14 @@ int		ft_check_nothing(char *num, t_flags *flags, int *count)
 					if (flags->plus == 1)
 						return (ft_constructor_nothing(flags, 1, count));
 					else if (flags->plus == 0)
-						return (ft_constructor_nothing(flags, 2, count));	
+						return (ft_constructor_nothing(flags, 2, count));
 				}
 				else
 					return (ft_constructor_nothing(flags, 2, count)); /* для o, x, u с .0 или . */
 			}
 			else if (flags->dot == 0 && (flags->spec == 'x' || flags->spec == 'X' || flags->spec == 'o') && flags->resh) /* чтобы с нулем и решеткой не выводилась приставка оx */
 				return (ft_constructor_nothing(flags, 4, count));
-			// else if (flags->dot == 0) 
+			// else if (flags->dot == 0)
 			// {
 			// 	if (flags->spec == 'd' || flags->spec == 'i')
 			// 	{

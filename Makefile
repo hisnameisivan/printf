@@ -1,22 +1,25 @@
 NAME = libftprintf.a
-#NAME = a.out
-SRC = ft_printf.c
+OBJ = ft_printf.o
 INCLUDES = ft_printf.h
-FLAG = -Wall -Wextra -Werror
+FLAGS = -Wall -Wextra -Werror
 
 all: $(NAME)
 
-$(NAME):
-		@$(MAKE) -C libft
-		@gcc $(FLAG) $(SRC) -I.$(INCLUDES) -c
-		#gcc $(FLAG) -g $(SRC) libft/libft.a -I.$(INCLUDES)
-		@cp libft/libft.a $(NAME)
-		@ar rc $(NAME) ft_printf.o
-clean: # дописать
-		#@$(MAKE) -C libft fclean
-		@/bin/rm -f rm -f *.o
+$(OBJ): %.o : %.c
+		make -C libft
+		gcc $(FLAGS) -c -I.$(INCLUDES) $< -o $@
+
+$(NAME): $(OBJ)
+		cp libft/libft.a $(NAME)
+		ar rc $(NAME) $(OBJ)
+clean:
+		/bin/rm -f $(OBJ)
+		make clean -C ./libft/
 
 fclean: clean
-		@/bin/rm -f $(NAME) # дописать
+		/bin/rm -f $(NAME)
+		make fclean -C ./libft/
 
-re: fclean $(NAME)
+re: fclean all
+
+.PHONY : all, clean, flcean, re
