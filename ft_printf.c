@@ -271,7 +271,7 @@ void	ft_constructor(t_flags *flags, t_wp temp, int sit, char *num, int *count)
 			ft_putchar_pf(' ', count); /* флаг пробел (флаг пробел не работает с восьмиричной и шестнадцатиричной*/
 			temp.sp--; /* флаг пробел съел один пробел */
 		}
-		if (flags->dot == 1 || (flags->dot == 0 && flags->nul == 0))
+		if (((flags->spec == 'f' && flags->nul == 0)) || (flags->dot == 1 && (flags->spec == 'd' || flags->spec == 'i')) || (flags->dot == 0 && flags->nul == 0))
 			ft_type_space(temp.sp, count); /* sit 6b отсюда начинается */
 		if (temp.znak == 0 && flags->spec != 'u' && flags->resh)
 		{
@@ -279,7 +279,7 @@ void	ft_constructor(t_flags *flags, t_wp temp, int sit, char *num, int *count)
 			if (flags->spec != 'o') /* для шестнадцатиричной */
 				ft_putchar_pf(flags->spec, count);
 		}
-		if (flags->nul && flags->dot == 0) /* если точность указана Флаг '0' ignore -> нужно, чтобы не было точки */
+		if ((flags->dot == 0 && flags->nul == 1) || (flags->spec == 'f' && flags->nul == 1)) /* если точность указана Флаг '0' ignore -> нужно, чтобы не было точки */
 			ft_type_sp_nul(temp.sp, count); /* sit 6c или sit 6d*/
 		else
 		ft_type_nul(temp.nul, count);
@@ -1058,14 +1058,15 @@ void	ft_float(va_list ap, int *count, t_flags *flags)
 		znak = (char *)&fraction;
 		znak += 9;
 		flag_znak = ((*znak < 0) ? -1 : 1);
-		//flag_znak = (((znak[9]) & (1 << 7) != 0) ? -1 : 0);
+		//flag_znak = ((((znak[9]) & (1 << 7)) != 0) ? -1 : 0);
 	}
 	else
 	{
 		fraction = va_arg(ap, double);
 		znak = (char *)&fraction;
-		znak += 7;
+		znak += 9;
 		flag_znak = ((*znak < 0) ? -1 : 1);
+		//flag_znak = (((znak[7] & (1 << 7)) != 0) ? (char)'+' : (char)'-');
 	}
 	whole = (long long)fraction;
 	if ((fraction = fraction - whole) < 0)
@@ -1116,6 +1117,11 @@ void	ft_float(va_list ap, int *count, t_flags *flags)
 	new_float = ft_strjoin_float(wh, fr, flags);
 	cmp_f = ft_cmp_width_prec_num(flags, new_float);
 	cmp_f.znak = flag_znak;
+	// if (fraction == -0.)
+	// {
+	// 	cmp_f.znak = -1;
+	// 	cmp_f.sp--;
+	// }
 	ft_complex_constructor(flags, cmp_f, new_float, count);
 	// printf("%s", new_float);
 	// printf("\n");
@@ -1192,9 +1198,9 @@ int		ft_printf(const char *fmt, ...)
 	return (count);
 }
 
-// int main(void)
-// {
-	/* тесты для десятичной записи */
+int main(void)
+{
+// 	/* тесты для десятичной записи */
 
 // 	// printf("01 stroka: %-+8.6d\n", -123);
 	// ft_printf("01 stroka: %-+8.6d\n", -123);
@@ -1534,7 +1540,11 @@ int		ft_printf(const char *fmt, ...)
 // 	printf("\n%hd", (char)-32768);
 // 	ft_printf("ft %03.2d\n", 0);
 // 	printf("za %03.2d", 0);
-// 	 ft_printf("%15.8f|%-15.8f|%+15.8f|% 15.8f|%#15.8f|%15.8f\n", 0., 0., 0., 0., 0., -0.);
-// 		printf("%15.8f|%-15.8f|%+15.8f|% 15.8f|%#15.8f|%15.8f", 0., 0., 0., 0., 0., -0.);
-// 	return (0);
-// }
+// 	 ft_printf("%15.8f\n", -0.);
+// 	printf("%15.8f\n", -0.);
+// 	ft_printf("%f|%-f|%+f|% f|%#f|%0f\n", 0., 0., 0., 0., 0., 0.);
+// 	printf("%f|%-f|%+f|% f|%#f|%0f\n", 0., 0., 0., 0., 0., 0.);
+	ft_printf("%f|%-f|%+f|% f|%#f|%0f\n", -0., -0., -0., -0., -0., -0.);
+	printf("%f|%-f|%+f|% f|%#f|%0f\n", -0., -0., -0., -0., -0., -0.);
+	return (0);
+}

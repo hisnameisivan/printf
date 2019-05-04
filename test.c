@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   test.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: waddam <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: draudrau <draudrau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/16 12:18:30 by draudrau          #+#    #+#             */
-/*   Updated: 2019/05/03 19:26:51 by waddam           ###   ########.fr       */
+/*   Updated: 2019/05/04 17:10:30 by draudrau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -248,40 +248,53 @@ int main(void)
 	// printf("stroka 10 %015.2f\n", -123.456);
 	// printf("stroka 11 %015.2d\n", -123);
 
-	printf("stroka 01: %-+5.0f\n", 0.);
-	printf("stroka 02: %- 5.0f\n", 0.);
-	printf("stroka 03: %-5.0f\n", 0.);
-	printf("stroka 04: %-+5f\n", 0.);
-	printf("stroka 05: %- 5f\n", 0.);
-	printf("stroka 06: %-5f\n", 0.);
-	printf("stroka 71: %+5.0f\n", 0.);
-	printf("stroka 72: % 5.0f\n", 0.);
-	printf("stroka 08: %5.0f\n", 0.);
+	// printf("stroka 01: %-+5.0f\n", 0.);
+	// printf("stroka 02: %- 5.0f\n", 0.);
+	// printf("stroka 03: %-5.0f\n", 0.);
+	// printf("stroka 04: %-+5f\n", 0.);
+	// printf("stroka 05: %- 5f\n", 0.);
+	// printf("stroka 06: %-5f\n", 0.);
+	// printf("stroka 71: %+5.0f\n", 0.);
+	// printf("stroka 72: % 5.0f\n", 0.);
+	// printf("stroka 08: %5.0f\n", 0.);
 
 
-	printf("stroka 09: %+05f\n", 0.);
-	printf("stroka 10: %+5f\n", 0.);
-	printf("stroka 11: % 05f\n", 0.);
-	printf("stroka 12: %05f\n", 0.);
-	printf("stroka 13: % 5f\n", 0.);
-	printf("stroka 14: %5f\n", 0.);
+	// printf("stroka 09: %+05f\n", 0.);
+	// printf("stroka 10: %+5f\n", 0.);
+	// printf("stroka 11: % 05f\n", 0.);
+	// printf("stroka 12: %05f\n", 0.);
+	// printf("stroka 13: % 5f\n", 0.);
+	// printf("stroka 14: %5f\n", 0.);
 
-	printf("stroka 01: %#-+5.0f\n", 0.);
-	printf("stroka 02: %#- 5.0f\n", 0.);
-	printf("stroka 03: %#-5.0f\n", 0.);
-	printf("stroka 04: %#-+5f\n", 0.);
-	printf("stroka 05: %#- 5f\n", 0.);
-	printf("stroka 06: %#-5f\n", 0.);
-	printf("stroka 71: %#+5.0f\n", 0.);
-	printf("stroka 72: %# 5.0f\n", 0.);
-	printf("stroka 08: %#5.0f\n", 0.);
+	// printf("stroka 01: %#-+5.0f\n", 0.);
+	// printf("stroka 02: %#- 5.0f\n", 0.);
+	// printf("stroka 03: %#-5.0f\n", 0.);
+	// printf("stroka 04: %#-+5f\n", 0.);
+	// printf("stroka 05: %#- 5f\n", 0.);
+	// printf("stroka 06: %#-5f\n", 0.);
+	// printf("stroka 71: %#+5.0f\n", 0.);
+	// printf("stroka 72: %# 5.0f\n", 0.);
+	// printf("stroka 08: %#5.0f\n", 0.);
 
 
-	printf("stroka 09: %#+05f\n", 0.);
-	printf("stroka 10: %#+5f\n", 0.);
-	printf("stroka 11: %# 05f\n", 0.);
-	printf("stroka 12: %#05f\n", 0.);
-	printf("stroka 13: %# 5f\n", 0.);
-	printf("stroka 14: %#5f\n", 0.);
+	// printf("stroka 09: %#+05f\n", 0.);
+	// printf("stroka 10: %#+5f\n", 0.);
+	// printf("stroka 11: %# 05f\n", 0.);
+	// printf("stroka 12: %#05f\n", 0.);
+	// printf("stroka 13: %# 5f\n", 0.);
+	// printf("stroka 14: %#5f\n", 0.);
+	double		x;
+	char		*znak;
+	int			flag_znak;
+
+	x = -0.;
+	znak = (char *)&x;
+	znak += 7;
+	flag_znak = ((*znak < 0) ? -1 : 1);
+	// if (x == -0.)
+	// 	printf("da");
+	// else
+	// 	printf("net");
+	printf("%d\n", flag_znak);
 	return (0);
 }
