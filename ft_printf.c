@@ -1036,6 +1036,25 @@ char	*ft_strjoin_float(char *str1, char *str2, t_flags *flags)
 	return (tab);
 }
 
+int		ft_check_nan_inf(t_flags *flags, char *wh, int *count)
+{
+	if (ft_strcmp(wh, "-9223372036854775808") == 0)
+	{
+		if (flags->minus)
+		{
+			ft_putstr_pf("nan", count);
+			ft_type_space(flags->width - 3, count);
+		}
+		else if (!flags->minus)
+		{
+			ft_type_space(flags->width - 3, count);
+			ft_putstr_pf("nan", count);
+		}
+		return (1);
+	}
+	return (0);
+}
+
 void	ft_float(va_list ap, int *count, t_flags *flags)
 {
 	int			i;
@@ -1102,6 +1121,8 @@ void	ft_float(va_list ap, int *count, t_flags *flags)
 			(whole >= 0) ? (whole++) : (whole--);
 	}
 	wh = ft_long_to_ascii(whole);
+	if (ft_check_nan_inf(flags, wh, count) == 1)
+		return ;
 	// printf("%lld\n", whole);
 	// printf("%d\n", rounding);
 	// //printf("%lld\n", temp2);
@@ -1117,11 +1138,10 @@ void	ft_float(va_list ap, int *count, t_flags *flags)
 	new_float = ft_strjoin_float(wh, fr, flags);
 	cmp_f = ft_cmp_width_prec_num(flags, new_float);
 	cmp_f.znak = flag_znak;
-	// if (fraction == -0.)
-	// {
-	// 	cmp_f.znak = -1;
-	// 	cmp_f.sp--;
-	// }
+	if (cmp_f.znak == -1 && flags->plus == 0 && ft_strcmp(new_float, "0.0"))
+	{
+		cmp_f.sp--;
+	}
 	ft_complex_constructor(flags, cmp_f, new_float, count);
 	// printf("%s", new_float);
 	// printf("\n");
@@ -1196,355 +1216,4 @@ int		ft_printf(const char *fmt, ...)
 	}
 	va_end(ap);
 	return (count);
-}
-
-int main(void)
-{
-// 	/* тесты для десятичной записи */
-
-// 	// printf("01 stroka: %-+8.6d\n", -123);
-	// ft_printf("01 stroka: %-+8.6d\n", -123);
-	// printf("02 stroka: % -+8.6d\n", -123);
-	// ft_printf("02 stroka: % -+8.6d\n", -123);
-	// printf("03 stroka: %-+8.6d\n", 123);
-	// ft_printf("03 stroka: %-+8.6d\n", 123);
-	// printf("04 stroka: % -+8.6d\n", 123);
-	// ft_printf("04 stroka: % -+8.6d\n", 123);
-	// printf("05 stroka: %-8.6d\n", 123);
-	// ft_printf("05 stroka: %-8.6d\n", 123);
-	// printf("06 stroka: % -8.6d\n", 123);
-	// ft_printf("06 stroka: % -8.6d\n", 123);
-	// printf("07 stroka: %+8.6d\n", -123);
-	// ft_printf("07 stroka: %+8.6d\n", -123);
-	// printf("08 stroka: % +8.6d\n", -123);
-	// ft_printf("08 stroka: % +8.6d\n", -123);
-	// printf("09 stroka: %+8.6d\n", 123);
-	// ft_printf("09 stroka: %+8.6d\n", 123);
-	// printf("10 stroka: % +8.6d\n", 123);
-	// ft_printf("10 stroka: % +8.6d\n", 123);
-	// printf("11 stroka: %8.6d\n", 123);
-	// ft_printf("11 stroka: %8.6d\n", 123);
-	// printf("12 stroka: % 8.6d\n", 123);
-	// ft_printf("12 stroka: % 8.6d\n", 123);
-	// printf("13 stroka: %+8d\n", -123);
-	// ft_printf("13 stroka: %+8d\n", -123);
-	// printf("14 stroka: % +8d\n", -123);
-	// ft_printf("14 stroka: % +8d\n", -123);
-	// printf("15 stroka: %8.6d\n", 123);
-	// ft_printf("15 stroka: %8.6d\n", 123);
-	// printf("16 stroka: % 8.6d\n", 123);
-	// ft_printf("16 stroka: % 8.6d\n", 123);
-	// printf("17 stroka: %+ 8.6d\n", 123);
-	// ft_printf("17 stroka: %+ 8.6d\n", 123);
-	// printf("18 stroka: % 8.6 d\n", 123);
-	// ft_printf("18 stroka: % 8.6 d\n", 123);
-	// printf("19 stroka: %      8d\n", -123);
-	// ft_printf("19 stroka: %      8d\n", -123);
-	// printf("20 stroka: % 8.6d\n", 123);
-	// ft_printf("20 stroka: % 8.6d\n", 123);
-	// printf("21 stroka: % d\n", -123);
-	// ft_printf("21 stroka: % d\n", -123);
-	// printf("22 stroka: %      d\n", -123);
-	// ft_printf("22 stroka: %      d\n", -123);
-	// printf("23 stroka: %08.6d\n", 123);
-	// ft_printf("23 stroka: %08.6d\n", 123);
-	// printf("24 stroka: %-010d\n", 123);
-	// ft_printf("24 stroka: %-010d\n", 123);
-	// printf("25 stroka: % 010d\n", 123);
-	// ft_printf("25 stroka: % 010d\n", 123);
-	// printf("26 stroka: % 010.5d\n", 123);
-	// ft_printf("26 stroka: % 010.5d\n", 123);
-	// printf("27 stroka: %9 0d\n", 123);
-	// ft_printf("27 stroka: %9 0d\n", 123);
-	// printf("28 stroka: %9d\n", 123);
-	// ft_printf("28 stroka: %9d\n", 123);
-	// printf("29 stroka: % 08.6d\n", 123);
-	// ft_printf("29 stroka: % 08.6d\n", 123);
-	// printf("30 stroka: % 06d\n", 123);
-	// ft_printf("30 stroka: % 06d\n", 123);
-	// printf("31 stroka: %+08.6d\n", 123);
-	// ft_printf("31 stroka: %+08.6d\n", 123);
-	// printf("32 stroka: % 15s\n", "privet");
-	// ft_printf("32 stroka: % 15s\n", "privet");
-	// printf("33 stroka: % c\n", 'c');
-	// ft_printf("33 stroka: % c\n", 'c');
-	// printf("34 stroka: % 08.6hhd\n", (char)128);
-	// ft_printf("34 stroka: % 08.6hhd\n", (char)128);
-	// printf("35 stroka: % 06hhd\n", (char)212);
-	// ft_printf("35 stroka: % 06hhd\n", (char)212);
-	// printf("36 stroka: %+08.6hhd\n", (char)212);
-	// ft_printf("36 stroka: %+08.6hhd\n", (char)212);
-	// ft_printf("37 stroka: % 1.2d\n", -1);
-	// printf("37 stroka: % 1.2d\n", -1);
-	// printf("38 stroka: %9.5d\n", 345);
-	// ft_printf("38 stroka: %9.5d\n", 345);
-
-	/* тесты для восьмиричной записи */
-
-	// printf("01 stroka: %-+8.6o\n", -123);
-	// ft_printf("01 stroka: %-+8.6o\n", -123);
-    // printf("02 stroka: % -+8.6o\n", -123);
-	// ft_printf("02 stroka: % -+8.6o\n", -123);
-	// printf("03 stroka: %-+8.6o\n", 123);
-	// ft_printf("03 stroka: %-+8.6o\n", 123);
-	// printf("04 stroka: % -+8.6o\n", 123);
-	// ft_printf("04 stroka: % -+8.6o\n", 123);
-	// printf("05 stroka: %-8.6o\n", 123);
-	// ft_printf("05 stroka: %-8.6o\n", 123);
-	// printf("06 stroka: % -8.6o\n", 123);
-	// ft_printf("06 stroka: % -8.6o\n", 123);
-	// printf("07 stroka: %+8.6o\n", -123);
-	// ft_printf("07 stroka: %+8.6o\n", -123);
-	// printf("08 stroka: % +8.6o\n", -123);
-	// ft_printf("08 stroka: % +8.6o\n", -123);
-	// printf("09 stroka: %+8.6o\n", 123);
-	// ft_printf("09 stroka: %+8.6o\n", 123);
-	// printf("10 stroka: % +8.6o\n", 123);
-	// ft_printf("10 stroka: % +8.6o\n", 123);
-	// printf("11 stroka: %8.6o\n", 123);
-	// ft_printf("11 stroka: %8.6o\n", 123);
-	// printf("12 stroka: % 8.6o\n", 123);
-	// ft_printf("12 stroka: % 8.6o\n", 123);
-	// printf("13 stroka: %+8o\n", -123);
-	// ft_printf("13 stroka: %+8o\n", -123);
-	// printf("14 stroka: % +8o\n", -123);
-	// ft_printf("14 stroka: % +8o\n", -123);
-	// printf("15 stroka: %8.6o\n", 123);
-	// ft_printf("15 stroka: %8.6o\n", 123);
-	// printf("16 stroka: % 8.6o\n", 123);
-	// ft_printf("16 stroka: % 8.6o\n", 123);
-	// printf("17 stroka: %+ 8.6o\n", 123);
-	// ft_printf("17 stroka: %+ 8.6o\n", 123);
-	// printf("18 stroka: % 8.6 o\n", 123);
-	// ft_printf("18 stroka: % 8.6 o\n", 123);
-	// printf("19 stroka: %      15o\n", -123);
-	// ft_printf("19 stroka: %      15o\n", -123);
-	// printf("20 stroka: % 8.6o\n", 123);
-	// ft_printf("20 stroka: % 8.6o\n", 123);
-	// printf("21 stroka: % o\n", -123);
-	// ft_printf("21 stroka: % o\n", -123);
-	// printf("22 stroka: %      o\n", -123);
-	// ft_printf("22 stroka: %      o\n", -123);
-	// printf("23 stroka: %08.6o\n", 123);
-	// ft_printf("23 stroka: %08.6o\n", 123);
-	// printf("24 stroka: %-010o\n", 123);
-	// ft_printf("24 stroka: %-010o\n", 123);
-	// printf("25 stroka: % 010o\n", 123);
-	// ft_printf("25 stroka: % 010o\n", 123);
-	// printf("26 stroka: % 010.5o\n", 123);
-	// ft_printf("26 stroka: % 010.5o\n", 123);
-	// printf("27 stroka: %9 0o\n", 123);
-	// ft_printf("27 stroka: %9 0o\n", 123);
-	// printf("28 stroka: %9o\n", 123);
-	// ft_printf("28 stroka: %9o\n", 123);
-	// printf("29 stroka: % 08.6o\n", 123);
-	// ft_printf("29 stroka: % 08.6o\n", 123);
-	// printf("30 stroka: % 06o\n", 123);
-	// ft_printf("30 stroka: % 06o\n", 123);
-	// printf("31 stroka: %+08.6o\n", 123);
-	// ft_printf("31 stroka: %+08.6o\n", 123);
-	// printf("32 stroka: % 15s\n", "privet");
-	// ft_printf("32 stroka: % 15s\n", "privet");
-	// printf("33 stroka: % c\n", 'c');
-	// ft_printf("33 stroka: % c\n", 'c');
-	// printf("34 stroka: % 08.6hho\n", (char)128);
-	// ft_printf("34 stroka: % 08.6hho\n", (char)128);
-	// printf("35 stroka: % 06hho\n", (char)212);
-	// ft_printf("35 stroka: % 06hho\n", (char)212);
-	// printf("36 stroka: %+08.6hho\n", (char)212);
-	// ft_printf("36 stroka: %+08.6hho\n", (char)212);
-	// printf("37 stroka: % 1.2o\n", -1);
-	// ft_printf("37 stroka: % 1.2o\n", -1);
-	// printf("38 stroka: % -8hho\n", (char)255);
-	// ft_printf("38 stroka: % -8hho\n", (char)255);
-	// printf("39 stroka: % -8hho\n", (char)255);
-	// ft_printf("39 stroka: % -8hho\n", (char)255);
-	// printf("40 stroka: %9.5o\n", 345);
-	// ft_printf("40 stroka: %9.5o\n", 345);
-
-	/* тесты для char */
-
-	// char	ch = 'x';
-	// printf("kolichestvo %d\n", printf("01 stroka: %c\n", ch));
-	// printf("kolichestvo %d\n", ft_printf("01 stroka: %c\n", ch));
-	// printf("kolichestvo %d\n", printf("02 stroka: %15.6c\n", ch));
-	// printf("kolichestvo %d\n", ft_printf("02 stroka: %15.6c\n", ch));
-	// printf("kolichestvo %d\n", printf("03 stroka: %-15c\n", ch));
-	// printf("kolichestvo %d\n", ft_printf("03 stroka: %-15c\n", ch));
-	// printf("kolichestvo %d\n", printf("04 stroka: % -15c\n", ch));
-	// printf("kolichestvo %d\n", ft_printf("04 stroka: % -15c\n", ch));
-	// printf("kolichestvo %d\n", printf("05 stroka: % -015c\n", ch));
-	// printf("kolichestvo %d\n", ft_printf("05 stroka: % -015c\n", ch));
-
-	/* тесты для string */
-
-	// char	*str = "hello";
-	// printf("kolichestvo %d\n", printf("01 stroka: %s\n", str));
-	// printf("kolichestvo %d\n", ft_printf("01 stroka: %s\n", str));
-	// printf("kolichestvo %d\n", printf("02 stroka: %15.6s\n", str));
-	// printf("kolichestvo %d\n", ft_printf("02 stroka: %15.6s\n", str));
-	// printf("kolichestvo %d\n", printf("03 stroka: %-15s\n", str));
-	// printf("kolichestvo %d\n", ft_printf("03 stroka: %-15s\n", str));
-	// printf("kolichestvo %d\n", printf("04 stroka: % -15s\n", str));
-	// printf("kolichestvo %d\n", ft_printf("04 stroka: % -15s\n", str));
-	// printf("kolichestvo %d\n", printf("05 stroka: % -015s\n", str));
-	// printf("kolichestvo %d\n", ft_printf("05 stroka: % -015s\n", str));
-
-	/* тесты для pointer */
-
-	// char	*str = "hello";
-	// printf("kolichestvo %d\n", printf("01 stroka: %p\n", str));
-	// printf("kolichestvo %d\n", ft_printf("01 stroka: %p\n", str));
-	// printf("kolichestvo %d\n", printf("02 stroka: %15.6p\n", str));
-	// printf("kolichestvo %d\n", ft_printf("02 stroka: %15.6p\n", str));
-	// printf("kolichestvo %d\n", printf("03 stroka: %-15p\n", str));
-	// printf("kolichestvo %d\n", ft_printf("03 stroka: %-15p\n", str));
-	// printf("kolichestvo %d\n", printf("04 stroka: % -15p\n", str));
-	// printf("kolichestvo %d\n", ft_printf("04 stroka: % -15p\n", str));
-	// printf("kolichestvo %d\n", printf("05 stroka: % -015p\n", str));
-	// printf("kolichestvo %d\n", ft_printf("05 stroka: % -015p\n", str));
-
-	/* тесты для count */
-
-	// printf("kolichestvo %d\n", printf("01 stroka: %-+8.6d\n", -123));
-	// printf("kolichestvo %d\n", ft_printf("01 stroka: %-+8.6d\n", -123));
-	// printf("kolichestvo %d\n", printf("02 stroka: % -+8.6d\n", -123));
-	// printf("kolichestvo %d\n", ft_printf("02 stroka: % -+8.6d\n", -123));
-	// printf("kolichestvo %d\n", printf("03 stroka: %-+8.6d\n", 123));
-	// printf("kolichestvo %d\n", ft_printf("03 stroka: %-+8.6d\n", 123));
-	// printf("kolichestvo %d\n", printf("04 stroka: % -+8.6d\n", 123));
-	// printf("kolichestvo %d\n", ft_printf("04 stroka: % -+8.6d\n", 123));
-	// printf("kolichestvo %d\n", printf("05 stroka: %-8.6d\n", 123));
-	// printf("kolichestvo %d\n", ft_printf("05 stroka: %-8.6d\n", 123));
-	// printf("kolichestvo %d\n", printf("06 stroka: % -8.6d\n", 123));
-	// printf("kolichestvo %d\n", ft_printf("06 stroka: % -8.6d\n", 123));
-	// printf("kolichestvo %d\n", printf("07 stroka: %+8.6d\n", -123));
-	// printf("kolichestvo %d\n", ft_printf("07 stroka: %+8.6d\n", -123));
-	// printf("kolichestvo %d\n", printf("08 stroka: % +8.6d\n", -123));
-	// printf("kolichestvo %d\n", ft_printf("08 stroka: % +8.6d\n", -123));
-	// printf("kolichestvo %d\n", printf("09 stroka: %+8.6d\n", 123));
-	// printf("kolichestvo %d\n", ft_printf("09 stroka: %+8.6d\n", 123));
-	// printf("kolichestvo %d\n", printf("10 stroka: % +8.6d\n", 123));
-	// printf("kolichestvo %d\n", ft_printf("10 stroka: % +8.6d\n", 123));
-	// printf("kolichestvo %d\n", printf("11 stroka: %8.6d\n", 123));
-	// printf("kolichestvo %d\n", ft_printf("11 stroka: %8.6d\n", 123));
-	// printf("kolichestvo %d\n", printf("12 stroka: % 8.6d\n", 123));
-	// printf("kolichestvo %d\n", ft_printf("12 stroka: % 8.6d\n", 123));
-	// printf("kolichestvo %d\n", printf("13 stroka: %+8d\n", -123));
-	// printf("kolichestvo %d\n", ft_printf("13 stroka: %+8d\n", -123));
-	// printf("kolichestvo %d\n", printf("14 stroka: % +8d\n", -123));
-	// printf("kolichestvo %d\n", ft_printf("14 stroka: % +8d\n", -123));
-	// printf("kolichestvo %d\n", printf("15 stroka: %8.6d\n", 123));
-	// printf("kolichestvo %d\n", ft_printf("15 stroka: %8.6d\n", 123));
-	// printf("kolichestvo %d\n", printf("16 stroka: % 8.6d\n", 123));
-	// printf("kolichestvo %d\n", ft_printf("16 stroka: % 8.6d\n", 123));
-	// printf("kolichestvo %d\n", printf("17 stroka: %+ 8.6d\n", 123));
-	// printf("kolichestvo %d\n", ft_printf("17 stroka: %+ 8.6d\n", 123));
-	// printf("kolichestvo %d\n", printf("18 stroka: % 8.6 d\n", 123));
-	// printf("kolichestvo %d\n", ft_printf("18 stroka: % 8.6 d\n", 123));
-	// printf("kolichestvo %d\n", printf("19 stroka: %      8d\n", -123));
-	// printf("kolichestvo %d\n", ft_printf("19 stroka: %      8d\n", -123));
-	// printf("kolichestvo %d\n", printf("20 stroka: % 8.6d\n", 123));
-	// printf("kolichestvo %d\n", ft_printf("20 stroka: % 8.6d\n", 123));
-	// printf("kolichestvo %d\n", printf("21 stroka: % d\n", -123));
-	// printf("kolichestvo %d\n", ft_printf("21 stroka: % d\n", -123));
-	// printf("kolichestvo %d\n", printf("22 stroka: %      d\n", -123));
-	// printf("kolichestvo %d\n", ft_printf("22 stroka: %      d\n", -123));
-	// printf("kolichestvo %d\n", printf("23 stroka: %08.6d\n", 123));
-	// printf("kolichestvo %d\n", ft_printf("23 stroka: %08.6d\n", 123));
-	// printf("kolichestvo %d\n", printf("24 stroka: %-010d\n", 123));
-	// printf("kolichestvo %d\n", ft_printf("24 stroka: %-010d\n", 123));
-	// printf("kolichestvo %d\n", printf("25 stroka: % 010d\n", 123));
-	// printf("kolichestvo %d\n", ft_printf("25 stroka: % 010d\n", 123));
-	// printf("kolichestvo %d\n", printf("26 stroka: % 010.5d\n", 123));
-	// printf("kolichestvo %d\n", ft_printf("26 stroka: % 010.5d\n", 123));
-	// printf("kolichestvo %d\n", printf("27 stroka: %9 0d\n", 123));
-	// printf("kolichestvo %d\n", ft_printf("27 stroka: %9 0d\n", 123));
-	// printf("kolichestvo %d\n", printf("28 stroka: %9d\n", 123));
-	// printf("kolichestvo %d\n", ft_printf("28 stroka: %9d\n", 123));
-	// printf("kolichestvo %d\n", printf("29 stroka: % 08.6d\n", 123));
-	// printf("kolichestvo %d\n", ft_printf("29 stroka: % 08.6d\n", 123));
-	// printf("kolichestvo %d\n", printf("30 stroka: % 06d\n", 123));
-	// printf("kolichestvo %d\n", ft_printf("30 stroka: % 06d\n", 123));
-	// printf("kolichestvo %d\n", printf("31 stroka: %+08.6d\n", 123));
-	// printf("kolichestvo %d\n", ft_printf("31 stroka: %+08.6d\n", 123));
-	// printf("kolichestvo %d\n", printf("32 stroka: % 15s\n", "privet"));
-	// printf("kolichestvo %d\n", ft_printf("32 stroka: % 15s\n", "privet"));
-	// printf("kolichestvo %d\n", printf("33 stroka: % c\n", 'c'));
-	// printf("kolichestvo %d\n", ft_printf("33 stroka: % c\n", 'c'));
-	// printf("kolichestvo %d\n", printf("34 stroka: % 08.6hhd\n", (char)128));
-	// printf("kolichestvo %d\n", ft_printf("34 stroka: % 08.6hhd\n", (char)128));
-	// printf("kolichestvo %d\n", printf("35 stroka: % 06hhd\n", (char)212));
-	// printf("kolichestvo %d\n", ft_printf("35 stroka: % 06hhd\n", (char)212));
-	// printf("kolichestvo %d\n", printf("36 stroka: %+08.6hhd\n", (char)212));
-	// printf("kolichestvo %d\n", ft_printf("36 stroka: %+08.6hhd\n", (char)212));
-	// printf("kolichestvo %d\n", ft_printf("37 stroka: % 1.2d\n", -1));
-	// printf("kolichestvo %d\n", printf("37 stroka: % 1.2d\n", -1));
-	// printf("kolichestvo %d\n", printf("38 stroka: %9.5d\n", 345));
-	// printf("kolichestvo %d\n", ft_printf("38 stroka: %9.5d\n", 345));
-	// ft_printf("%.0d\n", 0);
-	// ft_printf("%.0x\n", 0);
-	// ft_printf("%.0o\n", 0);
-	// ft_printf("%.0x\n", 0);
-	// ft_printf("%#.0d\n", 0);
-	// ft_printf("%#.0x\n", 0);
-	// ft_printf("%#.0o\n", 0);
-	// ft_printf("%#.0x\n", 0);
-// 	ft_printf("01 %#hhx\n", (char)256);
-// 	ft_printf("02 %hh#x\n", (char)256);
-// 	printf("04 %#hhx\n", (char)256);
-// 	printf("05 %hh#x\n", (char)256);
-// 	printf("%%\n");
-// 	printf("%5%\n");
-// 	printf("%-5%\n");
-// 	printf("%.0%\n");
-
-	//printf("\n#0074\n");
-	// ft_printf("%.2c", NULL);
-	// ft_printf("%.2c", 0);
-	// printf("\n#0075\n");
-	// printf("%s %s", NULL, "string");
-	// printf("\n#0079\n");
-	// printf("@moulitest: %c", 0);
-	// printf("\n#0080\n");
-	// printf("%2c", 0);
-	// printf("\n#0081\n");
-	// printf("null %c and text", 0);
-	// printf("\n#0082\n");
-	// printf("% c", 0);
-	//ft_printf("%+d\n", 0);
-	//ft_printf("%+0d\n", 0);
-	//printf("%+0d\n", 0);
-	//ft_printf("%#8x\n", 0);
-	//printf("%#8x\n", 0);
-	// ft_printf("@moulitest: %#.o %#.0o\n", 0, 0);
-	//printf("@moulitest: %#.o %#.0o\n", 0, 0);
-	//printf("@moulitest: %#.x %#.0x", 0, 0);
-	//ft_printf("%.o\n", 0);
-	//printf("%#.x\n", 0);
-	//printf("%#.0o\n", 0);
-
-	// printf("%d\n", printf("%llu\n", (long long)-42));
-	// ft_printf("%d\n",ft_printf("%llu\n", (long long)-42));
-
-	// ft_printf("%d\n", ft_printf("%.8s\n", "hello"));
-	// printf("%d\n", printf("%.8s\n", "hello"));
-	//float nb = -0.00;
-	//ft_printf("%-+10.14f\n", nb);
-// 	//printf("original %-+10.14f\n", nb);
-// 	// ft_printf("\n%d\n", -100);
-
-// 	ft_printf("%023i\n", LONG_MIN, LONG_MIN, LONG_MIN, LONG_MIN, LONG_MIN);
-// 	printf("%023i", LONG_MIN, LONG_MIN, LONG_MIN, LONG_MIN, LONG_MIN);
-// 	ft_printf("%hd", (char)-32768);
-// 	printf("\n%hd", (char)-32768);
-// 	ft_printf("ft %03.2d\n", 0);
-// 	printf("za %03.2d", 0);
-// 	 ft_printf("%15.8f\n", -0.);
-// 	printf("%15.8f\n", -0.);
-// 	ft_printf("%f|%-f|%+f|% f|%#f|%0f\n", 0., 0., 0., 0., 0., 0.);
-// 	printf("%f|%-f|%+f|% f|%#f|%0f\n", 0., 0., 0., 0., 0., 0.);
-	ft_printf("%f|%-f|%+f|% f|%#f|%0f\n", -0., -0., -0., -0., -0., -0.);
-	printf("%f|%-f|%+f|% f|%#f|%0f\n", -0., -0., -0., -0., -0., -0.);
-	return (0);
 }

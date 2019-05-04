@@ -6,7 +6,7 @@
 /*   By: draudrau <draudrau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/09 16:58:56 by draudrau          #+#    #+#             */
-/*   Updated: 2019/04/30 14:17:27 by draudrau         ###   ########.fr       */
+/*   Updated: 2019/05/04 19:03:46 by draudrau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # define FT_MAX_UINT 4294967295
 # include "libft/libft.h"
 # include <limits.h>
+# include <float.h>
 
 typedef struct	s_flags
 {

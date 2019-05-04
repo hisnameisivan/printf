@@ -6,7 +6,7 @@
 /*   By: draudrau <draudrau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/16 12:18:30 by draudrau          #+#    #+#             */
-/*   Updated: 2019/05/04 17:10:30 by draudrau         ###   ########.fr       */
+/*   Updated: 2019/05/04 18:35:43 by draudrau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -283,18 +283,22 @@ int main(void)
 	// printf("stroka 12: %#05f\n", 0.);
 	// printf("stroka 13: %# 5f\n", 0.);
 	// printf("stroka 14: %#5f\n", 0.);
-	double		x;
-	char		*znak;
-	int			flag_znak;
+	// double		x;
+	// char		*znak;
+	// int			flag_znak;
 
-	x = -0.;
-	znak = (char *)&x;
-	znak += 7;
-	flag_znak = ((*znak < 0) ? -1 : 1);
-	// if (x == -0.)
-	// 	printf("da");
-	// else
-	// 	printf("net");
-	printf("%d\n", flag_znak);
-	return (0);
+	// x = -0.;
+	// znak = (char *)&x;
+	// znak += 7;
+	// flag_znak = ((*znak < 0) ? -1 : 1);
+	// // if (x == -0.)
+	// // 	printf("da");
+	// // else
+	// // 	printf("net");
+	// printf("%d\n", flag_znak);
+
+	// double x;
+	// x = NaN;
+	// printf("%f", x);
+	// return (0);
 }
