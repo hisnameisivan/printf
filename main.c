@@ -248,40 +248,45 @@ int main(void)
 	// x = x - z;
 	// printf("\n%f\n", x);
 
-	ft_printf("stroka 01: %-+5.0f\n", 0.);
-	ft_printf("stroka 02: %- 5.0f\n", 0.);
-	ft_printf("stroka 03: %-5.0f\n", 0.);
-	ft_printf("stroka 04: %-+5f\n", 0.);
-	ft_printf("stroka 05: %- 5f\n", 0.);
-	ft_printf("stroka 06: %-5f\n", 0.);
-	ft_printf("stroka 71: %+5.0f\n", 0.);
-	ft_printf("stroka 72: % 5.0f\n", 0.);
-	ft_printf("stroka 08: %5.0f\n", 0.);
+	// ft_printf("stroka 01: %-+5.0f\n", 0.);
+	// ft_printf("stroka 02: %- 5.0f\n", 0.);
+	// ft_printf("stroka 03: %-5.0f\n", 0.);
+	// ft_printf("stroka 04: %-+5f\n", 0.);
+	// ft_printf("stroka 05: %- 5f\n", 0.);
+	// ft_printf("stroka 06: %-5f\n", 0.);
+	// ft_printf("stroka 71: %+5.0f\n", 0.);
+	// ft_printf("stroka 72: % 5.0f\n", 0.);
+	// ft_printf("stroka 08: %5.0f\n", 0.);
 
 
-	ft_printf("stroka 09: %+05f\n", 0.);
-	ft_printf("stroka 10: %+5f\n", 0.);
-	ft_printf("stroka 11: % 05f\n", 0.);
-	ft_printf("stroka 12: %05f\n", 0.);
-	ft_printf("stroka 13: % 5f\n", 0.);
-	ft_printf("stroka 14: %5f\n", 0.);
+	// ft_printf("stroka 09: %+05f\n", 0.);
+	// ft_printf("stroka 10: %+5f\n", 0.);
+	// ft_printf("stroka 11: % 05f\n", 0.);
+	// ft_printf("stroka 12: %05f\n", 0.);
+	// ft_printf("stroka 13: % 5f\n", 0.);
+	// ft_printf("stroka 14: %5f\n", 0.);
 
-	ft_printf("stroka 01: %#-+5.0f\n", 0.);
-	ft_printf("stroka 02: %#- 5.0f\n", 0.);
-	ft_printf("stroka 03: %#-5.0f\n", 0.);
-	ft_printf("stroka 04: %#-+5f\n", 0.);
-	ft_printf("stroka 05: %#- 5f\n", 0.);
-	ft_printf("stroka 06: %#-5f\n", 0.);
-	ft_printf("stroka 71: %#+5.0f\n", 0.);
-	ft_printf("stroka 72: %# 5.0f\n", 0.);
-	ft_printf("stroka 08: %#5.0f\n", 0.);
+	// ft_printf("stroka 01: %#-+5.0f\n", 0.);
+	// ft_printf("stroka 02: %#- 5.0f\n", 0.);
+	// ft_printf("stroka 03: %#-5.0f\n", 0.);
+	// ft_printf("stroka 04: %#-+5f\n", 0.);
+	// ft_printf("stroka 05: %#- 5f\n", 0.);
+	// ft_printf("stroka 06: %#-5f\n", 0.);
+	// ft_printf("stroka 71: %#+5.0f\n", 0.);
+	// ft_printf("stroka 72: %# 5.0f\n", 0.);
+	// ft_printf("stroka 08: %#5.0f\n", 0.);
 
 
-	ft_printf("stroka 09: %#+05f\n", 0.);
-	ft_printf("stroka 10: %#+5f\n", 0.);
-	ft_printf("stroka 11: %# 05f\n", 0.);
-	ft_printf("stroka 12: %#05f\n", 0.);
-	ft_printf("stroka 13: %# 5f\n", 0.);
-	ft_printf("stroka 14: %#5f\n", 0.);
+	// ft_printf("stroka 09: %#+05f\n", 0.);
+	// ft_printf("stroka 10: %#+5f\n", 0.);
+	// ft_printf("stroka 11: %# 05f\n", 0.);
+	// ft_printf("stroka 12: %#05f\n", 0.);
+	// ft_printf("stroka 13: %# 5f\n", 0.);
+	// ft_printf("stroka 14: %#5f\n", 0.);
+
+	double		x;
+
+	x = -0;
+	
 	return (0);
  }
