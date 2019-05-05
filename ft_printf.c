@@ -1296,12 +1296,25 @@ int		ft_printf(const char *fmt, ...)
 					ft_percent(&count, flags);
 					break ;
 				}
+				else
+				{
+					while (*p && *p != '%')
+					{
+						while (*p == ' ' && *p)
+						{
+							p++;
+						}
+						ft_putchar_pf(*p, &count);
+						p++;
+					}
+				}
 				p++;
 			}
 		}
-		else
+		else if (*p)
 			ft_putchar_pf(*p, &count);
-		p++;
+		if (*p)
+			p++;
 	}
 	va_end(ap);
 	return (count);

@@ -640,8 +640,12 @@ int main(void)
 	// ft_printf("%.f|%.f|%.f|%.f|%.f\n", 44.5001, 44.4, 44.6, 44.50001, 44.5 + 1e-52);
 	// printf("%.f|%.f|%.f|%.f|%.f", 44.500001, 44.4, 44.6, 44.50001, 44.5 + 1e-14);
 
-	ft_printf("%23.50s|%-23.5s|%-23.50s\n", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
-	printf("%23.50s|%-23.5s|%-23.50s", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+	// ft_printf("%o%o%o%o%o", 1, 100, 999, 42, 999988888);
+	// printf("\n");
+	// printf("%o%o%o%o%o", 1, 100, 999, 42, 999988888);
+	ft_printf("% Zoo");
+	printf("\n");
+	printf("% Zoo %d", 5, 6);
 
 	return (0);
  }
