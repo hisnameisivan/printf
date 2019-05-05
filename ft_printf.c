@@ -84,12 +84,15 @@ t_wp	ft_cmp_width_prec_num(t_flags *flags, char *num)
 	else if ((flags->spec == 'd' || flags->spec == 'i') && !(ft_strchr(num, '-'))) /* убрали float т.к. менялся знак */
 		temp.znak = 1;
 	count = ft_strlen(num);
-	// if (temp.znak == -1)
-	// 	count = count - 1;
+	if (flags->spec == 'o' && flags->resh == 1)
+	{
+		flags->precision--;
+		flags->width--;
+	}
 	((flags->precision - count) < 0) ? (temp.nul = 0) : (temp.nul = flags->precision - count); /* чтобы учесть отрицательный результат precision - count, т к дальше сломается!!!*/
 	((flags->width - (temp.nul + count)) < 0) ? (temp.sp = 0) : (temp.sp = flags->width - (temp.nul + count));
 	//temp.sp = flags->width - (temp.nul + count);
-	if ((flags->plus && (flags->spec == 'd' || flags->spec == 'i' || flags->spec == 'f')) || (flags->spec == 'o' && flags->resh == 1)
+	if ((flags->plus && (flags->spec == 'd' || flags->spec == 'i' || flags->spec == 'f')) /*|| (flags->spec == 'o' && flags->resh == 1)*/
 	|| ((flags->spec == 'd' || flags->spec == 'i' || flags->spec == 'f') && (temp.znak == -1)))
 		(((temp.sp) - 1) > 0) ? ((temp.sp)--) : (temp.sp = 0);
 	if (((flags->spec == 'x') || (flags->spec == 'X')) && (flags->resh == 1))
@@ -271,18 +274,28 @@ void	ft_constructor(t_flags *flags, t_wp temp, int sit, char *num, int *count)
 			ft_putchar_pf(' ', count); /* флаг пробел (флаг пробел не работает с восьмиричной и шестнадцатиричной*/
 			temp.sp--; /* флаг пробел съел один пробел */
 		}
-		if (((flags->spec == 'f' && flags->nul == 0)) || (flags->dot == 1 && (flags->spec == 'd' || flags->spec == 'i')) || (flags->dot == 0 && flags->nul == 0))
+		if (((flags->spec == 'f' && flags->nul == 0)) || (flags->dot == 1 && (flags->spec != 'f')) || (flags->dot == 0 && flags->nul == 0))
 			ft_type_space(temp.sp, count); /* sit 6b отсюда начинается */
 		if (temp.znak == 0 && flags->spec != 'u' && flags->resh)
 		{
-			ft_putchar_pf('0', count);
-			if (flags->spec != 'o') /* для шестнадцатиричной */
+			if (flags->spec == 'o')
+			{
+				ft_putchar_pf('0', count);
+				//temp.nul--;
+			}
+			else
+			{
+				ft_putchar_pf('0', count);	
 				ft_putchar_pf(flags->spec, count);
+			}
+			// ft_putchar_pf('0', count);
+			// if (flags->spec != 'o') /* для шестнадцатиричной */
+			// 	ft_putchar_pf(flags->spec, count);
 		}
 		if ((flags->dot == 0 && flags->nul == 1) || (flags->spec == 'f' && flags->nul == 1)) /* если точность указана Флаг '0' ignore -> нужно, чтобы не было точки */
 			ft_type_sp_nul(temp.sp, count); /* sit 6c или sit 6d*/
 		else
-		ft_type_nul(temp.nul, count);
+			ft_type_nul(temp.nul, count);
 		ft_putstr_pf(num, count);
 		//printf("\nsit 6\n");
 	}
@@ -442,7 +455,27 @@ int		ft_constructor_nothing(t_flags *flags, int sit, int *count)
 		ft_type_space(flags->width - 1, count);
 	}
 	else if (sit == 2)
-		ft_type_space(flags->width, count);
+	{
+		// if (flags->resh == 0)
+		// {
+			// if (flags->spec == 'o' && flags->resh == 1)
+			// {
+			// 	ft_putchar_pf('0', count);
+			// 	flags->width;
+			// }
+			if (flags->space == 1 && !flags->plus) /* флаг пробел игнор, когда есть флаг + */
+			{
+				ft_putchar_pf(' ', count);
+				flags->width--;
+			}
+			ft_type_space(flags->width, count);
+		// }
+		// else
+		// {
+		// 	ft_putchar_pf('0', count);	
+		// 	ft_type_space(flags->width - 1, count);
+		// }
+	}
 	else if (sit == 3)
 	{
 		if (flags->plus == 1)
@@ -454,12 +487,19 @@ int		ft_constructor_nothing(t_flags *flags, int sit, int *count)
 	}
 	else if (sit == 4)
 	{
+		flags->width = flags->width - ((flags->precision - 1 < 0) ? 0 : flags->precision - 1);
+		if (flags->precision)
+			ft_type_nul(flags->precision - 1, count);
 		ft_putchar_pf('0', count);
 		ft_type_space(flags->width - 1, count);
 	}
 	else if (sit == 5)
 	{
-		ft_type_space(flags->width - 1, count);
+		flags->width = flags->width - ((flags->precision - 1 < 0) ? 0 : flags->precision - 1);
+		(flags->dot == 0 && flags->nul == 1) ? ft_type_sp_nul(flags->width - 1, count) : ft_type_space(flags->width - 1, count);
+		//ft_type_space(flags->width - 1, count);
+		if (flags->precision)
+			ft_type_nul(flags->precision - 1, count);
 		ft_putchar_pf('0', count);
 	}
 	else if (sit == 6)
@@ -468,8 +508,14 @@ int		ft_constructor_nothing(t_flags *flags, int sit, int *count)
 		ft_type_sp_nul(flags->width - 2, count);
 		ft_putchar_pf('0', count);
 	}
-	else if (sit == 7)
-		ft_type_sp_nul(flags->width, count);
+	// else if (sit == 7)
+	// {
+	// 	flags->width = flags->width - ((flags->precision - 1 < 0) ? 0 : flags->precision - 1);
+	// 	(flags->dot == 0) ? ft_type_sp_nul(flags->width - 1, count) : ft_type_space(flags->width - 1, count);
+	// 	if (flags->precision)
+	// 		ft_type_nul(flags->precision - 1, count);
+	// 	ft_putchar_pf('0', count);
+	// }
 	else if (sit == 8)
 	{
 		ft_type_space(flags->width - 2, count);
@@ -501,10 +547,12 @@ int		ft_check_nothing(char *num, t_flags *flags, int *count)
 					else if (flags->plus == 0)
 						return (ft_constructor_nothing(flags, 2, count));
 				}
+				else if (flags->resh != 0 && flags->spec == 'o') /* восьмиричная с # выводит 0 (остальные выводят пустоту)*/
+					return (ft_constructor_nothing(flags, 4, count));
 				else
 					return (ft_constructor_nothing(flags, 2, count)); /* для o, x, u с .0 или . */
 			}
-			else if (flags->dot == 0 && (flags->spec == 'x' || flags->spec == 'X' || flags->spec == 'o') && flags->resh) /* чтобы с нулем и решеткой не выводилась приставка оx */
+			else if (/*flags->dot == 0 && */(flags->spec == 'x' || flags->spec == 'X' || flags->spec == 'o') && flags->resh) /* чтобы с нулем и решеткой не выводилась приставка оx */
 				return (ft_constructor_nothing(flags, 4, count));
 			// else if (flags->dot == 0)
 			// {
@@ -540,8 +588,9 @@ int		ft_check_nothing(char *num, t_flags *flags, int *count)
 				else /* для o (без реш), для x и u */
 					return (ft_constructor_nothing(flags, 2, count));
 			}
-			else if (flags->dot == 0 && (flags->spec == 'x' || flags->spec == 'X' || flags->spec == 'o') && flags->resh) /* чтобы с нулем и решеткой не выводилась приставка оx */
-				return ((flags->nul == 1) ? ft_constructor_nothing(flags, 7, count) : ft_constructor_nothing(flags, 5, count));
+			else if ((flags->spec == 'x' || flags->spec == 'X' || flags->spec == 'o') && flags->resh) /* чтобы с нулем и решеткой не выводилась приставка оx */
+				return (ft_constructor_nothing(flags, 5, count));
+				//return ((flags->nul == 1) ? ft_constructor_nothing(flags, 7, count) : ft_constructor_nothing(flags, 5, count));
 			// else if (flags->dot == 0)
 			// {
 			// 	if (flags->spec == 'd' || flags->spec == 'i')
@@ -779,23 +828,25 @@ void	ft_string(va_list ap, int *count, t_flags *flags)
 {
 	char	*str;
 	int		spaces;
+	int		cnt;
+	int		len;
+	//char	*temp_n;
 
 	spaces = 0;
+	//temp_n = "(null)";
 	str = va_arg(ap, char *);
 	if (!str)
-	{
-		ft_type_space(flags->width - 6, count);
-		ft_putstr_pf("(null)", count);
-		return ;
-	}
+		str = "(null)";
 	if (*str == '\0')
 	{
 		ft_type_space(flags->width, count);
 		return ;
 	}
+	len = ft_strlen(str);
 	if (flags->precision == 0)
-		flags->precision = ft_strlen(str);
-	((flags->width - flags->precision) <= 0 ) ? (spaces = 0) : (spaces = flags->width - flags->precision);
+		flags->precision = len;
+	cnt = ((flags->precision > len) ? len : flags->precision);
+	((flags->width - cnt) <= 0 ) ? (spaces = 0) : (spaces = flags->width - cnt);
 	if (flags->minus)
 	{
 		while (flags->precision-- > 0 && *str != '\0') /* добавила условие != '\0'*/

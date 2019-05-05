@@ -637,8 +637,11 @@ int main(void)
 	//printf("%f|%-f|%+f|% f|%#f|%0f\n", 1.0 / 0.0, 1.0 / 0.0, 1.0 / 0.0, 1.0 / 0.0, 1.0 / 0.0, 1.0 / 0.0);
 	//ft_printf("%f|%-f|%+f|% f|%#f|%0f\n", 1.0 / 0.0, 1.0 / 0.0, 1.0 / 0.0, 1.0 / 0.0, 1.0 / 0.0, 1.0 / 0.0);
 
-	ft_printf("%f|%-f|%+f|% f|%#f|%0f\n", -42., -42., -42., -42., -42., -42.);
-	printf("%f|%-f|%+f|% f|%#f|%0f", -42., -42., -42., -42., -42., -42.);
+	// ft_printf("%.f|%.f|%.f|%.f|%.f\n", 44.5001, 44.4, 44.6, 44.50001, 44.5 + 1e-52);
+	// printf("%.f|%.f|%.f|%.f|%.f", 44.500001, 44.4, 44.6, 44.50001, 44.5 + 1e-14);
+
+	ft_printf("%23.50s|%-23.5s|%-23.50s\n", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+	printf("%23.50s|%-23.5s|%-23.50s", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
 	return (0);
  }
