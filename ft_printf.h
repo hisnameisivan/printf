@@ -6,7 +6,7 @@
 /*   By: draudrau <draudrau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/09 16:58:56 by draudrau          #+#    #+#             */
-/*   Updated: 2019/05/04 19:03:46 by draudrau         ###   ########.fr       */
+/*   Updated: 2019/05/05 15:24:23 by draudrau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@
 typedef struct	s_flags
 {
 	char		spec;
+	int			znak;
 	int			dot;
 	int			resh;
 	int			j;

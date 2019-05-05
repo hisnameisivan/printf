@@ -73,15 +73,15 @@ t_wp	ft_cmp_width_prec_num(t_flags *flags, char *num)
 	t_wp	temp;
 	int		count; /* количество цифр без учета знака */
 
-	temp.znak = 0;
+	temp.znak = flags->znak;
 	temp.nul = 0;
 	temp.sp = 0;
-	if ((flags->spec == 'd' || flags->spec == 'i' || flags->spec == 'f') && ft_strchr(num, '-'))
+	if ((flags->spec == 'd' || flags->spec == 'i' || flags->spec == 'f') && ft_strchr(num, '-')) /* float оставили т.к. нужен модуль */
 	{
 		temp.znak = -1;
 		ft_modul_char(num);
 	}
-	else if ((flags->spec == 'd' || flags->spec == 'i' || flags->spec == 'f') && !(ft_strchr(num, '-')))
+	else if ((flags->spec == 'd' || flags->spec == 'i') && !(ft_strchr(num, '-'))) /* убрали float т.к. менялся знак */
 		temp.znak = 1;
 	count = ft_strlen(num);
 	// if (temp.znak == -1)
@@ -921,6 +921,7 @@ int		ft_search_before_spec(char *p, char c)
 void	ft_initialization(t_flags *temp)
 {
 	temp->dot = 0;
+	temp->znak = 0;
 	temp->spec = 0;
 	temp->resh = 0;
 	temp->j = 0;
@@ -1036,19 +1037,57 @@ char	*ft_strjoin_float(char *str1, char *str2, t_flags *flags)
 	return (tab);
 }
 
-int		ft_check_nan_inf(t_flags *flags, char *wh, int *count)
+int		ft_check_nan_inf(t_flags *flags, long double num, int *count)
 {
-	if (ft_strcmp(wh, "-9223372036854775808") == 0)
+	long double	inf_p;
+	long double	inf_m;
+	char		*new_num;
+	int			znak;
+	
+	inf_p = 18.0 / 0.0;
+	inf_m = -18.0 / 0.0;
+	new_num = NULL;
+	znak = 1;
+	if (num == inf_m || num == inf_p)
 	{
+		if (num == inf_p)
+			new_num = "inf";
+		else if (num == inf_m)
+		{
+			new_num = "-inf";
+			znak = -1;
+		}
+		flags->width = ((ft_strcmp("-inf", new_num) == 0) ? (flags->width - 4) : (flags->width - 3));
 		if (flags->minus)
 		{
-			ft_putstr_pf("nan", count);
-			ft_type_space(flags->width - 3, count);
+			if (flags->plus && znak == 1)
+			{
+				ft_putchar_pf('+', count);
+				flags->width--;
+			}
+			else if (flags->space && znak == 1)
+			{
+				ft_putchar_pf(' ', count);
+				flags->width--;
+			}
+			ft_putstr_pf(new_num, count);
+			ft_type_space(flags->width, count);
 		}
 		else if (!flags->minus)
 		{
-			ft_type_space(flags->width - 3, count);
-			ft_putstr_pf("nan", count);
+			((flags->plus || flags->space) && znak == 1) ? flags->width-- : (flags->width = flags->width);
+			ft_type_space(flags->width, count);
+			if (flags->plus && znak == 1)
+			{
+				ft_putchar_pf('+', count);
+				// flags->width--;
+			}
+			else if (flags->space && znak == 1)
+			{
+				ft_putchar_pf(' ', count);
+				//flags->width--;
+			}
+			ft_putstr_pf(new_num, count);
 		}
 		return (1);
 	}
@@ -1068,7 +1107,6 @@ void	ft_float(va_list ap, int *count, t_flags *flags)
 	char		*new_float;
 	t_wp		cmp_f;
 	char		*znak;
-	int			flag_znak;
 
 	precision = 0;
 	if (flags->bl)
@@ -1076,7 +1114,7 @@ void	ft_float(va_list ap, int *count, t_flags *flags)
 		fraction = va_arg(ap, long double);
 		znak = (char *)&fraction;
 		znak += 9;
-		flag_znak = ((*znak < 0) ? -1 : 1);
+		flags->znak = ((*znak < 0) ? -1 : 1);
 		//flag_znak = ((((znak[9]) & (1 << 7)) != 0) ? -1 : 0);
 	}
 	else
@@ -1084,9 +1122,11 @@ void	ft_float(va_list ap, int *count, t_flags *flags)
 		fraction = va_arg(ap, double);
 		znak = (char *)&fraction;
 		znak += 9;
-		flag_znak = ((*znak < 0) ? -1 : 1);
+		flags->znak = ((*znak < 0) ? -1 : 1);
 		//flag_znak = (((znak[7] & (1 << 7)) != 0) ? (char)'+' : (char)'-');
 	}
+	if (ft_check_nan_inf(flags, fraction, count) == 1)
+		return ;
 	whole = (long long)fraction;
 	if ((fraction = fraction - whole) < 0)
 		fraction = fraction * (-1);
@@ -1105,7 +1145,7 @@ void	ft_float(va_list ap, int *count, t_flags *flags)
 	rounding = fr[i] - '0';
 	fr[i] = '\0';
 	i--;
-	if (rounding > 5)
+	if (rounding >= 5)
 	{
 		fr[i]++;
 		while (((fr[i] - '0') == 10) && (i >= 0)) /* i - 1 проверка на то, что мы дошли до первого (нулевого) элемента массива */
@@ -1121,8 +1161,6 @@ void	ft_float(va_list ap, int *count, t_flags *flags)
 			(whole >= 0) ? (whole++) : (whole--);
 	}
 	wh = ft_long_to_ascii(whole);
-	if (ft_check_nan_inf(flags, wh, count) == 1)
-		return ;
 	// printf("%lld\n", whole);
 	// printf("%d\n", rounding);
 	// //printf("%lld\n", temp2);
@@ -1137,11 +1175,11 @@ void	ft_float(va_list ap, int *count, t_flags *flags)
 	flags->precision = 0;
 	new_float = ft_strjoin_float(wh, fr, flags);
 	cmp_f = ft_cmp_width_prec_num(flags, new_float);
-	cmp_f.znak = flag_znak;
-	if (cmp_f.znak == -1 && flags->plus == 0 && ft_strcmp(new_float, "0.0"))
-	{
-		cmp_f.sp--;
-	}
+	// cmp_f.znak = flag_znak;
+	// if (cmp_f.znak == -1 && flags->plus == 0 && (!ft_strcmp(new_float, "0.0") || !ft_strcmp(new_float, "0."))
+	// {
+	// 	cmp_f.sp--;
+	// }
 	ft_complex_constructor(flags, cmp_f, new_float, count);
 	// printf("%s", new_float);
 	// printf("\n");
