@@ -643,9 +643,34 @@ int main(void)
 	// ft_printf("%o%o%o%o%o", 1, 100, 999, 42, 999988888);
 	// printf("\n");
 	// printf("%o%o%o%o%o", 1, 100, 999, 42, 999988888);
-	ft_printf("% Zoo");
-	printf("\n");
-	printf("% Zoo %d", 5, 6);
+	//printf("% \n");
+	//printf("% Zoo");
+	//char	*s = "3456789#%\n";
+	
+	// ft_printf("%010s is a string", "this");
+	// printf("\n");
+	// printf("%010s is a string", "this");
+	//ft_printf("% 123Z\n");
 
+	//ft_printf("%jx\n", -4294967295);
+	//printf("%jx\n", -4294967295);
+	//printf("% Zoooo\n");
+	//printf("\n");
+	//ft_printf("% Zoooo");
+	//ft_printf("%hhU\n", -1);
+	// ft_printf("%jx", -4294967297);
+	// printf("\n");
+	// printf("%jx", -4294967297);
+
+	// printf("\n");
+	// ft_printf("%zd", 4294967295);
+	// printf("\n");
+	// printf("%zd", 4294967295);
+	// printf("%h-hhd", 128);
+	// printf("\n");
+	// printf("%jhd", 9223372036854775809);
+	ft_printf("%U", ULONG_MAX);
+	printf("\n");
+	printf("%U", ULONG_MAX);
 	return (0);
  }

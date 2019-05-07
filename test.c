@@ -6,7 +6,7 @@
 /*   By: draudrau <draudrau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/16 12:18:30 by draudrau          #+#    #+#             */
-/*   Updated: 2019/05/04 18:35:43 by draudrau         ###   ########.fr       */
+/*   Updated: 2019/05/07 16:58:41 by draudrau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,6 +177,7 @@ int main(void)
 	//printf("%-5.2s is a string", "");
 	// printf("\n#0073\n");
 	// printf("@moulitest: %s", NULL);
+	
 	// не ОК
 
 	// printf("\n#0029\n");
