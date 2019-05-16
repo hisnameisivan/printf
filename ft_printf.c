@@ -73,7 +73,7 @@ t_wp	ft_cmp_width_prec_num(t_flags *flags, char *num)
 	t_wp	temp;
 	int		count; /* количество цифр без учета знака */
 
-	temp.znak = flags->znak;
+	temp.znak = flags->znak; /* для float достали знак из битов раньше */
 	temp.nul = 0;
 	temp.sp = 0;
 	if ((flags->spec == 'd' || flags->spec == 'i' || flags->spec == 'f') && ft_strchr(num, '-')) /* float оставили т.к. нужен модуль */
@@ -390,6 +390,7 @@ char	*convert_v_8(long long num, t_flags *flags)  /* Из десятичной �
 	}
 	ost[i] = temp;
 	oct_num = (char *)malloc(sizeof(char) * (i + 2));
+	oct_num[i + 1] = '\0';
 	oct_temp = oct_num;
 	while (i >= 0)
 	{
@@ -681,7 +682,7 @@ char	*ft_convert_negative_u(long long *num, t_flags *flags)
 		max = FT_MAX_UCHAR;
 	if (flags->h)
 		max = FT_MAX_USHORT;
-	if (flags->l || flags->ll)
+	if (flags->l || flags->ll || flags->spec == 'U')
 		max = FT_MAX_ULONG;
 	else
 		max = FT_MAX_UINT;
@@ -847,35 +848,44 @@ void	ft_char_2(char p, int *count, t_flags *flags) /* изменила 28.04 */
 void	ft_string(va_list ap, int *count, t_flags *flags)
 {
 	char	*str;
-	int		spaces;
-	int		cnt;
+	//int		spaces;
+	//int		cnt;
 	int		len;
 	//char	*temp_n;
+	int		flag_null;
 
-	spaces = 0;
+	//spaces = 0;
 	//temp_n = "(null)";
+	flag_null = 0;
 	str = va_arg(ap, char *);
 	if (!str)
+	{
 		str = "(null)";
+		flag_null = 1;
+	}
 	if (*str == '\0')
 	{
 		ft_type_space(flags->width, count);
 		return ;
 	}
 	len = ft_strlen(str);
-	if (flags->precision == 0)
+	// if (flags->precision == 0)
+	// 	flags->precision = len;
+	//cnt = ((flags->precision > len) ? len : flags->precision);
+	if (flags->dot == 0)
 		flags->precision = len;
-	cnt = ((flags->precision > len) ? len : flags->precision);
-	((flags->width - cnt) <= 0 ) ? (spaces = 0) : (spaces = flags->width - cnt);
+	if (flags->precision > len)
+		flags->precision = len;
+	((flags->width - flags->precision) <= 0 ) ? (flags->width = 0) : (flags->width = flags->width - flags->precision);
 	if (flags->minus)
 	{
 		while (flags->precision-- > 0 && *str != '\0') /* добавила условие != '\0'*/
 			ft_putchar_pf(*str++, count);
-		ft_type_space(spaces, count);
+		ft_type_space(flags->width, count);
 	}
 	else
 	{
-		(flags->nul == 1) ? ft_type_sp_nul(spaces, count) : ft_type_space(spaces, count);
+		(flags->nul == 1 && flag_null == 0) ? ft_type_sp_nul(flags->width, count) : ft_type_space(flags->width, count);
 		while (flags->precision-- > 0 && *str != '\0') /* добавила условие != '\0'*/
 			ft_putchar_pf(*str++, count);
 	}
@@ -885,26 +895,35 @@ void	ft_pointer(va_list ap, int *count, t_flags *flags)
 {
 	long long	pnt;
 	char		*new_pnt;
-	t_wp		temp;
+	int			len;
+	// t_wp		temp;
 
 	pnt = va_arg(ap, long long);
 	new_pnt = convert_v_16(pnt, flags);
-	temp = ft_cmp_width_prec_num(flags, new_pnt);
-	if (flags->width)
-		temp.sp = flags->width - count_of_digits(pnt);
+	len = ft_strlen(new_pnt);
+	//temp = ft_cmp_width_prec_num(flags, new_pnt);
+	//if (flags->width)
+	//	flags->width = flags->width - ft_strlen(new_pnt) - 2; /* -2 для приставки 0x */
+	if (flags->dot && flags->precision == 0 && pnt == 0)
+		flags->width++;
+	((flags->precision - len) < 0) ? (flags->precision = 0) : (flags->precision = flags->precision - len);
+	((flags->width - (flags->precision + len + 2)) < 0) ? (flags->width = 0) : (flags->width = flags->width - (flags->precision + len + 2));
 	if (flags->minus)
 	{
+		
 		ft_putstr_pf("0x", count);
-		ft_putstr_pf(new_pnt, count);
-		while (--temp.sp > 0)
-			ft_putchar_pf(' ', count);
+		ft_type_nul(flags->precision, count);
+		if (!(flags->dot && flags->precision == 0 && pnt == 0)) 
+			ft_putstr_pf(new_pnt, count);
+		ft_type_space(flags->width, count);
 	}
 	else
 	{
-		while (--temp.sp > 0)
-			ft_putchar_pf(' ', count);
+		ft_type_space(flags->width, count);
 		ft_putstr_pf("0x", count);
-		ft_putstr_pf(new_pnt, count);
+		ft_type_nul(flags->precision, count);
+		if (!(flags->dot && flags->precision == 0 && pnt == 0)) 
+			ft_putstr_pf(new_pnt, count);
 	}
 	free(new_pnt);
 }

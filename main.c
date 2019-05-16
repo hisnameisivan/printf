@@ -658,7 +658,7 @@ int main(void)
 	//printf("\n");
 	//ft_printf("% Zoooo");
 	//ft_printf("%hhU\n", -1);
-	// ft_printf("%jx", -4294967297);
+	// ft_printf("%jx", -42949672997);
 	// printf("\n");
 	// printf("%jx", -4294967297);
 
@@ -669,8 +669,29 @@ int main(void)
 	// printf("%h-hhd", 128);
 	// printf("\n");
 	// printf("%jhd", 9223372036854775809);
-	ft_printf("%U", ULONG_MAX);
+	//ft_printf("%S", L"Á±≥");
+	//printf("%d\n", ft_printf("%o%o%o%o%o", 1, 100, 999, 42, 999988888));
+	//int x = printf("%o%o%o%o%o", 1, 100, 999, 42, 999988888);
+	//printf("\n");
+	//printf("%d\n", x);
+
+	// ft_printf("%d\n",ft_printf("%o%o%o%o%o\n", 1, 100, 999, 42, 999988888));
+	// ft_printf("%llo, %llo", 0, ULLONG_MAX);
+	// printf("\n");
+	// printf("%llo, %llo", 0, ULLONG_MAX);
+	// printf("\n");
+	// ft_printf("%.4o", 424242);
+	// printf("\n");
+	// printf("%.4o", 424242);
+	// printf("\n");
+	// ft_printf("%o, %ho, %hho", -42, -42, -42);
+	// printf("\n");
+	// printf("%o, %ho, %hho", -42, -42, -42);
+
+	//printf("%p", 123);
+	//printf("%4.0s", "42");
+	ft_printf("%23.50s|%-23.5s|%-23.50s", "xF0x9Fx98x84", "xF0x9Fx98x84", "xF0x9Fx98x84", "xF0x9Fx98x84", "xF0x9Fx98x84", "xF0x9Fx98x84", "xF0x9Fx98x84", "xF0x9Fx98x84", "xF0x9Fx98x84", "xF0x9Fx98x84", "xF0x9Fx98x84", "xF0x9Fx98x84");
 	printf("\n");
-	printf("%U", ULONG_MAX);
+	printf("%23.50s|%-23.5s|%-23.50s", "xF0x9Fx98x84", "xF0x9Fx98x84", "xF0x9Fx98x84", "xF0x9Fx98x84", "xF0x9Fx98x84", "xF0x9Fx98x84", "xF0x9Fx98x84", "xF0x9Fx98x84", "xF0x9Fx98x84", "xF0x9Fx98x84", "xF0x9Fx98x84", "xF0x9Fx98x84");
 	return (0);
  }
