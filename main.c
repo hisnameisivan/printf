@@ -646,7 +646,7 @@ int main(void)
 	//printf("% \n");
 	//printf("% Zoo");
 	//char	*s = "3456789#%\n";
-	
+
 	// ft_printf("%010s is a string", "this");
 	// printf("\n");
 	// printf("%010s is a string", "this");
@@ -690,8 +690,37 @@ int main(void)
 
 	//printf("%p", 123);
 	//printf("%4.0s", "42");
-	ft_printf("%23.50s|%-23.5s|%-23.50s", "xF0x9Fx98x84", "xF0x9Fx98x84", "xF0x9Fx98x84", "xF0x9Fx98x84", "xF0x9Fx98x84", "xF0x9Fx98x84", "xF0x9Fx98x84", "xF0x9Fx98x84", "xF0x9Fx98x84", "xF0x9Fx98x84", "xF0x9Fx98x84", "xF0x9Fx98x84");
+	// ft_printf("%23.50s|%-23.5s|%-23.50s", "xF0x9Fx98x84", "xF0x9Fx98x84", "xF0x9Fx98x84", "xF0x9Fx98x84", "xF0x9Fx98x84", "xF0x9Fx98x84", "xF0x9Fx98x84", "xF0x9Fx98x84", "xF0x9Fx98x84", "xF0x9Fx98x84", "xF0x9Fx98x84", "xF0x9Fx98x84");
+	// printf("\n");
+	// printf("%23.50s|%-23.5s|%-23.50s", "xF0x9Fx98x84", "xF0x9Fx98x84", "xF0x9Fx98x84", "xF0x9Fx98x84", "xF0x9Fx98x84", "xF0x9Fx98x84", "xF0x9Fx98x84", "xF0x9Fx98x84", "xF0x9Fx98x84", "xF0x9Fx98x84", "xF0x9Fx98x84", "xF0x9Fx98x84");
+
+	// ft_printf("%jx", -2294967295);
+	// printf("\n");
+	// printf("%jx", -2294967295);
+	// ft_printf("%jx", -4294967297);
+	// printf("%jx", -4294967297);
+	// ft_printf("%jx", -11111111126);
+	// printf("\n");
+	// printf("%jx", -11111111126);
+	// int x = -11111111126;
+	// int	y = (unsigned long)x;
+	// ft_printf("%jx", y);
+	// printf("\n");
+	// printf("%jx", y);
+
+	// ft_printf("%jo, %jo", 0, ULLONG_MAX);
+	// printf("\n");
+	// printf("%jo, %jo", 0, ULLONG_MAX);
+	// ft_printf("%zu, %zu", 0, ULLONG_MAX);
+	// printf("\n");
+	// printf("%zu, %zu", 0, ULLONG_MAX);
+
+	// ft_printf("%U", ULONG_MAX);
+	// printf("\n");
+	// printf("%U", ULONG_MAX);
+
+	ft_printf("{%05.s}", 0);
 	printf("\n");
-	printf("%23.50s|%-23.5s|%-23.50s", "xF0x9Fx98x84", "xF0x9Fx98x84", "xF0x9Fx98x84", "xF0x9Fx98x84", "xF0x9Fx98x84", "xF0x9Fx98x84", "xF0x9Fx98x84", "xF0x9Fx98x84", "xF0x9Fx98x84", "xF0x9Fx98x84", "xF0x9Fx98x84", "xF0x9Fx98x84");
+	printf("{%05.s}", 0);
 	return (0);
  }

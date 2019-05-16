@@ -285,7 +285,7 @@ void	ft_constructor(t_flags *flags, t_wp temp, int sit, char *num, int *count)
 			}
 			else
 			{
-				ft_putchar_pf('0', count);	
+				ft_putchar_pf('0', count);
 				ft_putchar_pf(flags->spec, count);
 			}
 			// ft_putchar_pf('0', count);
@@ -339,7 +339,7 @@ long long	ft_apply_modificator(va_list ap, t_flags *flags) /* long long вмес
 	else if (flags->ll || flags->spec == 'U')
 		(flags->spec == 'd' || flags->spec == 'i' || flags->spec == 'U') ? (num = (long long)num) : (num = (unsigned long long)num);
 	else if (flags->j && flags->spec != 'U')
-		num = (unsigned long)num; /* новый флаг j */
+		num = (long long)num; /* новый флаг j */ /* это исправило последний тест в чекере long long, а не uns ll*/
 	else if (flags->z && flags->spec != 'U')
 		num = (size_t)num;
 	return (num);
@@ -374,10 +374,12 @@ char	*convert_v_8(long long num, t_flags *flags)  /* Из десятичной �
 	{
 		if (flags->hh)
 			max = FT_MAX_UCHAR;
-		if (flags->h)
+		else if (flags->h)
 			max = FT_MAX_USHORT;
-		if (flags->l || flags->ll)
+		else if (flags->l || flags->ll || flags->j)
 			max = FT_MAX_ULONG;
+		else if (flags->z)
+			max = FT_MAX_ULONG; /* 16.05 */
 		else
 			max = FT_MAX_UINT;
 		temp = max + num + 1; /* Отрицательный long long делаем unsigned long long */
@@ -419,10 +421,12 @@ char	*convert_v_16(long long num, t_flags *flags) /* Из десятичной �
 	{
 		if (flags->hh)
 			max = FT_MAX_UCHAR;
-		if (flags->h)
+		else if (flags->h)
 			max = FT_MAX_USHORT;
-		if (flags->l || flags->ll)
+		else if (flags->l || flags->ll || flags->j) /* это исправило последний тест в чекере */
 			max = FT_MAX_ULONG;
+		else if (flags->z)
+			max = FT_MAX_ULONG; /* 16.05 */
 		else
 			max = FT_MAX_UINT;
 		temp = max + num + 1; /* Отрицательный long long делаем unsigned long long */
@@ -475,7 +479,7 @@ int		ft_constructor_nothing(t_flags *flags, int sit, int *count)
 		// }
 		// else
 		// {
-		// 	ft_putchar_pf('0', count);	
+		// 	ft_putchar_pf('0', count);
 		// 	ft_type_space(flags->width - 1, count);
 		// }
 	}
@@ -680,10 +684,12 @@ char	*ft_convert_negative_u(long long *num, t_flags *flags)
 
 	if (flags->hh)
 		max = FT_MAX_UCHAR;
-	if (flags->h)
+	else if (flags->h)
 		max = FT_MAX_USHORT;
-	if (flags->l || flags->ll || flags->spec == 'U')
+	else if (flags->l || flags->ll || flags->spec == 'U' || flags->j) /* это исправило последний тест в чекере long long, а не uns ll*/
 		max = FT_MAX_ULONG;
+	else if (flags->z)
+		max = FT_MAX_ULONG; /* 16.05 */
 	else
 		max = FT_MAX_UINT;
 	temp_num = max + *num + 1; /* Отрицательный long long делаем unsigned long long */
@@ -885,7 +891,13 @@ void	ft_string(va_list ap, int *count, t_flags *flags)
 	}
 	else
 	{
-		(flags->nul == 1 && flag_null == 0) ? ft_type_sp_nul(flags->width, count) : ft_type_space(flags->width, count);
+		// (flags->nul == 1 && flag_null == 0) ? ft_type_sp_nul(flags->width, count) : ft_type_space(flags->width, count);
+		if (flags->nul == 1 && flag_null == 0) // наворотил для чекера 16ю.05
+			ft_type_sp_nul(flags->width, count);//
+		else if (flags->nul == 1 && flag_null == 1)//
+			ft_type_sp_nul(flags->width, count);//
+		else//
+			ft_type_space(flags->width, count);//
 		while (flags->precision-- > 0 && *str != '\0') /* добавила условие != '\0'*/
 			ft_putchar_pf(*str++, count);
 	}
@@ -910,10 +922,10 @@ void	ft_pointer(va_list ap, int *count, t_flags *flags)
 	((flags->width - (flags->precision + len + 2)) < 0) ? (flags->width = 0) : (flags->width = flags->width - (flags->precision + len + 2));
 	if (flags->minus)
 	{
-		
+
 		ft_putstr_pf("0x", count);
 		ft_type_nul(flags->precision, count);
-		if (!(flags->dot && flags->precision == 0 && pnt == 0)) 
+		if (!(flags->dot && flags->precision == 0 && pnt == 0))
 			ft_putstr_pf(new_pnt, count);
 		ft_type_space(flags->width, count);
 	}
@@ -922,7 +934,7 @@ void	ft_pointer(va_list ap, int *count, t_flags *flags)
 		ft_type_space(flags->width, count);
 		ft_putstr_pf("0x", count);
 		ft_type_nul(flags->precision, count);
-		if (!(flags->dot && flags->precision == 0 && pnt == 0)) 
+		if (!(flags->dot && flags->precision == 0 && pnt == 0))
 			ft_putstr_pf(new_pnt, count);
 	}
 	free(new_pnt);
@@ -1162,7 +1174,7 @@ int		ft_check_nan_inf(t_flags *flags, long double num, int *count)
 	long double	inf_m;
 	char		*new_num;
 	int			znak;
-	
+
 	inf_p = 18.0 / 0.0;
 	inf_m = -18.0 / 0.0;
 	new_num = NULL;
