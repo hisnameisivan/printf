@@ -858,16 +858,16 @@ void	ft_string(va_list ap, int *count, t_flags *flags)
 	//int		cnt;
 	int		len;
 	//char	*temp_n;
-	int		flag_null;
+	//int		flag_null;
 
 	//spaces = 0;
 	//temp_n = "(null)";
-	flag_null = 0;
+	//flag_null = 0;
 	str = va_arg(ap, char *);
 	if (!str)
 	{
 		str = "(null)";
-		flag_null = 1;
+	//	flag_null = 1;
 	}
 	if (*str == '\0')
 	{
@@ -891,13 +891,13 @@ void	ft_string(va_list ap, int *count, t_flags *flags)
 	}
 	else
 	{
-		// (flags->nul == 1 && flag_null == 0) ? ft_type_sp_nul(flags->width, count) : ft_type_space(flags->width, count);
-		if (flags->nul == 1 && flag_null == 0) // наворотил для чекера 16ю.05
-			ft_type_sp_nul(flags->width, count);//
-		else if (flags->nul == 1 && flag_null == 1)//
-			ft_type_sp_nul(flags->width, count);//
-		else//
-			ft_type_space(flags->width, count);//
+		(flags->nul == 1 ) ? ft_type_sp_nul(flags->width, count) : ft_type_space(flags->width, count);
+		// if (flags->nul == 1 && flag_null == 0) // наворотил для чекера 16ю.05
+		// 	ft_type_sp_nul(flags->width, count);//
+		// else if (flags->nul == 1 && flag_null == 1)//
+		// 	ft_type_sp_nul(flags->width, count);//
+		// else//
+		// 	ft_type_space(flags->width, count);//
 		while (flags->precision-- > 0 && *str != '\0') /* добавила условие != '\0'*/
 			ft_putchar_pf(*str++, count);
 	}
@@ -1078,6 +1078,8 @@ void	ft_analyze(t_flags *flags)
 	}
 	else if (flags->h)
 		flags->hh = 0;
+	if (flags->spec != 'f' && flags->spec != 'c' && flags->spec != 's' && !flags->procent && flags->dot && flags->nul) /* вопрос с float остается открытым */
+		flags->nul = 0;
 }
 
 void	ft_fill_struct(t_flags *flags, char *p)
@@ -1085,15 +1087,15 @@ void	ft_fill_struct(t_flags *flags, char *p)
 	int		width;
 
 	width = 0;
-	if ((flags->dot = ft_search_before_spec(p, '.')) == 1)
-		ft_write_width_precision(flags, p);
+	//if ((flags->dot = ft_search_before_spec(p, '.')) == 1)
+	//	ft_write_width_precision(flags, p);
 	ft_check_modificator(flags, p);
 	while (*p != 'c' && *p != 's' && *p != 'p' && *p != 'd' && *p != 'i' && *p != 'o'
 	&& *p != 'u' && *p != 'U' && *p != 'x' && *p != 'X' && *p != 'f' && *p != '\0') /* добавила != '\0' для процента */
 	{
-		if (*p == '0') /* нужно записать ноль раньше ширины, не заходя в запись ширины */
+		if (*p == '0') /* нужно записать ноль раньше ширины, не заходя в запись ширины вопрос с float остается открытым */
 			flags->nul = 1;
-		else if (*p >= '0' && *p <= '9' && flags->dot == 0)
+		else if (flags->dot == 0 && *p >= '0' && *p <= '9')
 		{
 			while (*p >= '0' && *p <= '9')
 			{
@@ -1102,6 +1104,22 @@ void	ft_fill_struct(t_flags *flags, char *p)
 			}
 			flags->width = width;
 			p--;	/* чтобы не перескочить спецификатор */
+		}
+		else if (*(p - 1) == '.' && *p >= '0' && *p <= '9')
+		{
+			flags->dot = 1;
+			flags->precision = 0;
+			while (*p >= '0' && *p <= '9')
+			{
+				flags->precision = flags->precision * 10 + *p - '0';
+				p++;
+			}
+			p--;	/* чтобы не перескочить спецификатор */
+		}
+		else if (*p == '.' && (*p < '0' || *p > '9'))
+		{
+			flags->dot = 1;
+			flags->precision = 0;
 		}
 		else if (*p == '-')
 			flags->minus = 1;
@@ -1335,6 +1353,10 @@ int		ft_printf(const char *fmt, ...)
 	p = (char *)fmt;
 	count = 0;
 	va_start(ap, fmt); /* устанавливает ap на 1-й безымянный аргумент */
+	while (!p)
+	{
+		return (0);
+	}
 	while (*p)
 	{
 		if (*p =='%')

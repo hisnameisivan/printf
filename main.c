@@ -719,8 +719,64 @@ int main(void)
 	// printf("\n");
 	// printf("%U", ULONG_MAX);
 
-	ft_printf("{%05.s}", 0);
-	printf("\n");
-	printf("{%05.s}", 0);
+	// ft_printf("{%05.s}", 0);
+	// printf("\n");
+	// printf("{%05.s}", 0);
+
+	// ft_printf("%U", ULONG_MAX);
+	// printf("\n");
+	// ft_printf("%jU", ULONG_MAX);
+
+	// ft_printf("%23.50s|%-23.5s|%-23.50s", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+	// printf("\n");
+	// printf("%23.50s|%-23.5s|%-23.50s", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+
+	//ft_printf("%10.1 f", 35);
+	// ft_printf("@main_ftprintf: %###-#0000 33.12..#0+0d\n", 256);
+	// printf("@main_printf: %###-#0000 33.12..#0+0d", 256);
+
+	// printf("\n");
+	// printf("%10.5d", 35);
+	// printf("\n");
+	// printf("%10..5.3d", 35);
+
+	// ft_printf("{%05.2c}", 'f');
+	// printf("\n");
+	// printf("{%05.2c}", 'f');
+
+
+	// ft_printf("%20.10f", 1.23);
+	// printf("\n");
+	// printf("%20.10f", 1.23);
+
+	// ft_printf("{%05.s}", 0);
+	// printf("\n");
+	// printf("{%05.s}", 0);
+	// ft_printf("{%05.%}", 0);
+	// printf("\n");
+	// printf("{%05.%}", 0);
+
+	// float		nb;
+	// nb = 0;
+	// ft_printf("null prec : %+.0f\n", nb);
+	// printf("null prec : %+.0f\n", nb);
+	// nb = 20.5;
+	// ft_printf("null prec : %+.0f\n", nb);
+	// printf("null prec : %+.0f\n", nb);
+	// nb = -25632.2541;
+	// ft_printf("null prec : %+.0f\n", nb);
+	// printf("null prec : %+.0f\n", nb);
+	// nb = -1.0123;
+	// ft_printf("null prec : %+.0f\n", nb);
+	// printf("null prec : %+.0f\n", nb);
+	// nb = 12354.569874;
+	// ft_printf("null prec : %+.0f\n", nb);
+	// printf("null prec : %+.0f\n", 24.);
+
+	// ft_printf(NULL, 123, 'A', 1235.123);
+	// //printf(NULL, 123, 'A', 1235.123);
+	// ft_printf("%d, %c, %f", 123, 'A');
+	// ft_printf(NULL);
+	printf("\n", NULL);
 	return (0);
  }
