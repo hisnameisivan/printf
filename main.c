@@ -773,10 +773,17 @@ int main(void)
 	// ft_printf("null prec : %+.0f\n", nb);
 	// printf("null prec : %+.0f\n", 24.);
 
-	// ft_printf(NULL, 123, 'A', 1235.123);
+	//ft_printf(NULL, 123, 'A', 1235.123);
 	// //printf(NULL, 123, 'A', 1235.123);
 	// ft_printf("%d, %c, %f", 123, 'A');
 	// ft_printf(NULL);
-	printf("\n", NULL);
+	// printf("\n", NULL);
+	// ft_printf("%05.2Zr", 1);
+	// printf("\n");
+	// printf("%05.2Zr", 1);
+
+	ft_printf("%#.O", 0);
+	printf("\n");
+	printf("%#.O", 0);
 	return (0);
  }

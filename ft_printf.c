@@ -76,15 +76,15 @@ t_wp	ft_cmp_width_prec_num(t_flags *flags, char *num)
 	temp.znak = flags->znak; /* для float достали знак из битов раньше */
 	temp.nul = 0;
 	temp.sp = 0;
-	if ((flags->spec == 'd' || flags->spec == 'i' || flags->spec == 'f') && ft_strchr(num, '-')) /* float оставили т.к. нужен модуль */
+	if ((flags->spec == 'd' || flags->spec == 'D' || flags->spec == 'i' || flags->spec == 'f') && ft_strchr(num, '-')) /* float оставили т.к. нужен модуль */
 	{
 		temp.znak = -1;
 		ft_modul_char(num);
 	}
-	else if ((flags->spec == 'd' || flags->spec == 'i') && !(ft_strchr(num, '-'))) /* убрали float т.к. менялся знак */
+	else if ((flags->spec == 'd' || flags->spec == 'D' || flags->spec == 'i') && !(ft_strchr(num, '-'))) /* убрали float т.к. менялся знак */
 		temp.znak = 1;
 	count = ft_strlen(num);
-	if (flags->spec == 'o' && flags->resh == 1)
+	if ((flags->spec == 'o' || flags->spec == 'O') && flags->resh == 1)
 	{
 		flags->precision--;
 		flags->width--;
@@ -92,8 +92,8 @@ t_wp	ft_cmp_width_prec_num(t_flags *flags, char *num)
 	((flags->precision - count) < 0) ? (temp.nul = 0) : (temp.nul = flags->precision - count); /* чтобы учесть отрицательный результат precision - count, т к дальше сломается!!!*/
 	((flags->width - (temp.nul + count)) < 0) ? (temp.sp = 0) : (temp.sp = flags->width - (temp.nul + count));
 	//temp.sp = flags->width - (temp.nul + count);
-	if ((flags->plus && (flags->spec == 'd' || flags->spec == 'i' || flags->spec == 'f')) /*|| (flags->spec == 'o' && flags->resh == 1)*/
-	|| ((flags->spec == 'd' || flags->spec == 'i' || flags->spec == 'f') && (temp.znak == -1)))
+	if ((flags->plus && (flags->spec == 'd' || flags->spec == 'D' || flags->spec == 'i' || flags->spec == 'f')) /*|| (flags->spec == 'o' && flags->resh == 1)*/
+	|| ((flags->spec == 'd' || flags->spec == 'D' || flags->spec == 'i' || flags->spec == 'f') && (temp.znak == -1)))
 		(((temp.sp) - 1) > 0) ? ((temp.sp)--) : (temp.sp = 0);
 	if (((flags->spec == 'x') || (flags->spec == 'X')) && (flags->resh == 1))
 		(((temp.sp) - 2) > 0) ? ((temp.sp) = (temp.sp) - 2) : (temp.sp = 0); /* с решеткой шестнадцатиричная выводится с 0x */
@@ -278,7 +278,7 @@ void	ft_constructor(t_flags *flags, t_wp temp, int sit, char *num, int *count)
 			ft_type_space(temp.sp, count); /* sit 6b отсюда начинается */
 		if (temp.znak == 0 && flags->spec != 'u' && flags->spec != 'U' && flags->resh)
 		{
-			if (flags->spec == 'o')
+			if (flags->spec == 'o' || flags->spec == 'O')
 			{
 				ft_putchar_pf('0', count);
 				//temp.nul--;
@@ -330,17 +330,17 @@ long long	ft_apply_modificator(va_list ap, t_flags *flags) /* long long вмес
 	long long	num;
 
 	num = va_arg(ap, long long);
-	if (flags->h && flags->spec != 'U')
+	if (flags->h && flags->spec != 'D' && flags->spec != 'O' && flags->spec != 'U') // 17.05 add DO
 		(flags->spec == 'd' || flags->spec == 'i') ? (num = (short)num) : (num = (unsigned short)num);
-	else if (flags->hh && flags->spec != 'U')
+	else if (flags->hh && flags->spec != 'D' && flags->spec != 'O' && flags->spec != 'U') // 17.05 add DO
 		(flags->spec == 'd' || flags->spec == 'i') ? (num = (char)num) : (num = (unsigned char)num);
-	else if (flags->l || flags->spec == 'U')
-		(flags->spec == 'd' || flags->spec == 'i' || flags->spec == 'U') ? (num = (long)num) : (num = (unsigned long)num);
-	else if (flags->ll || flags->spec == 'U')
-		(flags->spec == 'd' || flags->spec == 'i' || flags->spec == 'U') ? (num = (long long)num) : (num = (unsigned long long)num);
-	else if (flags->j && flags->spec != 'U')
-		num = (long long)num; /* новый флаг j */ /* это исправило последний тест в чекере long long, а не uns ll*/
-	else if (flags->z && flags->spec != 'U')
+	else if (flags->l || flags->spec == 'D' || flags->spec == 'O' || flags->spec == 'U') // 17.05 add DO
+		(flags->spec == 'd' || flags->spec == 'i' || flags->spec == 'D' || flags->spec == 'O' || flags->spec == 'U') ? (num = (long)num) : (num = (unsigned long)num); // 17.05 add DO
+	else if (flags->ll) // 17.05 удалил U
+		(flags->spec == 'd' || flags->spec == 'i') ? (num = (long long)num) : (num = (unsigned long long)num);
+	else if (flags->j && flags->spec != 'D' && flags->spec != 'O' && flags->spec != 'U') // 17.05 add DO
+		num = (uintmax_t)num; /* новый флаг j */ /* это исправило последний тест в чекере long long, а не uns ll*/
+	else if (flags->z && flags->spec != 'D' && flags->spec != 'O' && flags->spec != 'U') // 17.05 add DO
 		num = (size_t)num;
 	return (num);
 }
@@ -376,7 +376,7 @@ char	*convert_v_8(long long num, t_flags *flags)  /* Из десятичной �
 			max = FT_MAX_UCHAR;
 		else if (flags->h)
 			max = FT_MAX_USHORT;
-		else if (flags->l || flags->ll || flags->j)
+		else if (flags->l || flags->ll || flags->j || flags->spec == 'O') /* 17.05 */
 			max = FT_MAX_ULONG;
 		else if (flags->z)
 			max = FT_MAX_ULONG; /* 16.05 */
@@ -547,19 +547,19 @@ int		ft_check_nothing(char *num, t_flags *flags, int *count)
 		{
 			if (flags->dot != 0 && flags->precision == 0)
 			{
-				if (flags->spec == 'd' || flags->spec == 'i')
+				if (flags->spec == 'd' || flags->spec == 'D' || flags->spec == 'i')
 				{
 					if (flags->plus == 1)
 						return (ft_constructor_nothing(flags, 1, count));
 					else if (flags->plus == 0)
 						return (ft_constructor_nothing(flags, 2, count));
 				}
-				else if (flags->resh != 0 && flags->spec == 'o') /* восьмиричная с # выводит 0 (остальные выводят пустоту)*/
+				else if (flags->resh != 0 && (flags->spec == 'o' || flags->spec == 'O')) /* восьмиричная с # выводит 0 (остальные выводят пустоту)*/
 					return (ft_constructor_nothing(flags, 4, count));
 				else
 					return (ft_constructor_nothing(flags, 2, count)); /* для o, x, u с .0 или . */
 			}
-			else if (/*flags->dot == 0 && */(flags->spec == 'x' || flags->spec == 'X' || flags->spec == 'o') && flags->resh) /* чтобы с нулем и решеткой не выводилась приставка оx */
+			else if (/*flags->dot == 0 && */(flags->spec == 'x' || flags->spec == 'X' || flags->spec == 'o' || flags->spec == 'O') && flags->resh) /* чтобы с нулем и решеткой не выводилась приставка оx */
 				return (ft_constructor_nothing(flags, 4, count));
 			// else if (flags->dot == 0)
 			// {
@@ -583,19 +583,19 @@ int		ft_check_nothing(char *num, t_flags *flags, int *count)
 		{
 			if (flags->dot != 0 && flags->precision == 0)
 			{
-				if (flags->spec == 'd' || flags->spec == 'i')
+				if (flags->spec == 'd' || flags->spec == 'D'|| flags->spec == 'i')
 				{
 					if (flags->plus == 1)
 						return (ft_constructor_nothing(flags, 9, count));
 					else if (flags->plus == 0)
 						return (ft_constructor_nothing(flags, 2, count));
 				}
-				else if (flags->resh != 0 && flags->spec == 'o') /* восьмиричная с # выводит 0 (остальные выводят пустоту)*/
+				else if (flags->resh != 0 && (flags->spec == 'o' || flags->spec == 'O')) /* восьмиричная с # выводит 0 (остальные выводят пустоту)*/
 					return (ft_constructor_nothing(flags, 5, count));
 				else /* для o (без реш), для x и u */
 					return (ft_constructor_nothing(flags, 2, count));
 			}
-			else if ((flags->spec == 'x' || flags->spec == 'X' || flags->spec == 'o') && flags->resh) /* чтобы с нулем и решеткой не выводилась приставка оx */
+			else if ((flags->spec == 'x' || flags->spec == 'X' || flags->spec == 'o' || flags->spec == 'O') && flags->resh) /* чтобы с нулем и решеткой не выводилась приставка оx */
 				return (ft_constructor_nothing(flags, 5, count));
 				//return ((flags->nul == 1) ? ft_constructor_nothing(flags, 7, count) : ft_constructor_nothing(flags, 5, count));
 			// else if (flags->dot == 0)
@@ -686,7 +686,7 @@ char	*ft_convert_negative_u(long long *num, t_flags *flags)
 		max = FT_MAX_UCHAR;
 	else if (flags->h)
 		max = FT_MAX_USHORT;
-	else if (flags->l || flags->ll || flags->spec == 'U' || flags->j) /* это исправило последний тест в чекере long long, а не uns ll*/
+	else if (flags->l || flags->ll || flags->j || flags->spec == 'U') /* это исправило последний тест в чекере long long, а не uns ll*/
 		max = FT_MAX_ULONG;
 	else if (flags->z)
 		max = FT_MAX_ULONG; /* 16.05 */
@@ -739,7 +739,8 @@ void	ft_decimal(va_list ap, int *count, t_flags *flags)
 	t_wp		temp;
 
 	new_num = NULL;
-	if (flags->h || flags->l || flags->hh || flags->ll || flags->j || flags->z  || flags->spec == 'U') /* добавила флаг j */
+	if (flags->h || flags->l || flags->hh || flags->ll || flags->j || flags->z
+		|| flags->spec == 'D'|| flags->spec == 'O'|| flags->spec == 'U') /* добавила флаг j */ // 17.05 add DO
 		num = ft_apply_modificator(ap, flags);
 	else
 	{
@@ -748,12 +749,14 @@ void	ft_decimal(va_list ap, int *count, t_flags *flags)
 	}
 	if (flags->spec == 'x' || flags->spec == 'X')
 		new_num = convert_v_16(num, flags);
-	else if (flags->spec == 'o')
+	else if (flags->spec == 'o' || flags->spec == 'O')
 		new_num = convert_v_8(num, flags);
 	else if ((flags->spec == 'u' || flags->spec == 'U') && num < 0)
 		new_num = ft_convert_negative_u(&num, flags);
-	else if (flags->spec == 'd' || flags->spec == 'i' || flags->spec == 'u' || flags->spec == 'U')
+	else if (flags->spec == 'd' || flags->spec == 'D' || flags->spec == 'i' || flags->spec == 'u' || flags->spec == 'U')
 		new_num = ft_long_to_ascii(num);
+	// else if (flags->spec == 0)  // 17.05 без спецификатора ft_printf("%05.Z", 1);
+	// 	new_num = NULL;
 	if ((ft_check_nothing(new_num, flags, count)) == 1)
 		return ;
 	temp = ft_cmp_width_prec_num(flags, new_num);
@@ -846,7 +849,7 @@ void	ft_char_2(char p, int *count, t_flags *flags) /* изменила 28.04 */
 	}
 	else
 	{
-		ft_type_space(flags->width, count);
+		(flags->nul == 1) ? ft_type_sp_nul(flags->width, count) : ft_type_space(flags->width, count); // 17.05
 		ft_putchar_pf(ch, count);
 	}
 }
@@ -947,16 +950,17 @@ void	ft_check_modificator(t_flags *flags, char *ptr) /* Проверяет фл�
 
 	temp = ptr;
 	count_h = 0;
-	while (*ptr != 'c' && *ptr != 's' && *ptr != 'p' && *ptr != 'd' && *ptr != 'i' && *ptr != 'o'
-	&& *ptr != 'u' && *ptr != 'U' && *ptr != 'x' && *ptr != 'X' && *ptr != 'f' && *ptr != '\0') /* добавила != '\0' для процента*/
+	while (*ptr != 'c' && *ptr != 's' && *ptr != 'p' && *ptr != 'd' && *ptr != 'D' && *ptr != 'i' && *ptr != 'o'
+		&& *ptr != 'O' && *ptr != 'u' && *ptr != 'U' && *ptr != 'x' && *ptr != 'X' && *ptr != 'f' && *ptr != '\0') /* добавила != '\0' для процента*/ // 17.05 add DO
 	{
 		if (*ptr == 'h' && flags->h != 1)
 		{
 			flags->h = 1;
 			count_h++;
 			ptr++;
-			while (*ptr != 'c' && *ptr != 's' && *ptr != 'p' && *ptr != 'd' && *ptr != 'i' && *ptr != 'o'
-			&& *ptr != 'u' && *ptr != 'U' && *ptr != 'x' && *ptr != 'X' && *ptr != 'f' && *ptr != '\0')
+			while (*ptr != 'c' && *ptr != 's' && *ptr != 'p' && *ptr != 'd' && *ptr != 'D' && *ptr != 'i'
+				&& *ptr != 'o' && *ptr != 'O' && *ptr != 'u' && *ptr != 'U' && *ptr != 'x' // 17.05 add DO
+				&& *ptr != 'X' && *ptr != 'f' && *ptr != '\0')
 			{
 				if (*ptr != 'h' && flags->h == 1)
 					break ;
@@ -969,8 +973,8 @@ void	ft_check_modificator(t_flags *flags, char *ptr) /* Проверяет фл�
 		ptr++;
 	}
 	ptr = temp;
-	while (*ptr != 'c' && *ptr != 's' && *ptr != 'p' && *ptr != 'd' && *ptr != 'i' && *ptr != 'o'
-	&& *ptr != 'u' && *ptr != 'U' && *ptr != 'x' && *ptr != 'X' && *ptr != 'f' && *ptr != '\0') /* добавила != '\0' для процента*/
+	while (*ptr != 'c' && *ptr != 's' && *ptr != 'p' && *ptr != 'd' && *ptr != 'D' && *ptr != 'i' && *ptr != 'o'
+		&& *ptr != 'O' && *ptr != 'u' && *ptr != 'U' && *ptr != 'x' && *ptr != 'X' && *ptr != 'f' && *ptr != '\0') /* добавила != '\0' для процента*/ // 17.05 add DO
 	{
 		if (*ptr == 'l')
 		{
@@ -998,8 +1002,8 @@ void	ft_write_width_precision(t_flags *flags, char *p)
 	int	precision;
 
 	precision = 0;
-	while (*p != 'c' && *p != 's' && *p != 'p' && *p != 'd' && *p != 'i' && *p != 'o'
-	&& *p != 'u' && *p != 'U' && *p != 'x' && *p != 'X' && *p != 'f')
+	while (*p != 'c' && *p != 's' && *p != 'p' && *p != 'd' && *p != 'D' && *p != 'i'
+		&& *p != 'o' && *p != 'O' && *p != 'u' && *p != 'U' && *p != 'x' && *p != 'X' && *p != 'f') // 17.05 add DO
 	{
 		if (*p >= '0' && *p <= '9')
 		{
@@ -1025,8 +1029,8 @@ void	ft_write_width_precision(t_flags *flags, char *p)
 
 int		ft_search_before_spec(char *p, char c)
 {
-	while (*p != 'c' && *p != 's' && *p != 'p' && *p != 'd' && *p != 'i' && *p != 'o'
-	&& *p != 'u' && *p != 'U' && *p != 'x' && *p != 'X' && *p != 'f' && *p != '\0')
+	while (*p != 'c' && *p != 's' && *p != 'p' && *p != 'd' && *p != 'D' && *p != 'i'
+		&& *p != 'o' && *p != 'O' && *p != 'u' && *p != 'U' && *p != 'x' && *p != 'X' && *p != 'f' && *p != '\0') // 17.05 add DO
 	{
 		if (*p == c)
 			return (1);
@@ -1078,7 +1082,7 @@ void	ft_analyze(t_flags *flags)
 	}
 	else if (flags->h)
 		flags->hh = 0;
-	if (flags->spec != 'f' && flags->spec != 'c' && flags->spec != 's' && !flags->procent && flags->dot && flags->nul) /* вопрос с float остается открытым */
+	if (flags->spec != 0 && flags->spec != 'f' && flags->spec != 'c' && flags->spec != 's' && !flags->procent && flags->dot && flags->nul) /* вопрос с float остается открытым */
 		flags->nul = 0;
 }
 
@@ -1090,8 +1094,8 @@ void	ft_fill_struct(t_flags *flags, char *p)
 	//if ((flags->dot = ft_search_before_spec(p, '.')) == 1)
 	//	ft_write_width_precision(flags, p);
 	ft_check_modificator(flags, p);
-	while (*p != 'c' && *p != 's' && *p != 'p' && *p != 'd' && *p != 'i' && *p != 'o'
-	&& *p != 'u' && *p != 'U' && *p != 'x' && *p != 'X' && *p != 'f' && *p != '\0') /* добавила != '\0' для процента */
+	while (*p != 'c' && *p != 's' && *p != 'p' && *p != 'd' && *p != 'D' && *p != 'i' && *p != 'o' && *p != 'O'
+		&& *p != 'u' && *p != 'U' && *p != 'x' && *p != 'X' && *p != 'f' && *p != '\0') /* добавила != '\0' для процента */
 	{
 		if (*p == '0') /* нужно записать ноль раньше ширины, не заходя в запись ширины вопрос с float остается открытым */
 			flags->nul = 1;
@@ -1337,7 +1341,7 @@ void	ft_float(va_list ap, int *count, t_flags *flags)
 
 int		ft_valid_simbols(char c)
 {
-	if (ft_strchr("cspdiouUxXflhzj -+0123456789#%.", c) != NULL)
+	if (ft_strchr("cspdDioOuUxXflhzj -+0123456789#%.", c) != NULL)
 		return (1);
 	return (0);
 }
@@ -1353,9 +1357,9 @@ int		ft_printf(const char *fmt, ...)
 	p = (char *)fmt;
 	count = 0;
 	va_start(ap, fmt); /* устанавливает ap на 1-й безымянный аргумент */
-	while (!p)
+	while (!p) // 17.05 NULL
 	{
-		return (0);
+		return (-1); // 17.05 NULL
 	}
 	while (*p)
 	{
@@ -1366,7 +1370,7 @@ int		ft_printf(const char *fmt, ...)
 			ft_fill_struct(flags, p);
 			while (*p && (valid = ft_valid_simbols(*p)) == 1)
 			{
-				if (*p == 'd' || *p == 'i' || *p == 'u' || *p == 'U')
+				if (*p == 'd' || *p == 'D' || *p == 'i' || *p == 'o' || *p == 'O' || *p == 'u' || *p == 'U' || *p == 'x' || *p == 'X')
 				{
 					ft_decimal(ap, &count, flags);
 					break ;
@@ -1386,16 +1390,16 @@ int		ft_printf(const char *fmt, ...)
 					ft_pointer(ap, &count, flags);
 					break ;
 				}
-				if (*p == 'o')
-				{
-					ft_decimal(ap, &count, flags);
-					break ;
-				}
-				if (*p == 'x' || *p == 'X')
-				{
-					ft_decimal(ap, &count, flags);
-					break ;
-				}
+				// if (*p == 'o')
+				// {
+				// 	ft_decimal(ap, &count, flags);
+				// 	break ;
+				// }
+				// if (*p == 'x' || *p == 'X')
+				// {
+				// 	ft_decimal(ap, &count, flags);
+				// 	break ;
+				// }
 				if (*p == 'f')
 				{
 					ft_float(ap, &count, flags);
