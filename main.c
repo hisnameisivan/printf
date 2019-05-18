@@ -782,8 +782,50 @@ int main(void)
 	// printf("\n");
 	// printf("%05.2Zr", 1);
 
-	ft_printf("%#.O", 0);
-	printf("\n");
-	printf("%#.O", 0);
+
+
+	// printf("%hD", 222222);
+	// ft_printf("%hhu", -2557);
+	// printf("\n");
+	// printf("%hho", -2557);
+	//printf("%f|%-f|%+f|% f|%#f|%0f", 0. / 0., 0. / 0., 0. / 0., 0. / 0., 0. / 0., 0. / 0.);
+	// printf("\n");
+	// printf("%#.O", 0);
+
+	printf("01 stroka: %-+8.6hu\n", -123111);
+	ft_printf("01 stroka: %-+8.6hu\n",0);
+	printf("02 stroka: % -+8.6hhu\n", -123111);
+	ft_printf("02 stroka: % -+8.6hhu\n", -123111);
+	printf("03 stroka: %-+8.6hu\n", 123111);
+	ft_printf("03 stroka: %-+8.6hu\n", 123111);
+	printf("04 stroka: % -+8.6hhu\n", 123111);
+	ft_printf("04 stroka: % -+8.6hhu\n", 123111);
+	printf("05 stroka: %-8.6lu\n", 123111);
+	ft_printf("05 stroka: %-8.6lu\n", 123111);
 	return (0);
  }
+
+
+
+
+
+
+
+
+
+
+
+	// int		x = 1040;
+	// char	*a;
+	// char	*b;
+	// char	*c;
+	// char	*d;
+	// d = (char *)&x;
+	// c = (char *)&x;
+	// c += 1;
+	// b = (char *)&x;
+	// b += 2;
+	// a = (char *)&x;
+	// a += 3;
+	// //printf("%d",x);
+	// write(1, a, 4);

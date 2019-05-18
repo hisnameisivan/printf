@@ -6,20 +6,15 @@
 /*   By: waddam <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/09 16:58:56 by draudrau          #+#    #+#             */
-/*   Updated: 2019/05/17 18:22:17 by waddam           ###   ########.fr       */
+/*   Updated: 2019/05/18 21:51:08 by waddam           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FT_PRINTF_H
 # define FT_PRINTF_H
-# define FT_MAX_UCHAR 255
-# define FT_MAX_USHORT 65535
-# define FT_MAX_ULONG 18446744073709551615ul
-# define FT_MAX_UINT 4294967295
 # include "libft/libft.h"
-# include <limits.h>
 
-typedef struct	s_flags
+typedef struct	s_pf
 {
 	char		spec;
 	int			znak;
@@ -38,16 +33,9 @@ typedef struct	s_flags
 	int			bl; /* для float */
 	int			ml; /* для float */
 	int			procent;
-	int			width; /* для ширины */
-	int			precision; /* для точности */
-}				t_flags;
-
-typedef struct	s_wp
-{
-	int			nul;
-	int			sp;
-	int			znak; /* знак исходного числа (до применения модуля) */
-}				t_wp;
+	int			wid; /* для ширины */
+	int			prec; /* для точности */
+}				t_pf;
 
 // void	ft_putnbrll(long long n);
 // void	ft_decimal(va_list ap, int *count, t_flags *flags);
