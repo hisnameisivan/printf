@@ -792,16 +792,22 @@ int main(void)
 	// printf("\n");
 	// printf("%#.O", 0);
 
-	printf("01 stroka: %-+8.6hu\n", -123111);
-	ft_printf("01 stroka: %-+8.6hu\n",0);
-	printf("02 stroka: % -+8.6hhu\n", -123111);
-	ft_printf("02 stroka: % -+8.6hhu\n", -123111);
-	printf("03 stroka: %-+8.6hu\n", 123111);
-	ft_printf("03 stroka: %-+8.6hu\n", 123111);
-	printf("04 stroka: % -+8.6hhu\n", 123111);
-	ft_printf("04 stroka: % -+8.6hhu\n", 123111);
-	printf("05 stroka: %-8.6lu\n", 123111);
-	ft_printf("05 stroka: %-8.6lu\n", 123111);
+	// printf("01 stroka: %-+8.6hu\n", -123111);
+	// ft_printf("01 stroka: %-+8.6hu\n",0);
+	// printf("02 stroka: % -+8.6hhu\n", -123111);
+	// ft_printf("02 stroka: % -+8.6hhu\n", -123111);
+	// printf("03 stroka: %-+8.6hu\n", 123111);
+	// ft_printf("03 stroka: %-+8.6hu\n", 123111);
+	// printf("04 stroka: % -+8.6hhu\n", 123111);
+	// ft_printf("04 stroka: % -+8.6hhu\n", 123111);
+	// printf("05 stroka: %-8.6lu\n", 123111);
+	// ft_printf("05 stroka: %-8.6lu\n", 123111);
+	// ft_printf("%.1150f|%.1150f|%.1150f|%.1150f", 0x1p-1074, 0x1.ffffffffffffep-1023, 0x1.4e46p-1058, 0x1.59a8b0c3dp-1037);
+	// printf("\n");
+	// printf("%.1150f|%.1150f|%.1150f|%.1150f", 0x1p-1074, 0x1.ffffffffffffep-1023, 0x1.4e46p-1058, 0x1.59a8b0c3dp-1037);
+	ft_printf("%.0%");
+	printf("\n");
+	printf("%.0%");
 	return (0);
  }
 

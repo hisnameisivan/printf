@@ -800,9 +800,9 @@ void	ft_fill_flags(t_pf *pf, char *p)
 void	ft_fill_struct(t_pf *pf, char *p)
 {
 	ft_check_modificator(pf, p);
-	while (ft_check_specificator(p) && *p != '\0') /* добавила != '\0' для процента */
+	while (ft_check_specificator(p) && *p != '\0')
 	{
-		if (*p == '0') /* нужно записать ноль раньше ширины, не заходя в запись ширины вопрос с float остается открытым */
+		if (*p == '0')
 			pf->nul = 1;
 		else if (pf->dot == 0 && *p >= '0' && *p <= '9')
 			ft_fill_width(pf, &p);
@@ -821,7 +821,7 @@ void	ft_fill_struct(t_pf *pf, char *p)
 	ft_analyze(pf);
 }
 
-void	ft_percent(int *count, t_pf *pf) /* добавила функцию 28.04 */
+void	ft_percent(int *count, t_pf *pf)
 {
 	pf->wid--;
 	if (pf->minus)
@@ -931,7 +931,7 @@ long double	ft_fraction(va_list ap, t_pf *pf)
 {
 	long double	fraction;
 	char		*znak;
-	
+
 	if (pf->bl)
 	{
 		fraction = va_arg(ap, long double);
@@ -949,61 +949,88 @@ long double	ft_fraction(va_list ap, t_pf *pf)
 	return (fraction);
 }
 
+char	*ft_create_fr(t_pf *pf, long double fraction, int *i, int *rounding)
+{
+	int			prec;
+	long long	temp;
+	char		*fr;
+
+	prec = 0;
+	if (!(fr = ft_strnew(5000)))
+		return (NULL);
+	(pf->dot == 0) ? (prec = 7) : (prec = pf->prec + 1);
+	while (prec > 0)
+	{
+		fraction = fraction * 10;
+		fr[*i] = (int)fraction + '0';
+		temp = (long long)fraction;
+		fraction = fraction - temp;
+		prec--;
+		(*i)++;
+	}
+	(*i)--;
+	*rounding = fr[*i] - '0';
+	fr[*i] = '\0';
+	(*i)--;
+	return (fr);
+}
+
+long long	ft_rounding(t_pf *pf, char *fr, int i, long long whole)
+{
+	fr[i]++;
+	while (((fr[i] - '0') == 10) && (i >= 0))
+	{
+		fr[i] = '0';
+		if (i == 0)
+			(whole >= 0) ? (whole++) : (whole--);
+		else
+			fr[i - 1]++;
+		i--;
+	}
+	if (pf->dot && pf->prec == 0)
+		(whole >= 0) ? (whole++) : (whole--);
+	return (whole);
+}
+
+char	*ft_new_float(t_pf *pf, char *fr, long long whole, long double fraction)
+{
+	int		i;
+	int		rounding;
+	char	*wh;
+	char	*new_float;
+
+	i = 0;
+	rounding = 0;
+	wh = NULL;
+	new_float = NULL;
+	fr = ft_create_fr(pf, fraction, &i, &rounding);
+	if (rounding >= 5)
+		whole = ft_rounding(pf, fr, i, whole);
+	wh = ft_long_to_ascii(whole);
+	pf->prec = 0;
+	new_float = ft_strjoin_float(wh, fr, pf);
+	return (new_float);
+}
+
 void	ft_float(va_list ap, int *count, t_pf *pf)
 {
-	int			i;
-	int			prec;
-	int			rounding;
-	long long	temp;
 	long long	whole;
 	long double	fraction;
-	char 		fr[5000];
-	char		*wh;
+	char		*fr;
 	char		*new_float;
-	
-	prec = 0;
+
+	fr = NULL;
+	new_float = NULL;
 	fraction = ft_fraction(ap, pf);
 	if (ft_check_inf(pf, fraction, count) == 1)
 		return ;
 	whole = (long long)fraction;
 	if ((fraction = fraction - whole) < 0)
 		fraction = fraction * (-1);
-	i = 0;
-	(pf->dot == 0) ? (prec = 7) : (prec = pf->prec + 1); /* чтобы записать цифру по которой будем округлять +1 */
-	while (prec > 0)
-	{
-		fraction = fraction * 10;
-		fr[i] = (int)fraction + '0';
-		temp = (long long)fraction;
-		fraction = fraction - temp;
-		prec--;
-		i++;
-	}
-	i--;
-	rounding = fr[i] - '0';
-	fr[i] = '\0';
-	i--;
-	if (rounding >= 5)
-	{
-		fr[i]++;
-		while (((fr[i] - '0') == 10) && (i >= 0)) /* i - 1 проверка на то, что мы дошли до первого (нулевого) элемента массива */
-		{
-			fr[i] = '0';
-			if (i == 0)
-				(whole >= 0) ? (whole++) : (whole--);
-			else
-				fr[i - 1]++;
-			i--;
-		}
-		if (pf->dot && pf->prec == 0)
-			(whole >= 0) ? (whole++) : (whole--);
-	}
-	wh = ft_long_to_ascii(whole);
-	pf->prec = 0;
-	new_float = ft_strjoin_float(wh, fr, pf);
+	new_float = ft_new_float(pf, fr, whole, fraction);
 	ft_cmp_wid_prec_num(pf, new_float);
 	ft_complex_constructor(pf, new_float, count);
-	free(wh);
+	free(fr);
 	free(new_float);
 }
 
@@ -1014,74 +1041,93 @@ int		ft_valid_simbols(char c)
 	return (0);
 }
 
+int		ft_csp(va_list ap, t_pf *pf, char *p, int *count)
+{
+	if (*p == 'c')
+	{
+		ft_char(ap, count, pf);
+		free(pf);
+		return (1);
+	}
+	if (*p == 's')
+	{
+		ft_string(ap, count, pf);
+		free(pf);
+		return (1);
+	}
+	if (*p == 'p')
+	{
+		ft_pointer(ap, count, pf);
+		free(pf);
+		return (1);
+	}
+	return (0);
+}
+
+int		ft_dioux_prc_f(va_list ap, t_pf *pf, char *p, int *count)
+{
+	if (*p == 'd' || *p == 'D' || *p == 'i' || *p == 'o' || *p == 'O'
+		|| *p == 'u' || *p == 'U' || *p == 'x' || *p == 'X')
+	{
+		ft_decimal(ap, count, pf);
+		free(pf);
+		return (1);
+	}
+	if (*p == 'f')
+	{
+		ft_float(ap, count, pf);
+		free(pf);
+		return (1);
+	}
+	if (*p == '%')
+	{
+		ft_percent(count, pf);
+		free(pf);
+		return (1);
+	}
+	return (0);
+}
+
+void	ft_if_procent(va_list ap, char **p, int *count)
+{
+	int		valid;
+	t_pf	*pf;
+
+	valid = 0;
+	pf = NULL;
+	(*p)++;
+	pf = ft_create_struct_printf();
+	ft_fill_struct(pf, *p);
+	while (**p && (valid = ft_valid_simbols(**p)) == 1)
+	{
+		if (ft_csp(ap, pf, *p, count))
+			break ;
+		if (ft_dioux_prc_f(ap, pf, *p, count))
+			break ;
+		(*p)++;
+	}
+	if (valid == 0 && **p)
+	{
+		ft_char_2(**p, count, pf);
+		free(pf);
+	}
+}
+
 int		ft_printf(const char *fmt, ...)
 {
-	va_list	ap; /* указывает на очередной безымянный аргумент */
-	t_pf	*pf;
+	va_list	ap;
 	char	*p;
 	int 	count;
-	int		valid;
 
 	p = (char *)fmt;
 	count = 0;
-	va_start(ap, fmt); /* устанавливает ap на 1-й безымянный аргумент */
-	while (!p) // 17.05 NULL
-	{
-		return (-1); // 17.05 NULL
-	}
+	va_start(ap, fmt);
+	while (!p)
+		return (-1);
 	while (*p)
 	{
 		if (*p =='%')
-		{
-			p++;
-			pf = ft_create_struct_printf();
-			ft_fill_struct(pf, p);
-			while (*p && (valid = ft_valid_simbols(*p)) == 1)
-			{
-				if (*p == 'd' || *p == 'D' || *p == 'i' || *p == 'o' || *p == 'O' || *p == 'u' || *p == 'U' || *p == 'x' || *p == 'X')
-				{
-					ft_decimal(ap, &count, pf);
-					free(pf);
-					break ;
-				}
-				if (*p == 'c')
-				{
-					ft_char(ap, &count, pf);
-					free(pf);
-					break ;
-				}
-				if (*p == 's')
-				{
-					ft_string(ap, &count, pf);
-					free(pf);
-					break ;
-				}
-				if (*p == 'p')
-				{
-					ft_pointer(ap, &count, pf);
-					free(pf);
-					break ;
-				}
-				if (*p == 'f')
-				{
-					ft_float(ap, &count, pf);
-					free(pf);
-					break ;
-				}
-				if (*p == '%')
-				{
-					ft_percent(&count, pf);
-					free(pf);
-					break ;
-				}
-				p++;
-			}
-			if (valid == 0 && *p)
-			{
-				ft_char_2(*p, &count, pf);
-				free(pf);
-			}
-		}
+			ft_if_procent(ap, &p, &count);
 		else
 			ft_putchar_pf(*p, &count);
 		if (*p)

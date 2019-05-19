@@ -3,16 +3,104 @@
 /*                                                        :::      ::::::::   */
 /*   test.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: draudrau <draudrau@student.42.fr>          +#+  +:+       +#+        */
+/*   By: waddam <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/16 12:18:30 by draudrau          #+#    #+#             */
-/*   Updated: 2019/05/07 16:58:41 by draudrau         ###   ########.fr       */
+/*   Updated: 2019/05/19 20:54:01 by waddam           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <float.h>
+
+
+void	ft_float(va_list ap, int *count, t_pf *pf)
+{
+	long long	whole;
+	long double	fraction;
+	char		*wh;
+	char		*fr;
+	char		*new_float;
+
+	fr = NULL;
+	fraction = ft_fraction(ap, pf);
+	if (ft_check_inf(pf, fraction, count) == 1)
+		return ;
+	whole = (long long)fraction;
+	if ((fraction = fraction - whole) < 0)
+		fraction = fraction * (-1);
+	if (!(fr = ft_fraction_char(pf, fraction, &whole)))
+		return ;
+	if (!(wh = ft_long_to_ascii(whole)))
+		return ;
+	pf->prec = 0;
+	if (!(new_float = ft_strjoin_float(wh, fr, pf)))
+		return ;
+	ft_cmp_wid_prec_num(pf, new_float);
+	ft_complex_constructor(pf, new_float, count);
+	free(fr);
+	free(wh);
+	free(new_float);
+}
+
+void	ft_float(va_list ap, int *count, t_pf *pf)
+{
+	int			i;
+	int			prec;
+	int			rounding;
+	long long	temp;
+	long long	whole;
+	long double	fraction;
+	char 		fr[5000];
+	char		*wh;
+	char		*new_float;
+
+	prec = 0;
+	fraction = ft_fraction(ap, pf);
+	if (ft_check_inf(pf, fraction, count) == 1)
+		return ;
+	whole = (long long)fraction;
+	if ((fraction = fraction - whole) < 0)
+		fraction = fraction * (-1);
+	i = 0;
+	(pf->dot == 0) ? (prec = 7) : (prec = pf->prec + 1); /* чтобы записать цифру по которой будем округлять +1 */
+	while (prec > 0)
+	{
+		fraction = fraction * 10;
+		fr[i] = (int)fraction + '0';
+		temp = (long long)fraction;
+		fraction = fraction - temp;
+		prec--;
+		i++;
+	}
+	i--;
+	rounding = fr[i] - '0';
+	fr[i] = '\0';
+	i--;
+	if (rounding >= 5)
+	{
+		fr[i]++;
+		while (((fr[i] - '0') == 10) && (i >= 0)) /* i - 1 проверка на то, что мы дошли до первого (нулевого) элемента массива */
+		{
+			fr[i] = '0';
+			if (i == 0)
+				(whole >= 0) ? (whole++) : (whole--);
+			else
+				fr[i - 1]++;
+			i--;
+		}
+		if (pf->dot && pf->prec == 0)
+			(whole >= 0) ? (whole++) : (whole--);
+	}
+	wh = ft_long_to_ascii(whole);
+	pf->prec = 0;
+	new_float = ft_strjoin_float(wh, fr, pf);
+	ft_cmp_wid_prec_num(pf, new_float);
+	ft_complex_constructor(pf, new_float, count);
+	free(wh);
+	free(new_float);
+}
 
 int main(void)
 {
@@ -177,7 +265,7 @@ int main(void)
 	//printf("%-5.2s is a string", "");
 	// printf("\n#0073\n");
 	// printf("@moulitest: %s", NULL);
-	
+
 	// не ОК
 
 	// printf("\n#0029\n");
