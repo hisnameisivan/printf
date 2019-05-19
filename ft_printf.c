@@ -927,21 +927,11 @@ int		ft_check_inf(t_pf *pf, long double num, int *count)
 	return (0);
 }
 
-void	ft_float(va_list ap, int *count, t_pf *pf)
+long double	ft_fraction(va_list ap, t_pf *pf)
 {
-	int			i;
-	int			prec;
-	int			rounding;
-	long long	temp;
-	long long	whole;
 	long double	fraction;
-	char 		fr[5000];
-	char		*wh;
-	char		*new_float;
-
 	char		*znak;
-
-	prec = 0;
+	
 	if (pf->bl)
 	{
 		fraction = va_arg(ap, long double);
@@ -956,6 +946,23 @@ void	ft_float(va_list ap, int *count, t_pf *pf)
 		znak += 9;
 		pf->znak = ((*znak < 0) ? -1 : 1);
 	}
+	return (fraction);
+}
+
+void	ft_float(va_list ap, int *count, t_pf *pf)
+{
+	int			i;
+	int			prec;
+	int			rounding;
+	long long	temp;
+	long long	whole;
+	long double	fraction;
+	char 		fr[5000];
+	char		*wh;
+	char		*new_float;
+	
+	prec = 0;
+	fraction = ft_fraction(ap, pf);
 	if (ft_check_inf(pf, fraction, count) == 1)
 		return ;
 	whole = (long long)fraction;
