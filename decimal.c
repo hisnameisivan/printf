@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   decimal.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: draudrau <draudrau@student.42.fr>          +#+  +:+       +#+        */
+/*   By: waddam <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/19 21:47:16 by draudrau          #+#    #+#             */
-/*   Updated: 2019/05/19 23:06:25 by draudrau         ###   ########.fr       */
+/*   Updated: 2019/05/20 21:50:53 by waddam           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,27 +56,36 @@ char		*ft_create_num(long long num, t_pf *pf)
 	return (new_num);
 }
 
-long long	ft_modificators(va_list ap, t_pf *pf)
-{
-	long long	num;
+// long long	ft_modificators(va_list ap, t_pf *pf)
+// {
+// 	long long	num;
 
-	if (pf->h || pf->l || pf->hh || pf->ll || pf->j || pf->z)
-		num = ft_apply_modificator(ap, pf);
-	else
-	{
-		num = va_arg(ap, long long);
-		num = (((pf->spec == 'd') || (pf->spec == 'i')) ?
-		(int)num : (unsigned int)num);
-	}
-	return (num);
-}
+// 	if (pf->h || pf->l || pf->hh || pf->ll || pf->j || pf->z)
+// 		num = ft_apply_modificator(ap, pf);
+// 	else
+// 	{
+// 		num = va_arg(ap, long long);
+// 		num = (((pf->spec == 'd') || (pf->spec == 'i')) ?
+// 		(int)num : (unsigned int)num);
+// 	}
+// 	return (num);
+// }
 
 void		ft_decimal(va_list ap, int *count, t_pf *pf)
 {
 	char		*new_num;
+	long long	num;
 
 	new_num = NULL;
-	new_num = ft_create_num(ft_modificators(ap, pf), pf);
+	if (pf->h || pf->l || pf->hh || pf->ll || pf->j || pf->z)
+		num = ft_apply_modificator(ap, pf);
+	else
+	{
+		num = (int)va_arg(ap, long long);
+		num = (((pf->spec == 'd') || (pf->spec == 'i')) ?
+		(int)num : (unsigned int)num);
+	}
+	new_num = ft_create_num(num, pf);
 	if ((ft_check_nothing(new_num, pf, count)) == 1)
 	{
 		free(new_num);
