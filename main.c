@@ -806,14 +806,14 @@ int main(void)
 	// printf("\n");
 	// printf("%.1150f|%.1150f|%.1150f|%.1150f", 0x1p-1074, 0x1.ffffffffffffep-1023, 0x1.4e46p-1058, 0x1.59a8b0c3dp-1037);
 
-	// ft_printf("%d", -1);
-	// printf("\n");
-	// printf("%d", -1);
-	// printf("\n");
-
-	ft_printf("%x", -42);
+	ft_printf("%ld", -222222222222222);
 	printf("\n");
-	printf("%x", -42);
+	printf("%ld", -222222222222222);
+	printf("\n");
+
+	ft_printf("%lx", -42);
+	printf("\n");
+	printf("%lx", -42);
 
 	// long long	x;
 	// int			y;

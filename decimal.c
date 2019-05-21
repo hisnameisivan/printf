@@ -6,7 +6,7 @@
 /*   By: waddam <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/19 21:47:16 by draudrau          #+#    #+#             */
-/*   Updated: 2019/05/20 22:43:55 by waddam           ###   ########.fr       */
+/*   Updated: 2019/05/21 15:17:05 by waddam           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,12 +67,11 @@ long long	ft_modificators(va_list ap, t_pf *pf)
 	}
 	else
 	{
-		num = (int)va_arg(ap, int);
+		num = (unsigned long)va_arg(ap, unsigned long);
 		//if (num )
 		num = (((pf->spec == 'd') || (pf->spec == 'i')) ?
-		(int)num : (unsigned int)num);
-
-		return ((int)num);
+		(int)num : (unsigned long)num);
+		return ((unsigned long)num);
 	}
 }
 //(int)num : (unsigned int)num);
