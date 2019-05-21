@@ -1,4 +1,4 @@
-#include "ft_printf.h"
+#include "header/ft_printf.h"
 #include <stdio.h>
 
 int main(void)
@@ -806,14 +806,18 @@ int main(void)
 	// printf("\n");
 	// printf("%.1150f|%.1150f|%.1150f|%.1150f", 0x1p-1074, 0x1.ffffffffffffep-1023, 0x1.4e46p-1058, 0x1.59a8b0c3dp-1037);
 
-	ft_printf("%ld", -222222222222222);
-	printf("\n");
-	printf("%ld", -222222222222222);
-	printf("\n");
+	// ft_printf("%ld", -222222222222222);
+	// printf("\n");
+	// printf("%ld", -222222222222222);
+	// printf("\n");
 
-	ft_printf("%lx", -42);
+	// ft_printf("%lx", -42);
+	// printf("\n");
+	// printf("%lx", -42);
+
+	ft_printf("%x", -42);
 	printf("\n");
-	printf("%lx", -42);
+	printf("%x", -42);
 
 	// long long	x;
 	// int			y;
@@ -822,28 +826,3 @@ int main(void)
 	// printf("%lld", x);
 	// return (0);
  }
-
-
-
-
-
-
-
-
-
-
-
-	// int		x = 1040;
-	// char	*a;
-	// char	*b;
-	// char	*c;
-	// char	*d;
-	// d = (char *)&x;
-	// c = (char *)&x;
-	// c += 1;
-	// b = (char *)&x;
-	// b += 2;
-	// a = (char *)&x;
-	// a += 3;
-	// //printf("%d",x);
-	// write(1, a, 4);
