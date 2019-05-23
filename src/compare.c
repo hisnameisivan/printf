@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   compare.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: draudrau <draudrau@student.42.fr>          +#+  +:+       +#+        */
+/*   By: waddam <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/19 20:52:49 by draudrau          #+#    #+#             */
-/*   Updated: 2019/05/19 21:25:36 by draudrau         ###   ########.fr       */
+/*   Updated: 2019/05/23 21:13:53 by waddam           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,6 @@ void		ft_cmp_wid_prec_num(t_pf *pf, char *num)
 		pf->prec--;
 		pf->wid--;
 	}
-	// ((pf->prec - count) < 0) ? (pf->prec = 0) : (pf->prec = pf->prec - count);
 	pf->prec = ((pf->prec - count < 0) ? 0 : (pf->prec - count));
 	((pf->wid - (pf->prec + count)) < 0) ? (pf->wid = 0) :
 	(pf->wid = pf->wid - (pf->prec + count));
@@ -45,7 +44,6 @@ void		ft_cmp_wid_prec_num(t_pf *pf, char *num)
 		(((pf->wid) - 1) > 0) ? ((pf->wid)--) : (pf->wid = 0);
 	if (((pf->spec == 'x') || (pf->spec == 'X')) && (pf->resh == 1))
 		pf->wid = ((pf->wid - 2 > 0) ? pf->wid - 2 : 0);
-		//(((pf->wid) - 2) > 0) ? ((pf->wid) = (pf->wid) - 2) : (pf->wid = 0);
 }
 
 long long	ft_apply_modificator(va_list ap, t_pf *pf)
